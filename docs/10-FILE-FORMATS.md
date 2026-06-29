@@ -210,7 +210,7 @@ The total `KRAN.PAG` file could look like this:
 
 `INTRO.SC7` and `KRANT3.SC7` are SCREEN 7 VRAM dumps. They are loaded by the program as graphics assets.
 The INTRO.SC7 contains all elements to render the pages:
-![KRANT3.png](imgages/KRANT3.png "KRANT3.SC7")
+![KRANT3.png](images/KRANT3.png "KRANT3.SC7")
 
 ## Metric files
 
