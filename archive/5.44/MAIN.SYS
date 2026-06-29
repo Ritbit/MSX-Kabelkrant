@@ -1,0 +1,59 @@
+10 ' Name     : MAIN.SYS
+20 ' function : process system and msg funtions
+30 ' part of  : Kabelkrant V5.4
+40 ' chains to: SYSTEM.SYS/KRANT.SYS/TEKST.SYS
+50 ' options  : save text and papers.
+60 '
+70 ' Kabelkrant (c) 1990 by RitBit Software
+80 '
+90 '
+100 MAXFILES=2:CLEAR 5000:DEFINT A-Z:KEYOFF
+110 DIM R$(10),L(10),X(99),NM$(112)
+120 'ON ERROR GOTO 560
+130 ID$=CHR$(12)+STRING$(2,9)+"   KabelKrant (c) 1990 by RitBit Software Inc."
+140 '
+150 '**************************************************************
+160 '
+170 ' Hoofdmenu
+180 '
+190 CLS
+200 PRINTID$
+210 LOCATE 25,2:PRINT"H O O F D   -   M E N U"
+220 LOCATE 25,3:PRINT"------------------------"
+230 LOCATE 30,5:PRINT"1. Stoppen "
+240 LOCATE 30,7:PRINT"2. Teksten"
+250 LOCATE 30,9:PRINT"3. Krant"
+260 LOCATE 30,11:PRINT"4. Systeem"
+270 LOCATE 30,13:PRINT"Uw keuze :";
+280 A$=INPUT$(1):A=VAL(A$):IFA=0THEN280
+290 PRINTA$;
+300 ON A GOSUB 460,320,370,410
+310 PRINTCHR$(127);:GOTO 280
+320 '
+330 ' Teksten
+340 '
+350 RUN"TEKST.SYS"
+360 RETURN
+370 '
+380 ' Krant
+390 '
+400 RUN"Krant.SYS"
+410 '
+420 ' SYSTEEM
+430 '
+440 RUN"SYSTEM.SYS"
+450 '
+460 ' UITLOGGEN
+470 '
+480 CLS
+490 PRINTID$
+500 LOCATE30,2 :PRINT" S T O P P E N "
+510 LOCATE30,3 :PRINT"---------------"
+520 LOCATE30,11:PRINT"Stoppen ? [j/N] ";:IN$=INPUT$(1)
+530 IF USR(IN$)="J" THEN 540 ELSE 160
+540 RUN "LOop.SYS"
+550 RUN
+560 '
+570 ' Fout afhandeling
+580 '
+590 RESUME NEXT

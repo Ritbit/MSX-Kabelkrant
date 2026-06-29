@@ -1,0 +1,96 @@
+10 ' name : LOGIN.SYS
+20 ' function : Check user
+30 ' Part of  : kabelkrant V 5.3
+40 ' Chains to: MAIN.BAS
+50 '
+60 ' Kabelkrant (c) 1990 by RitBit Software Inc.
+70 '
+80 '
+90 '
+95 RUN "main.sys"
+100 CLEAR 1000:DEFINTA-Z
+110 POKE &HFFFE,0:POKE &HFFFD,0
+120 _CARRIER(:GOSUB 810):LOCATE,,1
+130 ON STOP GOSUB 800:STOP ON:ON ERROR GOTO 880
+135 E$=CHR$(27)
+140 NL$=CHR$(13)+CHR$(10) :
+150 HM$=E$+"H"+E$+"Y"+CHR$(50)+CHR$(32)
+160 CL$=E$+"A"+STRING$(80,32)+E$+"A"
+170 _LINEOUT(HM$+E$+"B"+E$+"B"+CL$):IN$=""
+180 _LINEOUT(HM$):GOSUB 590:UN$=USR2(IN$)
+190 IF LEN(UN$)<5 THEN _LINEOUT("Verkeerde naam";):FOR W=0TO1000:NEXT:_LINEOUT(STRING$(14,127)):GOTO 180
+200 _LINEOUT(NL$+UN$+" [J/N]?: ";):_GETCH(A$):IN$=USR(A$):_LINEOUT(IN$+CL$):IF IN$="N" THEN 180 ELSE IF IN$="J" THEN 210 ELSE 200
+210 GOSUB 450:EC=0:IF UN=0 THEN 240 ELSE PW$=PS$
+220 IF TR>2 THEN _LINEOUT(HM$+E$+"B"+CL$+HM$+"Illigale inlog"):II=-1:GOTO 300 ELSE GOSUB 670:IN$=USR2(IN$)
+230 IF IN$<>USR2(PW$) THEN _LINEOUT("Fout paswoord";):FOR W=0 TO 1000:NEXT:_LINEOUT(STRING$(13,127)):TR=TR+1:GOTO 220
+240 IF AC=0 THEN A$="verwijderd":II=-1
+250 IF AC=1 THEN A$="nog niet ingeschreven"
+260 IF AC=2 THEN A$="medewerker"
+270 IF AC=3 THEN A$="redactie Kabelkrant"
+280 IF AC=4 THEN A$="system operator"
+285 _LINEOUT (HM$+E$+"B"+CL$+UN$+" is "+A$)
+286 IF AC>1 THEN _LINEOUT ("Laatste inlog : "+LT$+"  "+LD$+NL$+"U heeft al"+STR$(NC)+" maal ingelogd.")
+290 '
+300 IF II=-1 THEN POKE &HFFFE,255:RUN "LOGOFF.SYS"
+310 GOSUB 740: GOSUB 340
+320 IF LL=1 THEN _LINEOUT(UN$+" heeft de vorige keer niet uitgelogd."):_LINEOUT("Nu wel even doen als u klaar bent a.u.b.";):GOTO 330
+325 _LINEOUT("Even geduld a.u.b.")
+330 RUN "MAIN.SYS"
+340 OPEN "c:CALLER.DTA" FOR OUTPUT AS #1
+350 PRINT #1,UN$     :' Username
+360 PRINT #1,UN      :' Usernumber
+370 PRINT #1,IN$     :' Paswoord
+380 PRINT #1,AC      :' Access code
+390 PRINT #1,1       :' Logoff (1=bad logoff)
+400 PRINT #1,NC+1    :' Log times
+410 PRINT #1,LM      :' reserved
+420 PRINT #1,TI$     :' Time of inlog (just now)
+430 PRINT #1,DA$     :' Date of inlog (just now)
+440 CLOSE:RETURN
+450 '
+460 ' check RAF for users, return UN=0 and AC=1 if not registrated
+470 '
+480 OPEN "USER.DTA" AS #1 LEN=48:L1=48
+490 FIELD #1,14 AS NM$,14 AS PS$,1 AS AC$,1 AS LL$,2 AS NC$,2 AS LM$,6 AS LD$,8 AS LT$
+500 IF LOF(1)=0 THEN 520
+510 FOR UN=1 TO LOF(1)/L1:GET 1,UN:IN$=NM$:IF USR1(IN$)<>UN$ THEN NEXT ELSE CLOSE:GOTO 530
+520 CLOSE:UN=0:AC=1:RETURN
+530 IF UN=0 THEN 550
+540 AC=ASC(AC$):LL=ASC(LL$):NC=CVI(NC$):LM=CVI(LM$):RETURN
+550 AC=0:LM$=MKI$(0):RETURN
+560 '
+570 ' Name input routine, performs BS and CR, DEL becomes BS, ^U deletes line
+580 '  Now '#' is also accepted as CR
+590 _LINEOUT(CL$+"(Schuil)Naam: ";)
+600 IN$="":LR=0
+610 _GETCH(A$):IF A$=CHR$(127) THEN A$=CHR$(8) ELSE IF A$>CHR$(127) THEN 610
+620 IF A$=CHR$(8) THEN IF LR>0 THEN LR=LR-1:IN$=LEFT$(IN$,LR):_LINEOUT(A$+" "+A$;):GOTO 610
+630 IF A$=CHR$(13) OR A$="#" THEN _LINEOUT(""):RETURN ELSE IF A$=CHR$(21) THEN IF LEN(IN$)>0 THEN FOR LR=1 TO LEN(IN$):_LINEOUT(CHR$(8)+" "+CHR$(8);):NEXT:GOTO 600
+640 B$=A$:IF INSTR("ABCDEFGHIJKLMNOPQRSTUVWXYZ.,- ",USR(B$))=0 OR A$<" " THEN 610 ELSE IF LR=0 AND A$=" " THEN 610
+650 IF LR<14 THEN _SENDCH(A$):IN$=IN$+USR(A$):LR=LR+1
+660 GOTO 610
+670 '
+680 'Psw input without echo. Ouput contains only capitals, accept everything
+690 '
+700 IN$="":MA=14:_LINEOUT(HM$+E$+"B"+CL$+"Paswoord: ";)
+710 _GETCH(A$):IF A$=CHR$(10) THEN 710 ELSE IF A$<>CHR$(13) AND A$<>"#" AND A$<>CHR$(8) THEN _SENDCH("."):IN$=IN$+USR(A$):MA=MA-1:IF MA>0 THEN 710 ELSE RETURN
+720 IF A$=CHR$(8) THEN IF IN$>"" THEN IN$=LEFT$(IN$,LEN(IN$)-1):MA=MA+1:_LINEOUT(A$+" "+A$;):GOTO 710 ELSE 710 ELSE _LINEOUT(""):RETURN
+730 '
+740 ' Get date and time in DA$ and TI$
+750 '
+760 GET TIME TI$:GET DATE D$:A$=MID$("0000000"+BIN$(PEEK(&H002B)),6,2)
+762 IF A$="01" THEN D$=MID$(D$,7,2)+"/"+MID$(D$,4,2)+"/"+MID$(D$,1,2)
+764 IF A$="00" THEN D$=MID$(D$,4,2)+"/"+MID$(D$,1,2)+"/"+MID$(D$,7,2)
+766 DA$=MID$(STR$(VAL(LEFT$(D$,2)))+" "+MID$("JanFebMrtAprMeiJunJulAugSepOktNovDec",VAL(MID$(D$,4,2))*3-2,3),2,6):RETURN
+770 '
+780 ' CTRL-STOP TRAP
+790 '
+800 IF INPUT$(6)<>"RITBIT" THEN RETURN ELSE STOP
+810 '
+820 ' CARIER LOST OR ILLIGAL CALL
+830 '
+840 LL=1:GOSUB 340:RUN"LOGOFF.SYS"
+850 '
+860 ' ERROR DETECTED ---> RESET
+870 '
+880 _LINEOUT(" ERROR DETECTED, LOGGING OFF, AND RESET SYSTEM..."):_DTR(OFF):_RTS(OFF):_ONHOOK:_MSTOP:DEFUSR=0:A=USR(0)

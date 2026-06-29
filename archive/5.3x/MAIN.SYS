@@ -1,0 +1,161 @@
+10 ' Name     : MAIN.SYS
+20 ' function : process system and msg funtions
+30 ' part of  : Kabelkrant V 5.3
+40 ' chains to: SYSTEM.SYS/KRANT.SYS/TEKST.SYS/LOGOFF.SYS
+50 ' options  : save text and papers.
+60 '
+70 ' Kabelkrant (c) 1990 by RitBit Software
+80 '
+90 '
+100 MAXFILES=2:CLEAR 5000:DEFINT A-Z:LOCATE,,1
+110 DIM R$(10),L(10),X(99),NM$(112)
+120 _CARRIER(:GOSUB 64000):'ON STOP GOSUB 53000:STOP ON
+130 ON ERROR GOTO 65000
+140 ID$=STRING$(16,32)+"KabelKrant (c) 1990 by RitBit Software Inc."
+150 NL$=CHR$(13)+CHR$(10)
+155 E$=CHR$(27):D$=E$+"D"+" "+E$+"D"
+160 'OPEN"c:caller.dta" FOR INPUT AS#1:INPUT#1,UN$,UN:LINEINPUT#1,PW$:INPUT#1,AC,LL,NC,LM,OT$,OD$:CLOSE:LL=1
+170 LV=4  : IF LV>4 THEN LV=0
+180 'IF UN=0 OR AC<2 THEN GOTO 3000
+185 GOTO 1000
+190 IF PEEK(&HFFFD)=255 THEN 1000
+200 GOSUB 4000
+210 IF I=0 THEN _LINEOUT("Er zijn geen berichten voor "+UN$+".")
+250 '
+260 '**************************************************************
+1000 '
+1010 ' Hoofdmenu
+1020 '
+1030 _LINEOUT(E$+"j")
+1040 _LINEOUT(ID$)
+1060 _LINEOUT(E$+"Y#8 H O O F D   -   M E N U")
+1070 _LINEOUT(E$+"Y$8------------------------")
+1080 _LINEOUT(E$+"Y&:  1. Stoppen (Altijd deze functie gebruiken !!!")
+1090 _LINEOUT(E$+"Y(:  2. Teksten")
+1100 _LINEOUT(E$+"Y*:  3. Krant")
+1110 _LINEOUT(E$+"Y,:  4. Grafisch (nog niet mogenlijk)")
+1120 _LINEOUT(E$+"Y.:  5. VHS programma (nog niet mogenlijk)")
+1125 _LINEOUT(E$+"Y0:  6. Systeem")
+1130 _LINEOUT(E$+"Y2=Uw keuze :"+E$+"K";)
+1140 _GETCH(A$):A=VAL(A$):IFA=0THEN1140
+1150 _LINEOUT(A$;)
+1160 ON A GOSUB 2010,1200,1300,1400,1500,1600
+1170 _LINEOUT(D$;):GOTO 1140
+1200 '
+1210 ' Teksten
+1220 '
+1230 IF PEEK(&HFFF0)=1 THEN RUN"TEKST-T.SYS"
+1240 IF PEEK(&HFFF0)=0 THEN RUN"TEKST-M.SYS"
+1250 RETURN
+1300 '
+1310 ' Krant
+1320 '
+1330 RUN"Krant.SYS"
+1400 '
+1410 ' Grafisch
+1420 '
+1430 RETURN:RUN"Graph.SYS"
+1500 '
+1510 ' VHS programma
+1520 '
+1530 RETURN:RUN"VHS.SYS"
+1600 '
+1610 ' SYSTEEM
+1620 '
+1630 RUN"SYSTEM.SYS"
+2000 '
+2010 ' UITLOGGEN
+2020 '
+2030 _LINEOUT(E$+"j")
+2040 _LINEOUT(ID$)
+2060 _LINEOUT(E$+"Y#8 U I T L O G G E N ")
+2070 _LINEOUT(E$+"Y$8-------------------")
+2090 '_LINEOUT(E$+"Y- Elk ander antwoord dan J of N zorgt voor terugkeer naar hoofdmenu.")
+2100 '_LINEOUT(E$+"Y+ Bericht achter laten voor Systeem Beheerder ? [j/N] ";):_GETCH(IN$):_SENDCH(IN$) : FOR W=0 TO 300:NEXT
+2110 'IF USR(IN$)="J" THEN 2230 ELSE IF USR(IN$)="N" THEN 2120 ELSE 1000
+2120 'LL=0:IF UN=0 THEN GOTO  2160
+2130 'OPEN "c:caller.dta" FOR OUTPUTAS#1
+2140 'PRINT#1,UN$,NL$,UN;NL$ PW$ NL$ AC;NL$ LL;NL$ NC;NL$ LM;NL$ OT$ NL$ OD$
+2150 'CLOSE
+2160 RUN "LOGOFF.SYS"
+2200 '
+2210 ' Uitlog bericht
+2220 '
+2230 _LINEOUT(E$+"j")
+2240 _LINEOUT(ID$)
+2260 _LINEOUT(E$+"Y#8 U I T L O G   B E R I C H T ")
+2270 _LINEOUT(E$+"Y$8-----------------------------")
+2280 _LINEOUT(NL$)
+2290 OPEN "comments.dta" FOR APPEND AS#1
+2300 PRINT#1,"Van "+UN$:GOSUB 15010 :PRINT#1,"Op "+TI$+"  "+DA$:PRINT#1,
+2310 LI=10:_LINEOUT("Bericht van: "+UN$+NL$+NL$+"Geef bericht van maximaal"+STR$(LI)+" regels."):_LINEOUT("Geef lege regel als einde"+NL$):I=1
+2320 IF I<=LI THEN MA=80:GOSUB 13000:IF IN$<>"" THEN PRINT#1,IN$:I=I+1:GOTO 2320
+2330 PRINT#1,STRING$(80,45):CLOSE:GOTO 2120
+3000 '
+3010 ' aanvraag
+3020 '
+3030 OPEN "A:request.dta" AS #1 LEN=152:L1=152:FIELD #1,14 AS NM$,20 AS N1$,20 AS N2$,20 AS AD$,7 AS ZP$,20 AS PL$,15 AS PN$,14 AS P$,20 AS FU$,2 AS AG$
+3040 'I=LOF(1)/L1+1
+3045 IF LOF(1)<>0 THEN FOR I=1 TO LOF(1)/L1:GET 1,I:IF ASC(NM$)<>255 THEN NEXT:I=LOF(1)/L1+1 ELSE ELSE I=1 :' Zoek leeg plekje in lijst.
+3050 _LINEOUT("Voer de volgende gegevens correct in als u wilt worden opgenomen.")
+3060 _LINEOUT("Aanvraag als medewerker Kabelkrant door: "+UN$+NL$):LSET NM$=UN$
+3070 DA$="Voornaam":MA=20:GOSUB 10000:LSET N1$=IN$
+3080 DA$="Achternaam":MA=20:GOSUB 10000:LSET N2$=IN$
+3090 DA$="Adres":MA=20:GOSUB 10000:LSET AD$=IN$
+3100 DA$="Postcode":MA=7:GOSUB 10000:LSET ZP$=IN$
+3110 DA$="Plaats":MA=20:GOSUB 10000:LSET PL$=IN$
+3120 DA$="Telefoon":MA=15:GOSUB 10000:LSET PN$=IN$
+3130 DA$="Paswoord ":MA=14:GOSUB 10000:LSET P$=IN$
+3140 DA$="Functie":MA=20:GOSUB 10000:LSET FU$=IN$:LSET AG$="20"
+3150 _LINEOUT(NL$+"Is dit goed ? (Ja/Nee/Stop)";)
+3160 _GETCH(IN$):IN$=USR(IN$):_SENDCH(IN$)
+3170 IF IN$="S" THEN CLOSE:RETURN ELSE IF IN$="N" THEN CLOSE:GOTO 3000
+3180 PUT 1,I:CLOSE:_LINEOUT(NL$+NL$+"De aanvraag zal worden behandeld")
+3190 _LINEOUT(NL$+"U heeft pas toegang tot het systeem waneer u bent opgenomen.")
+3200 _LINEOUT(NL$+"U hoort nog van de SYSOP waneer u bent opgenomen als medewerker."+NL$+NL$+"De verbinding zal nu worden verbroken....")
+3210 _LINEOUT("Druk op een toets."):_GETCH(A$)
+3220 RUN"logoff.sys"
+3230 DEFUSR=0:A=USR(0)
+4000 '
+4010 ' Berichten scan.
+4020 '
+10000 '
+10010 ' String input
+10020 '
+10030 B$=DA$+STRING$(22-LEN(DA$),32)+":"+STRING$(MA,"_")+"|":_LINEOUT(B$+STRING$(MA+1,8);):GOSUB 13000:IN$=USR1(IN$)
+10040 IF IN$="" THEN _LINEOUT("Voer de gegevens in a.u.b."):GOTO 10030 ELSE RETURN
+10050 RETURN
+11000 OPEN "USER.DTA" AS 1 LEN=48:L1=48
+11010 FIELD 1,14 AS NM$,14 AS PS$,1 AS AC$,1 AS DS$,2 AS NC$,2 AS LM$,6 AS LD$,8 AS LT$
+11020 RETURN
+11030 GOSUB 11000:IF LOF(1)=0 THEN 11050
+11040 FOR UN=1 TO LOF(1)/L1:GET 1,UN:A$=NM$:IF USR1(A$)<>UN$ THEN NEXT ELSE CLOSE:RETURN
+11050 CLOSE:UN=0:RETURN
+13000 '
+13010 'Line input routine, performs BS and CR, no DEL accepted
+13020 '
+13030 IN$="":LL=0
+13040 _GETCH(A$):IF A$=CHR$(127) THEN A$=CHR$(8)
+13050 IF A$=CHR$(8) THEN IF LL>0 THEN LL=LL-1:IN$=LEFT$(IN$,LL):_LINEOUT(A$+" "+A$;):GOTO 13040
+13060 IF A$=CHR$(13) OR A$="#" THEN _LINEOUT(""):RETURN ELSE IF A$=CHR$(21) THEN IF LEN(IN$)>0 THEN FOR LL=1 TO LEN(IN$):_LINEOUT(CHR$(8)+" "+CHR$(8);):NEXT:GOTO 13040
+13070 IF A$<>CHR$(9) THEN 13090 ELSE IN$=IN$+SPACE$(8-(LEN(IN$)MOD8)):IF LEN(IN$)>MA THEN IN$=LEFT$(IN$,MA):_LINEOUT(SPACE$(MA-LL);):LL=MA ELSE _LINEOUT(SPACE$(LEN(IN$)-LL);):LL=LEN(IN$)
+13080 GOTO 13040
+13090 IF A$<" " THEN 13040
+13100 IF LL<MA THEN _SENDCH(A$):IN$=IN$+A$:LL=LL+1
+13110 GOTO 13040
+14050 '
+15000 ' Tijd en datum
+15010 '
+15020 GET TIME TI$:GET DATE D$:A$=MID$("0000000"+BIN$(PEEK(&H002B)),6,2)
+15030 IF A$="01" THEN D$=MID$(D$,7,2)+"/"+MID$(D$,4,2)+"/"+MID$(D$,1,2)
+15040 IF A$="00" THEN D$=MID$(D$,4,2)+"/"+MID$(D$,1,2)+"/"+MID$(D$,7,2)
+15050 DA$=MID$(STR$(VAL(LEFT$(D$,2)))+" "+MID$("JanFebMrtAprMeiJunJulAugSepOktNovDec",VAL(MID$(D$,4,2))*3-2,3),2,6):RETURN
+15060 LOCATE,,0:PRINT:PRINT"Don't forget signals!!"+STRING$(5,7):_MSTOP:STOP:LOCATE,,LO:RETURN
+64000 '
+64010 ' Carrier lose afhandeling
+64020 '
+64030 RUN "LOGOFF.SYS"
+65000 '
+65010 ' Fout afhandeling
+65020 '
+65030 DEFUSR=0:A=USR(0):'RESUME NEXT
