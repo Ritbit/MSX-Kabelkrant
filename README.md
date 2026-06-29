@@ -1,8 +1,8 @@
-# Kabelkrant-MSX2
+# Kabelkrant
 
 ## Building a Digital Hospital Information System on an MSX2
 
-This repository preserves the source code for a digital news and information bulletin system written for an **MSX2 home computer**.
+This repository preserves the source code for a digital news and information bulletin system written for an **MSX2 home computer** in the early 90's.
 
 The software was used on the internal television system of a local hospital. It displayed information pages such as announcements, menus, visiting hours, service notices and other local news. The version published here is from the **sixth edition** of the system; earlier versions existed before this release.
 
