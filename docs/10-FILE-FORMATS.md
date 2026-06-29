@@ -1,5 +1,18 @@
 # File Formats
 
+## `.SC7` files
+
+`INTRO.SC7` and `KRANT3.SC7` are SCREEN 7 VRAM dumps. They are loaded by the program as graphics assets.
+The INTRO.SC7 contains all elements to render the pages:
+
+![KRANT3.png](images/KRANT3.png "KRANT3.SC7")
+
+## Binary support files
+
+This is the RamDisk as used store the text pages and to speed upo loading and save the life-time of the floppydrive.
+This is 'Ramdisk v2.16, by P. te Bokkel, Modified 24/9/89 by M.J. Vriend'
+The `RAMDISK.BIN` is loaded as usual with `BLOAD ...,R` by thhe `AUTOEXEC.BAS` and installs drive `C:`.
+
 ## Page text files
 
 File structure:
@@ -205,19 +218,7 @@ The total `KRAN.PAG` file could look like this:
 000007f0: 2d2d 2d2d 2d2d 2d2d 2d2d 2d2d 2d2d 2d2d  ----------------
 ```
 
-
-## `.SC7` files
-
-`INTRO.SC7` and `KRANT3.SC7` are SCREEN 7 VRAM dumps. They are loaded by the program as graphics assets.
-The INTRO.SC7 contains all elements to render the pages:
-![KRANT3.png](images/KRANT3.png "KRANT3.SC7")
-
 ## Metric files
 
 `X.DAT`, `XK.DAT`, and `YK.DAT` are used as coordinate/metric data for text rendering and clock drawing.
 
-## Binary support files
-
-This is the RamDisk as used store the text pages and to speed upo loading and save the life-time of the floppydrive.
-This is 'Ramdisk v2.16, by P. te Bokkel, Modified 24/9/89 by M.J. Vriend'
-The `RAMDISK.BIN` is loaded as usual with `BLOAD ...,R` by thhe `AUTOEXEC.BAS` and installs drive `C:`.
