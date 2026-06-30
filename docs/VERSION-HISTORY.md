@@ -89,7 +89,7 @@ An intermediate version that removed all BBS and modem infrastructure. The syste
 - `LOOP.SYS` is 9763 bytes (smaller than v6.2's 13950 — more features were added later)
 - `STORING.BAS` replaces the graphical fault screen (text-only maintenance notice)
 - Still uses `MAINPAGE.SC7` as the primary graphic asset (the split KRANT3/4.SC7 came later)
-- No `UTILS.SYS` or `PAPER.SYS` yet
+- No `UTILS.SYS` yet
 
 The `AUTOEXEC.BAS` is notably minimal (5 lines of line-numbered BASIC without header comments), suggesting early-stage reorganisation.
 
@@ -107,8 +107,6 @@ The production version. File headers are dated between **03-01-1994** and **08-0
 - Font and icon asset sheet split into `KRANT3.SC7` + `KRANT4.SC7`
 - `STORING.SC7` — graphical fault screen replaces `STORING.BAS`
 - `UTILS.SYS` added — text overview, rename, delete, virtual page view
-- `PAPER.SYS` added — paper/schedule related utilities
-- `HEADER.SYS` added — shared header include
 - `LOOP.SYS` grew to 13950 bytes (rendering pipeline, 14 wipe effects, clock, hourglass)
 - Proportional font engine with glyph metrics from `X.DAT`, `XK.DAT`, `YK.DAT`
 - 14 named wipe transitions between pages
@@ -128,7 +126,6 @@ The production version. File headers are dated between **03-01-1994** and **08-0
 | `TEKST.SYS` | 03-01-1994 | Text editor |
 | `SYSTEM.SYS` | 04-05-1994 | Change system setup |
 | `UTILS.SYS` | 13-06-1994 | Utilities for Kabelkrant V6.2 |
-| `PAPER.SYS` | 31-06-1994 | Make a paper for Kabelkrant V6.0 |
 
 ### The 1999 update
 

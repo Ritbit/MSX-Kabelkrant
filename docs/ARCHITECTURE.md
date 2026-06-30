@@ -56,8 +56,6 @@ flowchart TD
 | `KRANT.SYS` | Page schedule editor for `KRANT.PAG` | `src/KRANT.SYS` |
 | `SYSTEM.SYS` | Date, time, Ctrl-Stop settings | `src/SYSTEM.SYS` |
 | `UTILS.SYS` | Text overview, delete, rename, virtual page view | `src/UTILS.SYS` |
-| `PAPER.SYS` | Paper/schedule utilities | `src/PAPER.SYS` |
-| `HEADER.SYS` | Shared header | `src/HEADER.SYS` |
 
 ---
 

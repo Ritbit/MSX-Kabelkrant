@@ -172,28 +172,6 @@ The virtual video page display works the same way (`GOTO 2750` loop, same STRIG 
 
 ---
 
-## PAPER.SYS and HEADER.SYS — unimplemented stubs
-
-Two modules present in the repository were never implemented:
-
-### PAPER.SYS
-
-Header comment: *"Make a paper for Kabelkrant V6.0 — Save and load papers"*.
-
-The file contains 11 lines: the standard header block and a single `ID$` string assignment. No menu, no logic. The date in the header (`31-06-1994`) is impossible — June has 30 days — suggesting it was added as a placeholder without careful attention.
-
-`PAPER.SYS` is not referenced or called from any other module. Its intended purpose — presumably a way to compose or print a paper version of the page content — was never built.
-
-### HEADER.SYS
-
-The file contains 10 lines: the header template with all fields blank. No `Name`, no `Date`, no `Function`, no `Chains to`. The copyright line is present, and nothing else.
-
-`HEADER.SYS` is also not referenced or called from anywhere.
-
-Both files are preserved as-is in the repository as evidence of planned features that were not completed before the system went into production.
-
----
-
 ## Operator workflow
 
 ```mermaid

@@ -138,8 +138,6 @@ Reverse engineer every source file.
 | ☑      | UTILS.SYS    | `docs/12-OPERATOR-GUIDE.md` — all options incl. unimplemented rename, STRIG exit |
 | ☑      | TEKST.SYS    | `docs/12-OPERATOR-GUIDE.md` — full editor workflow with screenshots |
 | ☑      | KRANT.SYS    | `docs/12-OPERATOR-GUIDE.md` — schedule editor with screenshots |
-| ☑      | PAPER.SYS    | Documented in `docs/12-OPERATOR-GUIDE.md` as unimplemented stub |
-| ☑      | HEADER.SYS   | Documented in `docs/12-OPERATOR-GUIDE.md` as unimplemented stub |
 
 ---
 

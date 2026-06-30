@@ -86,7 +86,7 @@ Key changes from earlier versions:
 - The display system became entirely graphical, using dedicated asset sheets (`KRANT3.SC7`, `KRANT4.SC7`).
 - A custom proportional font system replaced any text-mode output during live display.
 - A graphical fault screen (`STORING.SC7`) was added.
-- New utility modules (`UTILS.SYS`, `PAPER.SYS`) were introduced.
+- The `UTILS.SYS` utility module was introduced.
 - The RAM disk caching strategy was refined.
 - The system gained 14 animated wipe transitions between pages.
 

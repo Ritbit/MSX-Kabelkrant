@@ -3,16 +3,13 @@
 | File | Role from source header | Numbered lines |
 |------|-------------------------|----------------|
 | `AUTOEXEC.BAS` | Autostart of kabelkrant | 15 |
-| `HEADER.SYS` |  | 9 |
 | `KBLINIT.SYS` | initializes the ram/vram areas of Kabelkrant and setups system | 45 |
 | `KRANT.SYS` | Process system funtions | 243 |
 | `LOOP.SYS` | Generates kabelkrant    1999:Changed line 3940 to EXT$=".txt" | 338 |
 | `MAIN.SYS` | Process system funtions | 60 |
-| `PAPER.SYS` | Make a paper for Kabelkrant V6.0 | 10 |
 | `SYSTEM.SYS` | Change system setup. | 92 |
 | `TEKST.SYS` | Tekst-editor. | 241 |
 | `UTILS.SYS` | Utillities for Kabelkrant V6.2 | 110 |
-
 
 ## `AUTOEXEC.BAS`
 
@@ -330,45 +327,3 @@ Notable operations:
 - line 21040: `A$=INPUT$(1): IF A$=CHR$(127) THEN A$=CHR$(8)`
 - line 21210: `' Get date and time in DA$ and TI$`
 - line 21230: `GET TIME TI$: GET DATE D$: A$=MID$("0000000"+BIN$(PEEK(&H002B)),6,2)`
-
-## `PAPER.SYS`
-
-Header metadata:
-
-```json
-{
-  "name": "PAPER.SYS",
-  "date": "31-06-1994",
-  "function": "Make a paper for Kabelkrant V6.0",
-  "part of": "Kabelkrant V6.2",
-  "chains to": "MAIN.SYS",
-  "options": "Save and load papers"
-}
-```
-
-Numbered BASIC lines: **10**
-
-Notable operations:
-
-- line 10: `' Name     : PAPER.SYS`
-
-## `HEADER.SYS`
-
-Header metadata:
-
-```json
-{
-  "name": "",
-  "date": "",
-  "function": "",
-  "part of": "Kabelkrant V6.2",
-  "chains to": "",
-  "options": ""
-}
-```
-
-Numbered BASIC lines: **9**
-
-Notable operations:
-
-- line 10: `' Name     :`
