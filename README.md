@@ -2,18 +2,26 @@
 
 ![ZZBO Kabelkrant startup screen](docs/images/startup.png)
 
-This repository preserves the source code of the **ZZBO Kabelkrant**, a digital information bulletin system built in the early 1990s for **[ZZBO](https://nl.wikipedia.org/wiki/ZZBO)** — the *Zaanse Zieken en Bejaarden Omroep*, a local cable television broadcaster serving care facilities in the Zaanstreek region of the Netherlands.
+You can see it working with a live demo here via the [WebMSX emulator](https://webmsx.org/?MACHINE=MSX2E&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/main/assets/kabelkrant-6.2.dsk)
+
+This repository preserves the source code of the **Kabelkrant**, a digital information bulletin system built in the early 1990s for **[ZZBO](https://nl.wikipedia.org/wiki/ZZBO)** — the *Zaanse Zieken en Bejaarden Omroep*, a local radio & television broadcaster serving care facilities in the Zaanstreek region of the Netherlands.
 
 The system ran unattended on a **Philips NMS-8250 MSX2** computer, displaying rotating information pages — visiting hours, daily menus, announcements, and local news — on the internal cable TV channel, visible in hospital rooms and public areas.
 
 The software is written almost entirely in **MSX BASIC**, with a small Z80 assembly RAM disk driver to keep page loading fast. It ran in production for several years.
 
-The version published here is **version 6.2 (1994)**. Two earlier generations are preserved in `archive/`.
+The version published here is **version 6.2 (1994)**. Two earlier generations are preserved in `archive/`, older versions did not survive the years unfortunately.
 
 > A historical and educational archive of a real production MSX2 BASIC system.
 
+In the late 80's and early 90's, the ZZBO, a local broadcaster serving care facilities in the Zaanstreek region, wanted to provide digital information to their viewers in the hospital rooms and public areas of the main hospital ziekenhuis de Heel in Zaandam. I (as an enthusiast 18 year old in 1990), was already experimenting with developing news-bulletin systems myself on my home-computer and so I suggested they could use a simple home-computer and I would make a program that could display rotating information pages on the internal cable TV channel. I built the Kabelkrant system on a Philips NMS-8250 MSX2 computer, which ran unattended and displayed pages like visiting hours, daily menus, announcements, and local news. The system was a success and ran in production for several years up to 1999!
 
-See it working with a live demo here via the [WebMSX emulator](https://webmsx.org/?MACHINE=MSX2E&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/main/assets/kabelkrant-6.2.dsk)
+The first editions where merely static code an no page-maintenance system existed and it was basic text only.
+Later editions added a graphical page which highly increased the font quality. From version 4 I started to implement a BBS function so editors could dial in and edit content remotely, that was used for a couple of months but later they decided it was easier to have copies of the system on disks, edit that at home or in the studio and just swap the disks in the system onsite. the latest version with modem support was 5.3x as we removed all modem support in version 5.40 to never return.
+
+The final version was version 6 where the some bugfixes were done in 6.2 which is the version as shown here and discussed in the documentation. The older version 5.3x and 5.44 are in /archive/ for reference.
+
+Over the years there were some ideas to let the system control video players so they could automate programs to be started automatically by that was never actually implemented, like switching the video output via the tape-cassette motor control, some remnants of that are still in the code as MOTOR ON and MOTOR OFF but were never actually used.
 
 ---
 
@@ -72,10 +80,10 @@ Although modest by modern standards, it solved a real communication problem with
 ├── LICENSE
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
-├── src/                        # Version 6.2 source (MSX BASIC + binary)
+├── src/                        # Version 6.2 source (MSX BASIC)
 ├── archive/
 │   ├── 5.3x/                   # Earliest preserved version (~1990, BBS era)
-│   └── 5.44/                   # Intermediate version
+│   └── 5.44/                   # Intermediate version (removed modem support)
 └── docs/
     ├── 00-HISTORY.md           # Project history and broadcaster context
     ├── 01-HARDWARE.md          # Philips NMS-8250 and MSX2 hardware
