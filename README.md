@@ -158,6 +158,9 @@ Recommended emulators:
 
 The source files must be placed on an MSX-DOS disk image with the correct layout. See [docs/SYSTEM-OVERVIEW.md](docs/SYSTEM-OVERVIEW.md) for the runtime requirements.
 
+Easier is to download the [.dsk](https://github.com/Ritbit/MSX-Kabelkrant/raw/refs/heads/main/assets/kabelkrant-6.2.dsk) disk-image for running on an MSX2-emulator or even a physical machine!
+Or you can download a [zip-archive](https://github.com/Ritbit/MSX-Kabelkrant/raw/refs/heads/main/assets/kabelkrant-6.2.zip) with all the files in a ascii/readable format
+
 ---
 
 ## Status
