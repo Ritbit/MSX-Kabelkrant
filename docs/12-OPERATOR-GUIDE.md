@@ -130,11 +130,15 @@ Sets the system date using MSX BASIC `SET DATE`.
 
 ### Zomertijd / Wintertijd (DST)
 
-Adjusts the clock by one hour for summer/winter time transitions.
+Options 4 and 5 (*Zomertijd instellen* and *Wintertijd instellen*) are listed in the menu but **not implemented**. Both route to the invalid-key handler (`GOTO 1200`) and do nothing. The DST adjustment would have had to call `GET TIME`, add or subtract one hour, and call `SET TIME` — this was apparently planned but never written.
 
 ### Ctrl-Stop instelling
 
-Enables or disables the Ctrl-Stop key by writing to the MSX system memory address `&HFBB1`.
+Option 6 (*Ctrl-Stop instellen*) is also listed in the menu but **not implemented** — it routes to the same invalid-key handler. The intended functionality (writing 0/1 to `&HFBB1`) was never added to this module; `AUTOEXEC.BAS` handles the Ctrl-Stop lock at boot instead.
+
+### Shared input routine
+
+`SYSTEM.SYS` contains a reusable line-input routine at line 21000 that is also present verbatim in `UTILS.SYS`, `KRANT.SYS`, and `TEKST.SYS`. It handles backspace, Ctrl-U (clear line), and Tab, using a fixed maximum-length parameter `MA`. The `USR1` function (strip spaces) is applied to every input result at line 20030 before returning.
 
 ---
 
@@ -146,9 +150,9 @@ Enables or disables the Ctrl-Stop key by writing to the MSX system memory addres
 
 | Option | Function |
 |---|---|
-| Tekst overzicht | List all `.TXT` files |
-| Tekst wissen | Delete a `.TXT` file |
-| Tekst hernoemen | Rename a `.TXT` file |
+| Tekst overzicht | List all `.TXT` files on the floppy with `FILES"*.TXT"` |
+| Tekst wissen | Delete a selected `.TXT` file with `KILL` |
+| Tekst hernoemen | Listed but **not implemented** — routes to invalid-key handler |
 | Virtuele videopagina tonen | Display the contents of VRAM page 1 (font and icon asset sheet) |
 | Storing! | Display the fault/maintenance screen (`STORING.SC7`) |
 
@@ -161,6 +165,32 @@ Copies VRAM page 1 to the visible display, revealing the complete `KRANT4.SC7` a
 Displays the `STORING.SC7` graphical maintenance screen.
 
 ![Fault screen](images/Storing.png)
+
+The fault screen is an infinite loop (`GOTO 2640`). To exit it, the operator presses the joystick trigger button (or the equivalent keyboard key mapped to `STRIG(0)`), which fires the `ON STRIG GOSUB 2000` handler. That routine switches back to SCREEN 0 and returns to the `UTILS.SYS` menu.
+
+The virtual video page display works the same way (`GOTO 2750` loop, same STRIG exit).
+
+---
+
+## PAPER.SYS and HEADER.SYS — unimplemented stubs
+
+Two modules present in the repository were never implemented:
+
+### PAPER.SYS
+
+Header comment: *"Make a paper for Kabelkrant V6.0 — Save and load papers"*.
+
+The file contains 11 lines: the standard header block and a single `ID$` string assignment. No menu, no logic. The date in the header (`31-06-1994`) is impossible — June has 30 days — suggesting it was added as a placeholder without careful attention.
+
+`PAPER.SYS` is not referenced or called from any other module. Its intended purpose — presumably a way to compose or print a paper version of the page content — was never built.
+
+### HEADER.SYS
+
+The file contains 10 lines: the header template with all fields blank. No `Name`, no `Date`, no `Function`, no `Chains to`. The copyright line is present, and nothing else.
+
+`HEADER.SYS` is also not referenced or called from anywhere.
+
+Both files are preserved as-is in the repository as evidence of planned features that were not completed before the system went into production.
 
 ---
 

@@ -134,12 +134,12 @@ Reverse engineer every source file.
 | ☑      | KBLINIT.SYS  | Covered in `docs/internal/INITIALISATION.md` |
 | ☑      | LOOP.SYS     | Covered in `docs/internal/DISPLAY-LOOP.md` + `docs/RENDERING.md` |
 | ☑      | MAIN.SYS     | Covered in `docs/12-OPERATOR-GUIDE.md` |
-| ◐      | SYSTEM.SYS   | Covered in `docs/12-OPERATOR-GUIDE.md` (overview only) |
-| ◐      | UTILS.SYS    | Covered in `docs/12-OPERATOR-GUIDE.md` (overview only) |
-| ◐      | TEKST.SYS    | Covered in `docs/12-OPERATOR-GUIDE.md` (overview only) |
-| ◐      | KRANT.SYS    | Covered in `docs/12-OPERATOR-GUIDE.md` (overview only) |
-| ☐      | PAPER.SYS    | Not yet documented |
-| ☐      | HEADER.SYS   | Not yet documented |
+| ☑      | SYSTEM.SYS   | `docs/12-OPERATOR-GUIDE.md` — menu, time/date, unimplemented options documented |
+| ☑      | UTILS.SYS    | `docs/12-OPERATOR-GUIDE.md` — all options incl. unimplemented rename, STRIG exit |
+| ☑      | TEKST.SYS    | `docs/12-OPERATOR-GUIDE.md` — full editor workflow with screenshots |
+| ☑      | KRANT.SYS    | `docs/12-OPERATOR-GUIDE.md` — schedule editor with screenshots |
+| ☑      | PAPER.SYS    | Documented in `docs/12-OPERATOR-GUIDE.md` as unimplemented stub |
+| ☑      | HEADER.SYS   | Documented in `docs/12-OPERATOR-GUIDE.md` as unimplemented stub |
 
 ---
 
@@ -189,7 +189,6 @@ Every document should:
 
 Remaining work in priority order:
 
-1. Expand `SYSTEM.SYS`, `UTILS.SYS`, `TEKST.SYS`, `KRANT.SYS` module docs — currently overview only in `12-OPERATOR-GUIDE.md`
-2. Document `PAPER.SYS` and `HEADER.SYS` — not yet documented at all
-3. Proofread all documents for factual accuracy
-4. Verify technical accuracy of coordinate values in `SCREEN-LAYOUT.md` against source
+1. Proofread all documents for factual accuracy
+2. Verify technical accuracy of coordinate values in `SCREEN-LAYOUT.md` against source
+3. Final release
