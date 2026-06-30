@@ -91,7 +91,7 @@ Document the graphics engine.
 | Status | Document         | Notes |
 | ------ | ---------------- | ----- |
 | ☑      | RENDERING.md     | Complete deep dive: font, metrics, icons, wipes, clock, scratch rendering |
-| ☐      | SCREEN-LAYOUT.md | Not yet written |
+| ☑      | SCREEN-LAYOUT.md | Written: coordinate zones, icon table, body line Y positions, VRAM page 1 map |
 | ☑      | PAGE-FORMAT.md   | Complete: KRANT.PAG structure with hex dump, .TXT format |
 
 Topics covered:
@@ -111,8 +111,8 @@ Topics covered:
 
 | Status | Document        | Notes |
 | ------ | --------------- | ----- |
-| ◐      | RAMDISK.md      | `docs/08-RAMDISK.md` exists but is thin; `docs/internal/RAMDISK-USAGE.md` also exists |
-| ◐      | MEMORY-USAGE.md | `docs/09-MEMORY-USAGE.md` exists but is thin |
+| ☑      | RAMDISK.md      | `docs/08-RAMDISK.md` expanded: initial population, refresh, BASIC interface, See also |
+| ☑      | MEMORY-USAGE.md | `docs/09-MEMORY-USAGE.md` expanded: Z80 map, CLEAR, arrays, RAM disk trade-off, VRAM |
 
 ---
 
@@ -189,9 +189,7 @@ Every document should:
 
 Remaining work in priority order:
 
-1. Expand `docs/08-RAMDISK.md` — the RAM disk binary and BASIC interface deserve more detail
-2. Expand `docs/09-MEMORY-USAGE.md` — BASIC memory pressure and the RAM disk trade-off
-3. Write `SCREEN-LAYOUT.md` — document the SCREEN 7 page layout coordinates
-4. Expand `SYSTEM.SYS`, `UTILS.SYS`, `TEKST.SYS`, `KRANT.SYS` module docs
-5. Document `PAPER.SYS` and `HEADER.SYS`
-6. Proofread all documents for factual accuracy
+1. Expand `SYSTEM.SYS`, `UTILS.SYS`, `TEKST.SYS`, `KRANT.SYS` module docs — currently overview only in `12-OPERATOR-GUIDE.md`
+2. Document `PAPER.SYS` and `HEADER.SYS` — not yet documented at all
+3. Proofread all documents for factual accuracy
+4. Verify technical accuracy of coordinate values in `SCREEN-LAYOUT.md` against source

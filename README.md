@@ -80,19 +80,24 @@ Although modest by modern standards, it solved a real communication problem with
     ├── 00-HISTORY.md           # Project history and broadcaster context
     ├── 01-HARDWARE.md          # Philips NMS-8250 and MSX2 hardware
     ├── 02-SYSTEM-OVERVIEW.md   # Runtime concept and data flow
-    ├── 03-ARCHITECTURE.md      # Architectural layers
     ├── 04-BOOT-PROCESS.md      # AUTOEXEC.BAS and boot sequence
     ├── 05-DISPLAY-ENGINE.md    # Display loop overview
+    ├── 08-RAMDISK.md           # RAM disk usage
+    ├── 09-MEMORY-USAGE.md      # Memory layout and constraints
     ├── 10-FILE-FORMATS.md      # KRANT.PAG, .TXT, .SC7, data files
     ├── 11-MODULE-REFERENCE.md  # All BASIC modules with source references
-    ├── 15-VERSION-HISTORY.md   # Version timeline
+    ├── 12-OPERATOR-GUIDE.md    # Operator menus with screenshots
+    ├── 13-TECHNICAL-DETAILS.md # USR routines, bootstrap, scratch rendering
+    ├── 14-LIMITATIONS.md       # Performance and capacity constraints
     ├── ARCHITECTURE.md         # High-level architecture with Mermaid diagrams
     ├── PAGE-FORMAT.md          # Page schedule and content file formats
     ├── RENDERING.md            # Complete rendering pipeline (deep dive)
-    ├── SOFTWARE-OVERVIEW.md    # System overview
-    ├── VERSION-HISTORY.md      # Version history
-    ├── MSX_CHARACTER_MAP_TABLE.md  # MSX character set reference
+    ├── SCREEN-LAYOUT.md        # SCREEN 7 coordinate zones
     ├── SCREENSHOTS.md          # Screenshot gallery
+    ├── THE-SYSTEM.md           # Narrative: viewers, operators, daily workflow
+    ├── VERSION-HISTORY.md      # Version history (v5.3x, v5.44, v6.2)
+    ├── MSX_CHARACTER_MAP_TABLE.md  # MSX character set reference
+    ├── SOFTWARE-OVERVIEW.md    # System overview
     └── internal/               # Source-driven module documentation
         ├── BOOT.md
         ├── INITIALISATION.md
@@ -110,16 +115,20 @@ Although modest by modern standards, it solved a real communication problem with
 **Start here:**
 
 - [History](docs/00-HISTORY.md) — why this was built, for whom, and how it evolved
+- [The system in use](docs/THE-SYSTEM.md) — viewers, operators, a typical broadcast day
 - [Hardware](docs/01-HARDWARE.md) — the Philips NMS-8250 MSX2 platform
-- [Software overview](docs/SOFTWARE-OVERVIEW.md) — system responsibilities at a glance
 - [Architecture](docs/ARCHITECTURE.md) — module layers and data flow
 
 **Technical deep dives:**
 
 - [Rendering engine](docs/RENDERING.md) — proportional fonts, right-alignment trick, wipe effects, clock
+- [Screen layout](docs/SCREEN-LAYOUT.md) — SCREEN 7 coordinate zones and VRAM page map
+- [Technical details](docs/13-TECHNICAL-DETAILS.md) — USR routines, bootstrap trick, interrupt management
+- [Memory usage](docs/09-MEMORY-USAGE.md) — Z80 address space, BASIC heap, RAM disk trade-off
 - [Page format](docs/PAGE-FORMAT.md) — KRANT.PAG schedule and .TXT content files
 - [File formats](docs/10-FILE-FORMATS.md) — all data file structures
 - [Module reference](docs/11-MODULE-REFERENCE.md) — every BASIC module documented
+- [Limitations](docs/14-LIMITATIONS.md) — capacity limits and maintainability constraints
 
 **Source-level documentation** (in `docs/internal/`):
 
