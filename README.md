@@ -12,7 +12,7 @@ The software is written almost entirely in **MSX BASIC**, with a small Z80 assem
 
 The version published here is **version 6.2 (1994)**. Two earlier generations are preserved in `archive/`, older versions did not survive the years unfortunately.
 
-> A historical and educational archive of a real production MSX2 BASIC system.
+# Why and a bit of history
 
 In the late 80's and early 90's, the ZZBO, a local broadcaster serving care facilities in the Zaanstreek region, wanted to provide digital information to their viewers in the hospital rooms and public areas of the main hospital ziekenhuis de Heel in Zaandam. I (as an enthusiast 18 year old in 1990), was already experimenting with developing news-bulletin systems myself on my home-computer and so I suggested they could use a simple home-computer and I would make a program that could display rotating information pages on the internal cable TV channel. I built the Kabelkrant system on a Philips NMS-8250 MSX2 computer, which ran unattended and displayed pages like visiting hours, daily menus, announcements, and local news. The system was a success and ran in production for several years up to 1999!
 
