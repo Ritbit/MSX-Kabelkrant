@@ -54,7 +54,7 @@
 540 PRINT: SV=1
 550 FOR A=0 TO 32: N$(A)="--------": NEXT
 560 FOR A=0 TO 7
-570 PRINTUSING "           ##. \      \ [01]V ##. \      \ [01]V ##. \      \ [01]V ##. \      \ ";A+1;N$(A);A+9;N$(A+8);A+17;N$(A+16);A+24;N$(A+23)
+570 PRINTUSING "           ##. \      \ V ##. \      \ V ##. \      \ V ##. \      \ ";A+1;N$(A);A+9;N$(A+8);A+17;N$(A+16);A+24;N$(A+23)
 580 NEXT
 590 PRINT
 600 GOSUB 1700: IF F=0 THEN PRINT"Geen pagina's aanwezig.": PRINT"Druk op een toets.": A$=INPUT$(1): RETURN 170
@@ -87,7 +87,7 @@
 870 LOCATE 24,3 :PRINT"--------------------------------"
 880 PRINT: SV=1
 890 FOR A=0 TO 7
-900 PRINTUSING "           ##. \      \ [01]V ##. \      \ [01]V ##. \      \ [01]V ##. \      \ ";A+1;N$(A);A+9;N$(A+8);A+17;N$(A+16);A+25;N$(A+24)
+900 PRINTUSING "           ##. \      \ V ##. \      \ V ##. \      \ V ##. \      \ ";A+1;N$(A);A+9;N$(A+8);A+17;N$(A+16);A+25;N$(A+24)
 910 NEXT
 920 PRINT
 930 GOSUB 1700: IF F=0 THEN PRINT"Geen pagina's aanwezig.": PRINT"Druk op een toets." : A$=INPUT$(1): SV=0: RETURN 170
@@ -221,7 +221,7 @@
 2110 LOCATE 30,2: PRINT" O P S L A A N"
 2120 LOCATE 30,3: PRINT"-----------"
 2130 PRINT: PRINT"Geladen voor dag:"+STR$(WK): FOR A=0 TO 7
-2140 PRINTUSING "           ##. \      \ [01]V ##. \      \ [01]V ##. \      \ [01]V ##. \      \ ";A+1;N$(A);A+9;N$(A+8);A+17;N$(A+16);A+25;N$(A+24)
+2140 PRINTUSING "           ##. \      \ V ##. \      \ V ##. \      \ V ##. \      \ ";A+1;N$(A);A+9;N$(A+8);A+17;N$(A+16);A+25;N$(A+24)
 2150 NEXT
 2156 PRINT
 2160 PRINT"1. Maandag | 2. Dinsdag  | 3. Woensdag | 4. Donderdag
