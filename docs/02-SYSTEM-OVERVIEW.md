@@ -4,6 +4,12 @@ The software is an MSX BASIC application with a small Z80 RAM-disk binary.
 
 It cycles through information pages built from simple `.TXT` files and schedule data. Graphics and font data are stored as MSX2 SCREEN 7 VRAM dumps.
 
+## Live display
+
+![Live page](images/Krant-live.png)
+
+A live information page: proportional graphical font, analog clock, hourglass animation, page counter, and icon pictogram — all rendered in SCREEN 7 (512×212) via V9938 hardware `COPY` blits.
+
 ## Runtime overview
 
 ```mermaid
@@ -39,3 +45,15 @@ wijkende bezoektijden. Vraag op deze
 afdelingen het verplegend personeel
 naar de exacte bezoektijden.
 ```
+
+Line 1 (`1`) selects the first icon (arrow/general). Line 2 is the page title. Lines 3–12 are body text.
+
+## Graphics asset sheet
+
+All fonts and icons are stored in `KRANT4.SC7`, loaded into VRAM page 1 at startup.
+
+![KRANT4.SC7 asset sheet](images/Virtuele-Pagina-bekijken.png)
+
+Contents: 10 page-type pictograms, hourglass animation frames, and four proportional font styles.
+
+See [SCREENSHOTS.md](SCREENSHOTS.md) for the full gallery and [RENDERING.md](RENDERING.md) for the complete rendering pipeline.

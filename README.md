@@ -1,28 +1,65 @@
-# Kabelkrant
+# ZZBO Kabelkrant — MSX2 Cable Television Bulletin System (1994)
 
-## Building a Digital Hospital Information System on an MSX2
+![ZZBO Kabelkrant startup screen](docs/images/startup.png)
 
-This repository preserves the source code for a digital news and information bulletin system written for an **MSX2 home computer** in the early 90's.
+This repository preserves the source code of the **ZZBO Kabelkrant**, a digital information bulletin system built in the early 1990s for **[ZZBO](https://nl.wikipedia.org/wiki/ZZBO)** — the *Zaanse Zieken en Bejaarden Omroep*, a local cable television broadcaster serving care facilities in the Zaanstreek region of the Netherlands.
 
-The software was used on the internal television system of a local hospital. It displayed information pages such as announcements, menus, visiting hours, service notices and other local news. The version published here is from the **sixth edition** of the system; earlier versions existed before this release.
+The system ran unattended on a **Philips NMS-8250 MSX2** computer, displaying rotating information pages — visiting hours, daily menus, announcements, and local news — on the internal cable TV channel, visible in hospital rooms and public areas.
 
-The system is mostly written in **MSX BASIC**, with a small supporting RAM disk binary written in Z80 assembly to speed up page loading. It was designed for real-world unattended use and ran in production for several years.
+The software is written almost entirely in **MSX BASIC**, with a small Z80 assembly RAM disk driver to keep page loading fast. It ran in production for several years.
 
-> This repository is intended as a historical and educational archive of the original BASIC project.
+The version published here is **version 6.2 (1994)**. Two earlier generations are preserved in `archive/`.
+
+> A historical and educational archive of a real production MSX2 BASIC system.
+
+---
+
+## Screenshots
+
+### Live information display
+
+![Live page with analog clock](docs/images/Krant-live.png)
+
+*A live information page. SCREEN 7 graphical rendering, proportional font, animated analog clock, hourglass, page counter, and a day-of-week rotating header.*
+
+### Operator interface
+
+| Main menu | Page schedule editor |
+|---|---|
+| ![Main menu](docs/images/Hoofd-menu.png) | ![Page schedule editor](docs/images/Krant-samenstellen.png) |
+| Operator main menu (SCREEN 0 text mode) | Compose the daily broadcast order |
+
+| Text editor | System settings |
+|---|---|
+| ![Text editor](docs/images/Tekst-invoeren.png) | ![System settings](docs/images/Systeem-Instellingen-Menu.png) |
+| Built-in text editor for page content | Clock, date, Ctrl-Stop |
+
+### Fault display and asset sheet
+
+| Fault screen | Graphics asset sheet |
+|---|---|
+| ![Storing screen](docs/images/Storing.png) | ![Graphics asset sheet](docs/images/Virtuele-Pagina-bekijken.png) |
+| Displayed when the service is interrupted | KRANT4.SC7: icons, hourglass frames, 4 font styles |
+
+See [docs/SCREENSHOTS.md](docs/SCREENSHOTS.md) for the full screenshot gallery.
+
+---
 
 ## Why this is interesting
 
-Kabelkrant-MSX2 is a small example of a practical 1990s information system built with very limited hardware:
+A small home computer solving a real broadcast problem:
 
-- MSX2 computer
-- MSX BASIC
-- V9938 video hardware
-- 128 KB RAM class machine
-- custom RAM disk for faster page access
-- screen graphics and text rendering in SCREEN 7
-- local TV distribution as output
+- **Proportional graphical font** rendered in SCREEN 7 via VDP `COPY` blits — not BASIC `PRINT`
+- **Right-aligned text** using a scratch-line render-then-measure trick
+- **14 animated wipe transitions** between pages, written in BASIC `LINE` loops
+- **Analog clock** driven by an MSX BASIC interval timer with precomputed hand coordinates
+- **RAM disk** (`RAMDISK.BIN`, Z80 assembly) as drive `C:` to avoid floppy reads during live display
+- **Unattended operation** — boots, loads assets, and cycles continuously without operator input
+- Earlier versions (v5.3x) also included a **dial-up BBS** so editors could call in over a modem to update content
 
-Although modest by modern standards, it solved a real communication problem using consumer home-computer hardware.
+Although modest by modern standards, it solved a real communication problem with consumer home-computer hardware.
+
+---
 
 ## Repository layout
 
@@ -32,49 +69,85 @@ Although modest by modern standards, it solved a real communication problem usin
 ├── LICENSE
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
-├── docs/
-│   ├── ARCHITECTURE.md
-│   ├── SOFTWARE-OVERVIEW.md
-│   └── VERSION-HISTORY.md
-├── src/              # Original BASIC/source files
-├── assets/           # Screen images, font/page data, SC7 assets
-└── archive/          # Older versions, if available
+├── src/                        # Version 6.2 source (MSX BASIC + binary)
+├── archive/
+│   ├── 5.3x/                   # Earliest preserved version (~1990, BBS era)
+│   └── 5.44/                   # Intermediate version
+└── docs/
+    ├── 00-HISTORY.md           # Project history and broadcaster context
+    ├── 01-HARDWARE.md          # Philips NMS-8250 and MSX2 hardware
+    ├── 02-SYSTEM-OVERVIEW.md   # Runtime concept and data flow
+    ├── 03-ARCHITECTURE.md      # Architectural layers
+    ├── 04-BOOT-PROCESS.md      # AUTOEXEC.BAS and boot sequence
+    ├── 05-DISPLAY-ENGINE.md    # Display loop overview
+    ├── 10-FILE-FORMATS.md      # KRANT.PAG, .TXT, .SC7, data files
+    ├── 11-MODULE-REFERENCE.md  # All BASIC modules with source references
+    ├── 15-VERSION-HISTORY.md   # Version timeline
+    ├── ARCHITECTURE.md         # High-level architecture with Mermaid diagrams
+    ├── PAGE-FORMAT.md          # Page schedule and content file formats
+    ├── RENDERING.md            # Complete rendering pipeline (deep dive)
+    ├── SOFTWARE-OVERVIEW.md    # System overview
+    ├── VERSION-HISTORY.md      # Version history
+    ├── MSX_CHARACTER_MAP_TABLE.md  # MSX character set reference
+    ├── SCREENSHOTS.md          # Screenshot gallery
+    └── internal/               # Source-driven module documentation
+        ├── BOOT.md
+        ├── INITIALISATION.md
+        ├── DISPLAY-LOOP.md
+        ├── OPERATOR-MENUS.md
+        ├── PAGE-MANAGER.md
+        ├── TEXT-ENGINE.md
+        └── RAMDISK-USAGE.md
 ```
 
-The exact layout may evolve while the archive is being cleaned up.
-
-## Screenshots and video
-
-Screenshots and video captures can be generated using an MSX emulator such as openMSX or WebMSX.
-
-Suggested future media:
-
-```text
-docs/images/boot.png
-docs/images/main-page.png
-docs/images/editor.png
-docs/images/page-rendering.png
-docs/video/demo.mp4
-```
+---
 
 ## Documentation
 
-Start here:
+**Start here:**
 
-- [Software overview](docs/SOFTWARE-OVERVIEW.md)
-- [Architecture](docs/ARCHITECTURE.md)
-- [Version history](docs/VERSION-HISTORY.md)
+- [History](docs/00-HISTORY.md) — why this was built, for whom, and how it evolved
+- [Hardware](docs/01-HARDWARE.md) — the Philips NMS-8250 MSX2 platform
+- [Software overview](docs/SOFTWARE-OVERVIEW.md) — system responsibilities at a glance
+- [Architecture](docs/ARCHITECTURE.md) — module layers and data flow
 
-More technical documentation can be added later for file formats, RAM disk internals, rendering, memory usage and emulator setup.
+**Technical deep dives:**
+
+- [Rendering engine](docs/RENDERING.md) — proportional fonts, right-alignment trick, wipe effects, clock
+- [Page format](docs/PAGE-FORMAT.md) — KRANT.PAG schedule and .TXT content files
+- [File formats](docs/10-FILE-FORMATS.md) — all data file structures
+- [Module reference](docs/11-MODULE-REFERENCE.md) — every BASIC module documented
+
+**Source-level documentation** (in `docs/internal/`):
+
+- [Boot sequence](docs/internal/BOOT.md)
+- [Initialisation](docs/internal/INITIALISATION.md)
+- [Display loop](docs/internal/DISPLAY-LOOP.md)
+- [Operator menus](docs/internal/OPERATOR-MENUS.md)
+
+---
+
+## Running the system
+
+The software requires an MSX2 environment with two floppy drives (A: and B:) and the RAM disk installed on C:.
+
+Recommended emulators:
+
+- **[openMSX](https://openmsx.org/)** — accurate MSX2 emulation, supports floppy disk images
+- **[WebMSX](https://webmsx.org/)** — runs in the browser
+
+The source files must be placed on an MSX-DOS disk image with the correct layout. See [docs/02-SYSTEM-OVERVIEW.md](docs/02-SYSTEM-OVERVIEW.md) for the runtime requirements.
+
+---
 
 ## Status
 
-This is a historical archive. The code is published for preservation, curiosity and retro-computing interest.
+Historical archive. The code is published for preservation, curiosity, and retro-computing interest.
 
-It may not run unmodified on every MSX2 emulator or hardware configuration without reconstructing the original disk layout.
+It may not run unmodified on every MSX2 emulator without reconstructing the original disk layout.
+
+---
 
 ## License
 
-This project is released under the **GNU General Public License v3.0 or later**.
-
-See [LICENSE](LICENSE).
+Released under the **GNU General Public License v3.0 or later**. See [LICENSE](LICENSE).

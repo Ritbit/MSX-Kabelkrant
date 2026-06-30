@@ -29,15 +29,15 @@ Each document should be based on the original source code whenever possible.
 
 These documents describe the project as a whole.
 
-| Status | Document             |
-| ------ | -------------------- |
-| ☑      | README.md            |
-| ☑      | LICENSE              |
-| ☑      | CONTRIBUTING.md      |
-| ☑      | CHANGELOG.md         |
-| ☑      | SOFTWARE-OVERVIEW.md |
-| ◐      | ARCHITECTURE.md      |
-| ◐      | VERSION-HISTORY.md   |
+| Status | Document             | Notes |
+| ------ | -------------------- | ----- |
+| ☑      | README.md            | Rewritten with screenshots, ZZBO context, full docs index |
+| ☑      | LICENSE              | |
+| ☑      | CONTRIBUTING.md      | |
+| ☑      | CHANGELOG.md         | |
+| ☑      | SOFTWARE-OVERVIEW.md | |
+| ☑      | ARCHITECTURE.md      | Expanded: layers, data flow, startup sequence, design decisions |
+| ☑      | VERSION-HISTORY.md   | Documented all three versions: v5.3x, v5.44, v6.2 |
 
 ---
 
@@ -45,21 +45,21 @@ These documents describe the project as a whole.
 
 These documents explain the history of the project.
 
-| Status | Document               |
-| ------ | ---------------------- |
-| ☐      | HISTORY.md             |
-| ☐      | HARDWARE.md            |
-| ☐      | DEVELOPMENT-HISTORY.md |
-| ☐      | HOSPITAL-DEPLOYMENT.md |
+| Status | Document               | Notes |
+| ------ | ---------------------- | ----- |
+| ☑      | HISTORY.md             | Written as `00-HISTORY.md` — ZZBO, BBS origins, production kiosk |
+| ☑      | HARDWARE.md            | Written as `01-HARDWARE.md` — NMS-8250, V9938, MSX.org links |
+| ◐      | DEVELOPMENT-HISTORY.md | Covered in `00-HISTORY.md` and `VERSION-HISTORY.md`; standalone doc not yet created |
+| ◐      | HOSPITAL-DEPLOYMENT.md | Covered in `00-HISTORY.md`; standalone doc not yet created |
 
-Topics include:
+Topics covered:
 
-* Why the project was started
-* Earlier versions
-* Philips NMS-8250
-* Local television network
-* Hardware configuration
-* Operational lifetime
+* Why the project was started — ☑
+* Earlier versions (v5.3x BBS, v5.44, v6.2) — ☑
+* Philips NMS-8250 hardware — ☑
+* Local television network — ☑
+* Hardware configuration — ☑
+* Operational lifetime and 1999 update — ☑
 
 ---
 
@@ -67,21 +67,20 @@ Topics include:
 
 Reverse engineer the BASIC source.
 
-| Status | Document            |
-| ------ | ------------------- |
-| ☐      | BOOT.md             |
-| ☐      | INITIALISATION.md   |
-| ☐      | DISPLAY-LOOP.md     |
-| ☐      | OPERATOR-GUIDE.md   |
-| ☐      | MODULE-REFERENCE.md |
+| Status | Document            | Notes |
+| ------ | ------------------- | ----- |
+| ☑      | BOOT.md             | `docs/internal/BOOT.md` |
+| ☑      | INITIALISATION.md   | `docs/internal/INITIALISATION.md` |
+| ☑      | DISPLAY-LOOP.md     | `docs/internal/DISPLAY-LOOP.md` |
+| ☑      | OPERATOR-GUIDE.md   | `docs/12-OPERATOR-GUIDE.md` — with screenshots |
+| ☑      | MODULE-REFERENCE.md | `docs/11-MODULE-REFERENCE.md` — all modules with line references |
 
-Deliverables:
+Delivered:
 
-* call graphs
-* sequence diagrams
-* module dependencies
-* global variables
-* GOSUB maps
+* sequence diagrams — ☑ (in ARCHITECTURE.md and internal docs)
+* module dependencies — ☑ (in ARCHITECTURE.md)
+* GOSUB maps — ◐ (partial, in RENDERING.md and DISPLAY-LOOP.md)
+* global variables — ◐ (partial, in RENDERING.md)
 
 ---
 
@@ -89,60 +88,39 @@ Deliverables:
 
 Document the graphics engine.
 
-| Status | Document         |
-| ------ | ---------------- |
-| ☐      | RENDERING.md     |
-| ☐      | SCREEN-LAYOUT.md |
-| ☐      | PAGE-FORMAT.md   |
+| Status | Document         | Notes |
+| ------ | ---------------- | ----- |
+| ☑      | RENDERING.md     | Complete deep dive: font, metrics, icons, wipes, clock, scratch rendering |
+| ☐      | SCREEN-LAYOUT.md | Not yet written |
+| ☑      | PAGE-FORMAT.md   | Complete: KRANT.PAG structure with hex dump, .TXT format |
 
-Topics:
+Topics covered:
 
-* SCREEN 7
-* proportional font
-* glyph metrics
-* icon rendering
-* alignment
-* hidden page rendering
-* wipe effects
-* clock drawing
-* performance
+* SCREEN 7 — ☑
+* Proportional font — ☑
+* Glyph metrics (X.DAT) — ☑
+* Icon rendering — ☑
+* Right-aligned scratch rendering — ☑
+* Wipe effects — ☑
+* Clock drawing — ☑
+* Performance notes — ☑
 
 ---
 
 # Phase 5 — RAM Disk
 
-| Status | Document        |
-| ------ | --------------- |
-| ☐      | RAMDISK.md      |
-| ☐      | MEMORY-USAGE.md |
-
-Topics:
-
-* installation
-* BASIC interface
-* startup
-* update strategy
-* runtime behaviour
-* mapper usage
-* interaction with LOOP.SYS
+| Status | Document        | Notes |
+| ------ | --------------- | ----- |
+| ◐      | RAMDISK.md      | `docs/08-RAMDISK.md` exists but is thin; `docs/internal/RAMDISK-USAGE.md` also exists |
+| ◐      | MEMORY-USAGE.md | `docs/09-MEMORY-USAGE.md` exists but is thin |
 
 ---
 
 # Phase 6 — File Formats
 
-| Status | Document        |
-| ------ | --------------- |
-| ☐      | FILE-FORMATS.md |
-
-Document:
-
-* KRANT.PAG
-* *.TXT
-* X.DAT
-* XK.DAT
-* YK.DAT
-* *.SC7
-* RAMDISK.BIN
+| Status | Document        | Notes |
+| ------ | --------------- | ----- |
+| ☑      | FILE-FORMATS.md | `docs/10-FILE-FORMATS.md` — KRANT.PAG hex dump, .SC7, .TXT, metric files |
 
 ---
 
@@ -150,56 +128,47 @@ Document:
 
 Reverse engineer every source file.
 
-| Status | Module       |
-| ------ | ------------ |
-| ☐      | AUTOEXEC.BAS |
-| ☐      | KBLINIT.SYS  |
-| ☐      | LOOP.SYS     |
-| ☐      | MAIN.SYS     |
-| ☐      | SYSTEM.SYS   |
-| ☐      | UTILS.SYS    |
-| ☐      | TEKST.SYS    |
-| ☐      | KRANT.SYS    |
-| ☐      | PAPER.SYS    |
-| ☐      | HEADER.SYS   |
-
-For every module document:
-
-* purpose
-* entry points
-* GOSUB layout
-* variables
-* files used
-* routines
-* implementation notes
-* historical remarks
+| Status | Module       | Notes |
+| ------ | ------------ | ----- |
+| ☑      | AUTOEXEC.BAS | Covered in `docs/internal/BOOT.md` |
+| ☑      | KBLINIT.SYS  | Covered in `docs/internal/INITIALISATION.md` |
+| ☑      | LOOP.SYS     | Covered in `docs/internal/DISPLAY-LOOP.md` + `docs/RENDERING.md` |
+| ☑      | MAIN.SYS     | Covered in `docs/12-OPERATOR-GUIDE.md` |
+| ◐      | SYSTEM.SYS   | Covered in `docs/12-OPERATOR-GUIDE.md` (overview only) |
+| ◐      | UTILS.SYS    | Covered in `docs/12-OPERATOR-GUIDE.md` (overview only) |
+| ◐      | TEKST.SYS    | Covered in `docs/12-OPERATOR-GUIDE.md` (overview only) |
+| ◐      | KRANT.SYS    | Covered in `docs/12-OPERATOR-GUIDE.md` (overview only) |
+| ☐      | PAPER.SYS    | Not yet documented |
+| ☐      | HEADER.SYS   | Not yet documented |
 
 ---
 
 # Phase 8 — Visual Documentation
 
-| Status | Item                    |
-| ------ | ----------------------- |
-| 📷     | Boot screenshots        |
-| 📷     | Main menu               |
-| 📷     | Editor                  |
-| 📷     | Example pages           |
-| 📷     | Clock                   |
-| 📷     | Wipe animations         |
-| 📷     | System overview diagram |
+| Status | Item                    | Notes |
+| ------ | ----------------------- | ----- |
+| ☑      | Boot screenshots        | `startup.png` |
+| ☑      | Main menu               | `Hoofd-menu.png` |
+| ☑      | Editor                  | `Tekst-invoeren.png` |
+| ☑      | Example pages           | `Krant-live.png` |
+| ☑      | Asset / font sheet      | `Virtuele-Pagina-bekijken.png` |
+| ☑      | All operator menus      | Full set in `docs/images/` |
+| ☑      | SCREENSHOTS.md          | Gallery with descriptions for all 20+ images |
+| ☐      | Clock close-up          | No dedicated clock screenshot yet |
+| ☐      | Wipe animations         | Dynamic; difficult to capture as stills |
 
 ---
 
 # Phase 9 — Repository Polish
 
-| Status | Item                          |
-| ------ | ----------------------------- |
-| ☐      | Cross-reference all documents |
-| ☐      | Verify Mermaid diagrams       |
-| ☐      | Link screenshots              |
-| ☐      | Proofread                     |
-| ☐      | Verify technical accuracy     |
-| ☐      | Final release                 |
+| Status | Item                          | Notes |
+| ------ | ----------------------------- | ----- |
+| ☑      | Cross-reference all documents | Done in ARCHITECTURE.md, README.md, and all major docs |
+| ☑      | Verify Mermaid diagrams       | Diagrams added/updated in ARCHITECTURE.md, internal docs |
+| ☑      | Link screenshots              | SCREENSHOTS.md + 12-OPERATOR-GUIDE.md + README.md |
+| ☐      | Proofread                     | Not yet |
+| ☐      | Verify technical accuracy     | Not yet |
+| ☐      | Final release                 | Not yet |
 
 ---
 
@@ -218,10 +187,11 @@ Every document should:
 
 # Current Priority
 
-1. Finish ARCHITECTURE.md
-2. Reverse engineer LOOP.SYS
-3. Write RENDERING.md
-4. Write PAGE-FORMAT.md
-5. Write MODULE-REFERENCE.md
+Remaining work in priority order:
 
-These five documents provide the largest increase in understanding of the project.
+1. Expand `docs/08-RAMDISK.md` — the RAM disk binary and BASIC interface deserve more detail
+2. Expand `docs/09-MEMORY-USAGE.md` — BASIC memory pressure and the RAM disk trade-off
+3. Write `SCREEN-LAYOUT.md` — document the SCREEN 7 page layout coordinates
+4. Expand `SYSTEM.SYS`, `UTILS.SYS`, `TEKST.SYS`, `KRANT.SYS` module docs
+5. Document `PAPER.SYS` and `HEADER.SYS`
+6. Proofread all documents for factual accuracy
