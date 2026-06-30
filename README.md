@@ -80,33 +80,33 @@ Although modest by modern standards, it solved a real communication problem with
 ├── LICENSE
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
-├── src/                        # Version 6.2 source (MSX BASIC)
+├── src/                            # Version 6.2 source (MSX BASIC)
 ├── archive/
-│   ├── 5.3x/                   # Earliest preserved version (~1990, BBS era)
-│   └── 5.44/                   # Intermediate version (removed modem support)
+│   ├── 5.3x/                       # Earliest preserved version (~1990, BBS era)
+│   └── 5.44/                       # Intermediate version (removed modem support)
 └── docs/
-    ├── HISTORY.md           # Project history and broadcaster context
-    ├── HARDWARE.md          # Philips NMS-8250 and MSX2 hardware
-    ├── SYSTEM-OVERVIEW.md   # Runtime concept and data flow
-    ├── BOOT-PROCESS.md      # AUTOEXEC.BAS and boot sequence
-    ├── DISPLAY-ENGINE.md    # Display loop overview
-    ├── RAMDISK.md           # RAM disk usage
-    ├── MEMORY-USAGE.md      # Memory layout and constraints
-    ├── FILE-FORMATS.md      # KRANT.PAG, .TXT, .SC7, data files
-    ├── MODULE-REFERENCE.md  # All BASIC modules with source references
-    ├── OPERATOR-GUIDE.md    # Operator menus with screenshots
-    ├── TECHNICAL-DETAILS.md # USR routines, bootstrap, scratch rendering
-    ├── LIMITATIONS.md       # Performance and capacity constraints
-    ├── ARCHITECTURE.md         # High-level architecture with Mermaid diagrams
-    ├── PAGE-FORMAT.md          # Page schedule and content file formats
-    ├── RENDERING.md            # Complete rendering pipeline (deep dive)
-    ├── SCREEN-LAYOUT.md        # SCREEN 7 coordinate zones
-    ├── SCREENSHOTS.md          # Screenshot gallery
-    ├── THE-SYSTEM.md           # Narrative: viewers, operators, daily workflow
-    ├── VERSION-HISTORY.md      # Version history (v5.3x, v5.44, v6.2)
+    ├── HISTORY.md                  # Project history and broadcaster context
+    ├── HARDWARE.md                 # Philips NMS-8250 and MSX2 hardware
+    ├── SYSTEM-OVERVIEW.md          # Runtime concept and data flow
+    ├── BOOT-PROCESS.md             # AUTOEXEC.BAS and boot sequence
+    ├── DISPLAY-ENGINE.md           # Display loop overview
+    ├── RAMDISK.md                  # RAM disk usage
+    ├── MEMORY-USAGE.md             # Memory layout and constraints
+    ├── FILE-FORMATS.md             # KRANT.PAG, .TXT, .SC7, data files
+    ├── MODULE-REFERENCE.md         # All BASIC modules with source references
+    ├── OPERATOR-GUIDE.md           # Operator menus with screenshots
+    ├── TECHNICAL-DETAILS.md        # USR routines, bootstrap, scratch rendering
+    ├── LIMITATIONS.md              # Performance and capacity constraints
+    ├── ARCHITECTURE.md             # High-level architecture with Mermaid diagrams
+    ├── PAGE-FORMAT.md              # Page schedule and content file formats
+    ├── RENDERING.md                # Complete rendering pipeline (deep dive)
+    ├── SCREEN-LAYOUT.md            # SCREEN 7 coordinate zones
+    ├── SCREENSHOTS.md              # Screenshot gallery
+    ├── THE-SYSTEM.md               # Narrative: viewers, operators, daily workflow
+    ├── VERSION-HISTORY.md          # Version history (v5.3x, v5.44, v6.2)
     ├── MSX_CHARACTER_MAP_TABLE.md  # MSX character set reference
-    ├── SOFTWARE-OVERVIEW.md    # System overview
-    └── internal/               # Source-driven module documentation
+    ├── SOFTWARE-OVERVIEW.md        # System overview
+    └── internal/                   # Source-driven module documentation
         ├── BOOT.md
         ├── INITIALISATION.md
         ├── DISPLAY-LOOP.md

@@ -2,6 +2,8 @@
 
 ## Setting the scene
 
+
+
 It is sometime in the early 1990s. In a hospital ward in the Zaanstreek — the industrial and residential region north of Amsterdam, home to the cities of Zaandam and Wormerveer — a patient in a bed turns on the television. Among the channels available on the internal cable system is one that never shows video footage. No presenters, no drama, no news bulletins. Just a quietly cycling series of information screens, each one readable from across the room.
 
 Visiting hours for this ward: 13:30 to 14:00, and 18:00 to 19:30. Today's lunch menu. A notice about the pharmacy. The number to call for the duty nurse. A message from the administration. Then the first screen again, and the cycle repeats.
@@ -31,6 +33,7 @@ Care facilities have a constant flow of information that needs to reach patients
 - announcements and notices
 - local news and events
 - service information
+- radio and tv schedules of the ZZBO
 
 Printing and distributing paper notices is slow, labour-intensive, and quickly goes out of date. A television channel that could be updated from one central point and viewed anywhere in the building was a natural solution — if the technology existed at an affordable price.
 
@@ -53,9 +56,41 @@ A home computer became a broadcast appliance.
 
 ---
 
+## Producthistory
+
+
+In the late 80's and early 90's when the ZZBO wanted to provide digital information to their viewers in the hospital rooms and public areas of the main hospital ziekenhuis de Heel in Zaandam. I was already experimenting with developing news-bulletin systems myself on my MSX2 home-computer and so I suggested they could use a simple MSX2 home-computer and I would make a program that could display rotating information pages on the internal cable TV channel. I built the Kabelkrant system for a Philips NMS-8250 MSX2 computer, which could run unattended and displayed pages like visiting hours, daily menus, announcements, and local news. The system was a success and ran in production for several years up to 1999!
+
+The first editions where merely static code an no page-maintenance system existed and it was basic text only. Later editions added a graphical page which highly increased the font quality. From version 4 I started to implement a BBS function so editors could dial in and edit content remotely, that was used for a couple of months but later they decided it was easier to have copies of the system on disks, edit that at home or in the studio and just swap the disks in the system onsite. the latest version with modem support was 5.3x as we removed all modem support in version 5.40 to never return.
+
+The final version was version 6 where the some bugfixes were done in 6.2 which is the version as shown here and discussed in the documentation. The older version 5.3x and 5.44 are in /archive/ for reference.
+
+Over the years there were some ideas to let the system control video players so they could automate programs to be started automatically by that was never actually implemented, like switching the video output via the tape-cassette motor control, some remnants of that are still in the code as MOTOR ON and MOTOR OFF but were never actually used.
+
+---
+
 ## Development history
 
-### Version 5.3x — the dial-up BBS era (c. 1990)
+### Version 1-2
+
+These early versions were simple text-based systems with no graphical capabilities. They were static and had no page-maintenance system.
+There are no known copies that got preserved.
+
+### Version 3
+
+This version added graphical capabilities and some improved font quality massively.
+There are no known copies that got preserved.
+
+
+### Version 4 — the dial-up BBS option (1989-1990)
+
+This version added basic modem support for remote updating the content, a primitive content management system was created for this.
+
+This version connected let remote editors access the system via dial-up  and so update the content.
+There are no known copies that got preserved.
+
+
+### Version 5.3x
 
 The earliest preserved version of the software dates to around **1990**, when the copyright line reads *"KabelKrant (c) 1990 by RitBit Software Inc."*
 
@@ -70,11 +105,11 @@ In this version, the system was not a standalone kiosk. It was a **dial-up BBS**
 
 The main menu offered options including *"Grafisch (nog niet mogenlijk)"* (graphical — not yet possible) and *"VHS programma (nog niet mogenlijk)"* (VHS program — not yet possible), showing planned features that were never fully implemented.
 
-This version connected the world of 1990s Dutch BBS culture with a local TV broadcast use case.
 
 ### Version 5.44 — the transition
 
 An intermediate version removed the BBS and modem infrastructure entirely. Authentication, modems, and session logging disappeared. The focus shifted to the local display-only kiosk model. The graphical assets were still stored as a single `MAINPAGE.SC7`, and the operator utilities were not yet separated into dedicated modules.
+
 
 ### Version 6.2 — the production kiosk (1994)
 
