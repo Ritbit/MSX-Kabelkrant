@@ -85,5 +85,5 @@ flowchart TD
 
 - [internal/DISPLAY-LOOP.md](internal/DISPLAY-LOOP.md) — full annotated analysis of LOOP.SYS
 - [RENDERING.md](RENDERING.md) — complete rendering pipeline deep dive (font, icons, wipes, clock)
-- [07-TEXT-ENGINE.md](07-TEXT-ENGINE.md) — text renderer details
+- [TEXT-ENGINE.md](TEXT-ENGINE.md) — text renderer details
 - [PAGE-FORMAT.md](PAGE-FORMAT.md) — KRANT.PAG and .TXT file format details

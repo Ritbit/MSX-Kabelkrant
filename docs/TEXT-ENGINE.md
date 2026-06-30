@@ -45,4 +45,4 @@ When `X` is negative, the routine renders to a scratch area first, measures the 
 
 - [internal/TEXT-ENGINE.md](internal/TEXT-ENGINE.md) — detailed source analysis with BASIC code excerpts
 - [RENDERING.md](RENDERING.md) — full rendering pipeline including font metrics, VRAM layout, and all glyph operations
-- [10-FILE-FORMATS.md](10-FILE-FORMATS.md) — X.DAT, XK.DAT, YK.DAT metric file formats
+- [FILE-FORMATS.md](FILE-FORMATS.md) — X.DAT, XK.DAT, YK.DAT metric file formats

@@ -115,4 +115,4 @@ The repository contains:
 - the version 5.44 source in `archive/5.44/`
 
 See [VERSION-HISTORY.md](VERSION-HISTORY.md) for a detailed comparison of the versions.
-See [01-HARDWARE.md](01-HARDWARE.md) for the hardware platform details.
+See [HARDWARE.md](HARDWARE.md) for the hardware platform details.

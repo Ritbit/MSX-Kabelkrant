@@ -85,18 +85,18 @@ Although modest by modern standards, it solved a real communication problem with
 │   ├── 5.3x/                   # Earliest preserved version (~1990, BBS era)
 │   └── 5.44/                   # Intermediate version (removed modem support)
 └── docs/
-    ├── 00-HISTORY.md           # Project history and broadcaster context
-    ├── 01-HARDWARE.md          # Philips NMS-8250 and MSX2 hardware
-    ├── 02-SYSTEM-OVERVIEW.md   # Runtime concept and data flow
-    ├── 04-BOOT-PROCESS.md      # AUTOEXEC.BAS and boot sequence
-    ├── 05-DISPLAY-ENGINE.md    # Display loop overview
-    ├── 08-RAMDISK.md           # RAM disk usage
-    ├── 09-MEMORY-USAGE.md      # Memory layout and constraints
-    ├── 10-FILE-FORMATS.md      # KRANT.PAG, .TXT, .SC7, data files
-    ├── 11-MODULE-REFERENCE.md  # All BASIC modules with source references
-    ├── 12-OPERATOR-GUIDE.md    # Operator menus with screenshots
-    ├── 13-TECHNICAL-DETAILS.md # USR routines, bootstrap, scratch rendering
-    ├── 14-LIMITATIONS.md       # Performance and capacity constraints
+    ├── HISTORY.md           # Project history and broadcaster context
+    ├── HARDWARE.md          # Philips NMS-8250 and MSX2 hardware
+    ├── SYSTEM-OVERVIEW.md   # Runtime concept and data flow
+    ├── BOOT-PROCESS.md      # AUTOEXEC.BAS and boot sequence
+    ├── DISPLAY-ENGINE.md    # Display loop overview
+    ├── RAMDISK.md           # RAM disk usage
+    ├── MEMORY-USAGE.md      # Memory layout and constraints
+    ├── FILE-FORMATS.md      # KRANT.PAG, .TXT, .SC7, data files
+    ├── MODULE-REFERENCE.md  # All BASIC modules with source references
+    ├── OPERATOR-GUIDE.md    # Operator menus with screenshots
+    ├── TECHNICAL-DETAILS.md # USR routines, bootstrap, scratch rendering
+    ├── LIMITATIONS.md       # Performance and capacity constraints
     ├── ARCHITECTURE.md         # High-level architecture with Mermaid diagrams
     ├── PAGE-FORMAT.md          # Page schedule and content file formats
     ├── RENDERING.md            # Complete rendering pipeline (deep dive)
@@ -122,21 +122,21 @@ Although modest by modern standards, it solved a real communication problem with
 
 **Start here:**
 
-- [History](docs/00-HISTORY.md) — why this was built, for whom, and how it evolved
+- [History](docs/HISTORY.md) — why this was built, for whom, and how it evolved
 - [The system in use](docs/THE-SYSTEM.md) — viewers, operators, a typical broadcast day
-- [Hardware](docs/01-HARDWARE.md) — the Philips NMS-8250 MSX2 platform
+- [Hardware](docs/HARDWARE.md) — the Philips NMS-8250 MSX2 platform
 - [Architecture](docs/ARCHITECTURE.md) — module layers and data flow
 
 **Technical deep dives:**
 
 - [Rendering engine](docs/RENDERING.md) — proportional fonts, right-alignment trick, wipe effects, clock
 - [Screen layout](docs/SCREEN-LAYOUT.md) — SCREEN 7 coordinate zones and VRAM page map
-- [Technical details](docs/13-TECHNICAL-DETAILS.md) — USR routines, bootstrap trick, interrupt management
-- [Memory usage](docs/09-MEMORY-USAGE.md) — Z80 address space, BASIC heap, RAM disk trade-off
+- [Technical details](docs/TECHNICAL-DETAILS.md) — USR routines, bootstrap trick, interrupt management
+- [Memory usage](docs/MEMORY-USAGE.md) — Z80 address space, BASIC heap, RAM disk trade-off
 - [Page format](docs/PAGE-FORMAT.md) — KRANT.PAG schedule and .TXT content files
-- [File formats](docs/10-FILE-FORMATS.md) — all data file structures
-- [Module reference](docs/11-MODULE-REFERENCE.md) — every BASIC module documented
-- [Limitations](docs/14-LIMITATIONS.md) — capacity limits and maintainability constraints
+- [File formats](docs/FILE-FORMATS.md) — all data file structures
+- [Module reference](docs/MODULE-REFERENCE.md) — every BASIC module documented
+- [Limitations](docs/LIMITATIONS.md) — capacity limits and maintainability constraints
 
 **Source-level documentation** (in `docs/internal/`):
 
@@ -156,7 +156,7 @@ Recommended emulators:
 - **[openMSX](https://openmsx.org/)** — accurate MSX2 emulation, supports floppy disk images
 - **[WebMSX](https://webmsx.org/)** — runs in the browser
 
-The source files must be placed on an MSX-DOS disk image with the correct layout. See [docs/02-SYSTEM-OVERVIEW.md](docs/02-SYSTEM-OVERVIEW.md) for the runtime requirements.
+The source files must be placed on an MSX-DOS disk image with the correct layout. See [docs/SYSTEM-OVERVIEW.md](docs/SYSTEM-OVERVIEW.md) for the runtime requirements.
 
 ---
 

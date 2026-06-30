@@ -85,7 +85,7 @@ Every topic has exactly one "home".
 Example:
 
 * Rendering algorithms belong in `RENDERING.md`
-* File structures belong in `10-FILE-FORMATS.md`
+* File structures belong in `FILE-FORMATS.md`
 * Module internals belong in `MODULE-REFERENCE.md`
 * System overview belongs in `ARCHITECTURE.md`
 

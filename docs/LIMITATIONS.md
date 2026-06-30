@@ -76,7 +76,7 @@ Anyone not already familiar with the codebase must trace variable usage across h
 
 ### No structured modules within a module
 
-Each `.SYS` file is an independent BASIC program loaded with `RUN`. Within each file, functionality is divided by line-number ranges, not by named constructs. Navigating `LOOP.SYS` requires either a printed listing or careful use of the source line references in [11-MODULE-REFERENCE.md](11-MODULE-REFERENCE.md).
+Each `.SYS` file is an independent BASIC program loaded with `RUN`. Within each file, functionality is divided by line-number ranges, not by named constructs. Navigating `LOOP.SYS` requires either a printed listing or careful use of the source line references in [MODULE-REFERENCE.md](MODULE-REFERENCE.md).
 
 ### Testing is manual
 
@@ -105,7 +105,7 @@ These are not defects — they are consequences of a focused, production-stable 
 
 ## See also
 
-- [09-MEMORY-USAGE.md](09-MEMORY-USAGE.md) — memory layout and BASIC heap constraints
+- [MEMORY-USAGE.md](MEMORY-USAGE.md) — memory layout and BASIC heap constraints
 - [RENDERING.md](RENDERING.md) — performance analysis of the rendering pipeline
 - [ARCHITECTURE.md](ARCHITECTURE.md) — design decisions and rationale
 - [VERSION-HISTORY.md](VERSION-HISTORY.md) — how the system evolved and where it stopped

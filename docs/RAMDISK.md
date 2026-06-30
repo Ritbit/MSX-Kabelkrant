@@ -76,6 +76,6 @@ This document describes RAM disk usage from BASIC. The internal Z80 implementati
 ## See also
 
 - [internal/RAMDISK-USAGE.md](internal/RAMDISK-USAGE.md) — detailed source analysis with BASIC code references
-- [04-BOOT-PROCESS.md](04-BOOT-PROCESS.md) — how RAMDISK.BIN is installed at boot
-- [09-MEMORY-USAGE.md](09-MEMORY-USAGE.md) — RAM trade-off between BASIC and the RAM disk
+- [BOOT-PROCESS.md](BOOT-PROCESS.md) — how RAMDISK.BIN is installed at boot
+- [MEMORY-USAGE.md](MEMORY-USAGE.md) — RAM trade-off between BASIC and the RAM disk
 - [ARCHITECTURE.md](ARCHITECTURE.md) — data flow diagram showing the A: → C: → display pipeline

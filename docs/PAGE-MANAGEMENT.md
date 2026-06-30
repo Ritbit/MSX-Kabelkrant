@@ -36,4 +36,4 @@ The display logic recognises blank entries and marker-style entries such as `---
 
 - [internal/PAGE-MANAGER.md](internal/PAGE-MANAGER.md) — detailed analysis of KRANT.PAG read/write and KRANT.SYS editor
 - [PAGE-FORMAT.md](PAGE-FORMAT.md) — KRANT.PAG binary format and .TXT file structure
-- [12-OPERATOR-GUIDE.md](12-OPERATOR-GUIDE.md) — KRANT.SYS operator workflow with screenshots
+- [OPERATOR-GUIDE.md](OPERATOR-GUIDE.md) — KRANT.SYS operator workflow with screenshots

@@ -115,7 +115,7 @@ The consequence: **VRAM is not a constraint**. All graphical assets fit comforta
 
 ## See also
 
-- [08-RAMDISK.md](08-RAMDISK.md) — RAM disk usage from BASIC
-- [13-TECHNICAL-DETAILS.md](13-TECHNICAL-DETAILS.md) — USR machine-code routines
+- [RAMDISK.md](RAMDISK.md) — RAM disk usage from BASIC
+- [TECHNICAL-DETAILS.md](TECHNICAL-DETAILS.md) — USR machine-code routines
 - [ARCHITECTURE.md](ARCHITECTURE.md) — overall system design
-- [01-HARDWARE.md](01-HARDWARE.md) — V9938 VDP and hardware specs
+- [HARDWARE.md](HARDWARE.md) — V9938 VDP and hardware specs

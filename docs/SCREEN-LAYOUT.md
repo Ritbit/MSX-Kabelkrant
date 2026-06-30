@@ -157,5 +157,5 @@ The header (rows 0–43) is excluded from wipes — it remains static. After a w
 
 - [RENDERING.md](RENDERING.md) — complete rendering pipeline with glyph metrics
 - [internal/TEXT-ENGINE.md](internal/TEXT-ENGINE.md) — text renderer source analysis
-- [10-FILE-FORMATS.md](10-FILE-FORMATS.md) — page type numbers and .TXT format
+- [FILE-FORMATS.md](FILE-FORMATS.md) — page type numbers and .TXT format
 - [SCREENSHOTS.md](SCREENSHOTS.md) — annotated screenshots showing all zones

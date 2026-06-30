@@ -154,8 +154,8 @@ The engineering challenge — running a professional-looking broadcast-quality g
 
 ## See also
 
-- [00-HISTORY.md](00-HISTORY.md) — full historical background of ZZBO and the project
-- [12-OPERATOR-GUIDE.md](12-OPERATOR-GUIDE.md) — operator menus reference with screenshots
+- [HISTORY.md](HISTORY.md) — full historical background of ZZBO and the project
+- [OPERATOR-GUIDE.md](OPERATOR-GUIDE.md) — operator menus reference with screenshots
 - [SCREENSHOTS.md](SCREENSHOTS.md) — full screenshot gallery
 - [RENDERING.md](RENDERING.md) — how the graphical display was actually produced
 - [ARCHITECTURE.md](ARCHITECTURE.md) — system architecture and data flow

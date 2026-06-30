@@ -47,10 +47,10 @@ These documents explain the history of the project.
 
 | Status | Document               | Notes |
 | ------ | ---------------------- | ----- |
-| ☑      | HISTORY.md             | Written as `00-HISTORY.md` — ZZBO, BBS origins, production kiosk |
-| ☑      | HARDWARE.md            | Written as `01-HARDWARE.md` — NMS-8250, V9938, MSX.org links |
-| ◐      | DEVELOPMENT-HISTORY.md | Covered in `00-HISTORY.md` and `VERSION-HISTORY.md`; standalone doc not yet created |
-| ◐      | HOSPITAL-DEPLOYMENT.md | Covered in `00-HISTORY.md`; standalone doc not yet created |
+| ☑      | HISTORY.md             | Written as `HISTORY.md` — ZZBO, BBS origins, production kiosk |
+| ☑      | HARDWARE.md            | Written as `HARDWARE.md` — NMS-8250, V9938, MSX.org links |
+| ◐      | DEVELOPMENT-HISTORY.md | Covered in `HISTORY.md` and `VERSION-HISTORY.md`; standalone doc not yet created |
+| ◐      | HOSPITAL-DEPLOYMENT.md | Covered in `HISTORY.md`; standalone doc not yet created |
 
 Topics covered:
 
@@ -72,8 +72,8 @@ Reverse engineer the BASIC source.
 | ☑      | BOOT.md             | `docs/internal/BOOT.md` |
 | ☑      | INITIALISATION.md   | `docs/internal/INITIALISATION.md` |
 | ☑      | DISPLAY-LOOP.md     | `docs/internal/DISPLAY-LOOP.md` |
-| ☑      | OPERATOR-GUIDE.md   | `docs/12-OPERATOR-GUIDE.md` — with screenshots |
-| ☑      | MODULE-REFERENCE.md | `docs/11-MODULE-REFERENCE.md` — all modules with line references |
+| ☑      | OPERATOR-GUIDE.md   | `docs/OPERATOR-GUIDE.md` — with screenshots |
+| ☑      | MODULE-REFERENCE.md | `docs/MODULE-REFERENCE.md` — all modules with line references |
 
 Delivered:
 
@@ -111,8 +111,8 @@ Topics covered:
 
 | Status | Document        | Notes |
 | ------ | --------------- | ----- |
-| ☑      | RAMDISK.md      | `docs/08-RAMDISK.md` expanded: initial population, refresh, BASIC interface, See also |
-| ☑      | MEMORY-USAGE.md | `docs/09-MEMORY-USAGE.md` expanded: Z80 map, CLEAR, arrays, RAM disk trade-off, VRAM |
+| ☑      | RAMDISK.md      | `docs/RAMDISK.md` expanded: initial population, refresh, BASIC interface, See also |
+| ☑      | MEMORY-USAGE.md | `docs/MEMORY-USAGE.md` expanded: Z80 map, CLEAR, arrays, RAM disk trade-off, VRAM |
 
 ---
 
@@ -120,7 +120,7 @@ Topics covered:
 
 | Status | Document        | Notes |
 | ------ | --------------- | ----- |
-| ☑      | FILE-FORMATS.md | `docs/10-FILE-FORMATS.md` — KRANT.PAG hex dump, .SC7, .TXT, metric files |
+| ☑      | FILE-FORMATS.md | `docs/FILE-FORMATS.md` — KRANT.PAG hex dump, .SC7, .TXT, metric files |
 
 ---
 
@@ -133,11 +133,11 @@ Reverse engineer every source file.
 | ☑      | AUTOEXEC.BAS | Covered in `docs/internal/BOOT.md` |
 | ☑      | KBLINIT.SYS  | Covered in `docs/internal/INITIALISATION.md` |
 | ☑      | LOOP.SYS     | Covered in `docs/internal/DISPLAY-LOOP.md` + `docs/RENDERING.md` |
-| ☑      | MAIN.SYS     | Covered in `docs/12-OPERATOR-GUIDE.md` |
-| ☑      | SYSTEM.SYS   | `docs/12-OPERATOR-GUIDE.md` — menu, time/date, unimplemented options documented |
-| ☑      | UTILS.SYS    | `docs/12-OPERATOR-GUIDE.md` — all options incl. unimplemented rename, STRIG exit |
-| ☑      | TEKST.SYS    | `docs/12-OPERATOR-GUIDE.md` — full editor workflow with screenshots |
-| ☑      | KRANT.SYS    | `docs/12-OPERATOR-GUIDE.md` — schedule editor with screenshots |
+| ☑      | MAIN.SYS     | Covered in `docs/OPERATOR-GUIDE.md` |
+| ☑      | SYSTEM.SYS   | `docs/OPERATOR-GUIDE.md` — menu, time/date, unimplemented options documented |
+| ☑      | UTILS.SYS    | `docs/OPERATOR-GUIDE.md` — all options incl. unimplemented rename, STRIG exit |
+| ☑      | TEKST.SYS    | `docs/OPERATOR-GUIDE.md` — full editor workflow with screenshots |
+| ☑      | KRANT.SYS    | `docs/OPERATOR-GUIDE.md` — schedule editor with screenshots |
 
 ---
 
@@ -163,7 +163,7 @@ Reverse engineer every source file.
 | ------ | ----------------------------- | ----- |
 | ☑      | Cross-reference all documents | Done in ARCHITECTURE.md, README.md, and all major docs |
 | ☑      | Verify Mermaid diagrams       | Diagrams added/updated in ARCHITECTURE.md, internal docs |
-| ☑      | Link screenshots              | SCREENSHOTS.md + 12-OPERATOR-GUIDE.md + README.md |
+| ☑      | Link screenshots              | SCREENSHOTS.md + OPERATOR-GUIDE.md + README.md |
 | ☐      | Proofread                     | Not yet |
 | ☐      | Verify technical accuracy     | Not yet |
 | ☐      | Final release                 | Not yet |

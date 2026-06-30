@@ -135,8 +135,8 @@ Disabling the interval only for critical sections (not for the entire display lo
 
 ## See also
 
-- [04-BOOT-PROCESS.md](04-BOOT-PROCESS.md) — boot sequence with keyboard-buffer bootstrap
+- [BOOT-PROCESS.md](BOOT-PROCESS.md) — boot sequence with keyboard-buffer bootstrap
 - [internal/BOOT.md](internal/BOOT.md) — annotated AUTOEXEC.BAS source
-- [09-MEMORY-USAGE.md](09-MEMORY-USAGE.md) — USR routine memory location
+- [MEMORY-USAGE.md](MEMORY-USAGE.md) — USR routine memory location
 - [RENDERING.md](RENDERING.md) — full rendering pipeline with scratch area detail
 - [internal/TEXT-ENGINE.md](internal/TEXT-ENGINE.md) — text renderer source analysis

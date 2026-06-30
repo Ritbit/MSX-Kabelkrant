@@ -120,7 +120,7 @@ See [internal/BOOT.md](internal/BOOT.md) for the annotated source analysis.
 
 The RAM disk and BASIC program compete for main RAM. `CLEAR 2000` in `KBLINIT.SYS` reserves 2000 bytes of string space; `CLEAR 5000` in operator modules reserves 5000 bytes.
 
-See [09-MEMORY-USAGE.md](09-MEMORY-USAGE.md) for more detail.
+See [MEMORY-USAGE.md](MEMORY-USAGE.md) for more detail.
 
 ---
 
@@ -158,7 +158,7 @@ The text renderer (`GOSUB 2500`) uses global variables (`A$`, `X`, `Y`, `LT`, `K
 - [Software overview](SOFTWARE-OVERVIEW.md) — runtime responsibilities at a glance
 - [Rendering engine](RENDERING.md) — full rendering pipeline deep dive
 - [Page format](PAGE-FORMAT.md) — KRANT.PAG and .TXT file formats
-- [Module reference](11-MODULE-REFERENCE.md) — all modules with source line references
+- [Module reference](MODULE-REFERENCE.md) — all modules with source line references
 - [internal/BOOT.md](internal/BOOT.md) — AUTOEXEC.BAS boot analysis
 - [internal/INITIALISATION.md](internal/INITIALISATION.md) — KBLINIT.SYS analysis
 - [internal/DISPLAY-LOOP.md](internal/DISPLAY-LOOP.md) — LOOP.SYS analysis
