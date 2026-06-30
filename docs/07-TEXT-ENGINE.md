@@ -38,3 +38,11 @@ The renderer uses glyph metric data (`X.DAT`) and font metadata arrays to determ
 ## Alignment trick
 
 When `X` is negative, the routine renders to a scratch area first, measures the resulting width, then copies the final line to the visible page with adjusted coordinates. This makes proportional centred/right-aligned text possible in BASIC.
+
+---
+
+## See also
+
+- [internal/TEXT-ENGINE.md](internal/TEXT-ENGINE.md) — detailed source analysis with BASIC code excerpts
+- [RENDERING.md](RENDERING.md) — full rendering pipeline including font metrics, VRAM layout, and all glyph operations
+- [10-FILE-FORMATS.md](10-FILE-FORMATS.md) — X.DAT, XK.DAT, YK.DAT metric file formats

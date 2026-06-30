@@ -1,5 +1,17 @@
 # History
 
+## Setting the scene
+
+It is sometime in the early 1990s. In a hospital ward in the Zaanstreek — the industrial and residential region north of Amsterdam, home to the cities of Zaandam and Wormerveer — a patient in a bed turns on the television. Among the channels available on the internal cable system is one that never shows video footage. No presenters, no drama, no news bulletins. Just a quietly cycling series of information screens, each one readable from across the room.
+
+Visiting hours for this ward: 13:30 to 14:00, and 18:00 to 19:30. Today's lunch menu. A notice about the pharmacy. The number to call for the duty nurse. A message from the administration. Then the first screen again, and the cycle repeats.
+
+This is the **ZZBO Kabelkrant** — the cable newspaper. For the patients who watched it and the staff who maintained it, it was simply a useful service that was always there. For the people who built it, it was a small engineering achievement: a home computer, running in BASIC, producing something that looked and behaved like professional broadcast content.
+
+The story of how that came to be, and why it worked the way it did, is what this documentation records.
+
+---
+
 ## The broadcaster: ZZBO
 
 The **ZZBO** — *Zaanse Zieken en Bejaarden Omroep* (Zaans Sick and Elderly Broadcasting) — was a local cable television broadcaster in the **Zaanstreek** region of the Netherlands. Since 1965 it produced radio and, later, television programs for the sick and elderly care facilities in the area: hospitals, nursing homes, and residential care centres.

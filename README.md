@@ -12,6 +12,9 @@ The version published here is **version 6.2 (1994)**. Two earlier generations ar
 
 > A historical and educational archive of a real production MSX2 BASIC system.
 
+
+See it working here via the [WebMSX emulator](https://webmsx.org/?MACHINE=MSX2E&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/main/assets/kabelkrant-6.2.dsk)
+
 ---
 
 ## Screenshots

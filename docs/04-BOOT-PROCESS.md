@@ -33,3 +33,13 @@ sequenceDiagram
 ## Key idea
 
 `AUTOEXEC.BAS` exists mainly to bootstrap the binary RAM disk and then continue into BASIC initialisation.
+
+The unusual part is the keyboard-buffer injection on lines 110–140. `AUTOEXEC.BAS` cannot simply `RUN "KBLINIT.SYS"` after `BLOAD` because `BLOAD ... ,R` transfers control to machine code and does not return normally. Instead, the program pre-loads the `RUN` command into the MSX keyboard input buffer *before* triggering the binary. When `RAMDISK.BIN` finishes and returns to BASIC, BASIC reads the buffer and executes the waiting command automatically.
+
+---
+
+## See also
+
+- [internal/BOOT.md](internal/BOOT.md) — full annotated source analysis of the boot sequence
+- [internal/INITIALISATION.md](internal/INITIALISATION.md) — what KBLINIT.SYS does after boot
+- [ARCHITECTURE.md](ARCHITECTURE.md) — startup sequence diagram

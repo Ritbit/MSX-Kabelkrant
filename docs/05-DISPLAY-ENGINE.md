@@ -1,8 +1,10 @@
 # Display Engine
 
-The display engine is implemented primarily in `LOOP.SYS`.
+The display engine is implemented entirely in `LOOP.SYS`. It runs as an infinite loop, cycling through the page schedule, rendering each page, and waiting between pages while the clock and hourglass animate.
 
-Detected relevant operations:
+## Selected source lines from LOOP.SYS
+
+These are direct references to key BASIC lines that reveal the rendering pipeline:
 
 - line 20: `' Date     : 08-07-1994              1999:Changed line 3960 to A: Drive`
 - line 1130: `COPY "XK.dat" TO XK: COPY "YK.DAT" TO YK: COPY "X.DAT" TO X`
@@ -76,3 +78,12 @@ flowchart TD
     G --> H[Wipe]
     H --> A
 ```
+
+---
+
+## See also
+
+- [internal/DISPLAY-LOOP.md](internal/DISPLAY-LOOP.md) — full annotated analysis of LOOP.SYS
+- [RENDERING.md](RENDERING.md) — complete rendering pipeline deep dive (font, icons, wipes, clock)
+- [07-TEXT-ENGINE.md](07-TEXT-ENGINE.md) — text renderer details
+- [PAGE-FORMAT.md](PAGE-FORMAT.md) — KRANT.PAG and .TXT file format details
