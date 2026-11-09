@@ -60,7 +60,7 @@ def main():
     p.add_argument('--output',type=Path,default=Path('z80/build'))
     args=p.parse_args()
     init=(args.root/'src/KBLINIT.SYS').read_text(encoding='utf-8')
-    loop=(args.root/'src/LOOP.SYS').read_text(encoding='ascii')
+    loop=(args.root/'src/LOOP.SYS').read_text(encoding='utf-8')
     init,loop,count=transform(init,loop)
     args.output.mkdir(parents=True,exist_ok=True)
     for name,value in [('KBLINIT.SYS',init),('LOOP.SYS',loop)]:
