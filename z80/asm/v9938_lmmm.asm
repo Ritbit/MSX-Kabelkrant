@@ -9,7 +9,7 @@ LmmmLaunch:
     push de
     push hl
     ld a,i
-    jr po,.irq_off
+    jp po,.irq_off
     ld a,1
     jr .irq_saved
 .irq_off:
