@@ -35,6 +35,13 @@ jobs:
           (cd z80/asm && sjasmplus --raw=../build/textdemo.raw --lst=../build/textdemo.lst --sym=../build/textdemo.sym basic_text_demo.asm)
           python3 z80/tools/make_bload.py z80/build/textdemo.raw z80/build/KBLTXT.BIN
           python3 -m unittest discover -s z80/tests -p 'test_bload.py' -v
+      - name: Test and assemble combined RAMdisk+TEXT disk ROM
+        run: |
+          python3 -m unittest discover -s z80/tests -p 'test_combined_rom.py' -v
+          python3 z80/tools/make_combined_rom.py --root . --output z80/build
+          (cd z80/asm && sjasmplus --raw=../build/combined_text.raw --lst=../build/combined_text.lst --sym=../build/combined_text.sym .generated_combined.asm)
+          python3 z80/tools/make_combined_rom.py --root . --output z80/build --extension z80/build/combined_text.raw
+          test -s z80/build/KBLALL.BIN
       - name: Validate MSX BASIC ASCII formatting
         run: |
           python3 -m unittest discover -s z80/tests -p 'test_msx_basic_ascii.py' -v
@@ -62,6 +69,23 @@ jobs:
           mcopy -o -i z80/build/KBLASM.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
           mdir -i z80/build/KBLASM.DSK ::
           test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
+      - name: Create combined RAMdisk + Z80 TEXT experimental test disk
+        run: |
+          cp assets/kabelkrant-6.2.dsk z80/build/KBLCOMB.DSK
+          mcopy -o -i z80/build/KBLCOMB.DSK z80/build/AUTOEXEC.BAS ::AUTOEXEC.BAS
+          mcopy -o -i z80/build/KBLCOMB.DSK z80/build/COMBTEXT.BAS ::COMBTEXT.BAS
+          mcopy -o -i z80/build/KBLCOMB.DSK z80/build/KBLALL.BIN ::KBLALL.BIN
+          mdir -i z80/build/KBLCOMB.DSK ::
+          test "$(stat -c %s z80/build/KBLCOMB.DSK)" -eq 737280
+      - name: Upload experimental combined RAMdisk and text image
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLCOMB-RAMdisk-TEXT-EXPERIMENTAL
+          path: |
+            z80/build/KBLCOMB.DSK
+            z80/build/KBLALL.BIN
+            z80/build/combined_text.lst
+          if-no-files-found: error
       - name: Create original BASIC-only reference disk
         run: |
           cp assets/kabelkrant-6.2.dsk z80/build/KBLBASE.DSK
