@@ -1,6 +1,6 @@
 ; MSX2 Kabelkrant: experimental _TEXT (standalone, not production safe).
 ; BLOAD from C004 after CLEAR 300,&HBFFF in short test harness.
-; Standalone test: all four fonts on KRANT3.SC7, colour 15, positive X.
+; Standalone test: all four fonts on KRANT3.SC7, colours 13/15, positive X.
 ; Character atlas is NEVER modified: no prep/copy into Y=164..188.
 ; Sample: CALL TEXT("HELLO",20,90,2,15)
 SLTATR EQU 0FCC9h
@@ -72,7 +72,7 @@ CompareName:
     jr .loop
 TextName: db 'TEXT',0
 VerName:  db 'KBLVER',0
-VerMsg:   db 'KBL Z80 TEXT TEST 0.2 (KRANT3)',13,10,0
+VerMsg:   db 'KBL Z80 TEXT TEST 0.3 (COLOUR)',13,10,0
 
 VersionCommand:
     ld de,VerMsg
@@ -141,8 +141,8 @@ TextCommand:
 
     push hl
     ld a,(text_colour)
-    cp 15
-    jp nz,IllegalFunctionPop
+    cp 16
+    jp nc,IllegalFunctionPop
     ld a,(text_font)
     cp 1
     jp c,IllegalFunctionPop
@@ -283,9 +283,53 @@ GlyphBlit:
     ld (LmARG),a
     ld a,098h
     ld (LmCMD),a
+    ld a,(text_colour)
+    cp 15
+    jp nz,GlyphBlitColoured
     call LmmmLaunch
     ret
 
+; K!=15: convert only one glyph, using page-1 scratch area Y=190.
+; This does NOT touch the KRANT3.SC7 glyph atlas (last row Y=188).
+; LMMM/IMP copies glyph and zero pixels to scratch; LMMV/AND applies
+; the colour mask (15 AND K = K, 0 AND K = 0), then LMMM/TPSET to screen.
+; LmmmLaunch waits for idle before issuing each command.
+GlyphBlitColoured:
+    ld hl,(LmDX)
+    ld (ColourOutputX),hl
+    ld hl,(LmDY)
+    ld (ColourOutputY),hl
+    ld hl,0
+    ld (LmDX),hl
+    ld hl,256+190
+    ld (LmDY),hl
+    ld a,090h              ; LMMM, logical IMP
+    ld (LmCMD),a
+    call LmmmLaunch
+
+    ld a,(text_colour)
+    ld (LmCLR),a
+    ld a,084h              ; LMMV, logical AND
+    ld (LmCMD),a
+    call LmmmLaunch
+
+    ld hl,0
+    ld (LmSX),hl
+    ld hl,256+190
+    ld (LmSY),hl
+    ld hl,(ColourOutputX)
+    ld (LmDX),hl
+    ld hl,(ColourOutputY)
+    ld (LmDY),hl
+    xor a
+    ld (LmCLR),a
+    ld a,098h              ; LMMM, TPSET to destination
+    ld (LmCMD),a
+    call LmmmLaunch
+    ret
+
+ColourOutputX: dw 0
+ColourOutputY: dw 0
 text_length: db 0
 text_remaining: db 0
 text_colour: db 15
