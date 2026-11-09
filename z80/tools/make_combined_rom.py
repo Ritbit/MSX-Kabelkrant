@@ -32,8 +32,10 @@ def extension_source(source: str) -> str:
     assert 'INCLUDE \'v9938_lmmm.asm\'' in body
     return (constants + '\n    ORG 046F5h\n'
             'CallHandler:\n'
+            '    push hl\n'
             '    ld hl,EmbeddedFonts\n'
-            '    call SetFontBase\n' +
+            '    call SetFontBase\n'
+            '    pop hl\n' +
             body[len('CallHandler:\n'):])
 
 
@@ -76,6 +78,12 @@ def build_programs(root: Path, out: Path) -> None:
     boot = original_boot.replace('KBLINIT.SYS', 'COMBTEXT.BAS').replace('RAMDISK.BIN', OUT_NAME)
     demo = demo.replace('30 CLEAR 300,&HDFFF', '30 CLEAR 300').replace(
         '70 BLOAD "KBLTXT.BIN",R', "70 ' CALL extension is inside combined Disk-ROM")
+    # The original installer restores page-1 mapper segment 4. The extension
+    # ROM lives in segment 2, and its page-1 slot attribute is not registered
+    # during the legacy warm-start handoff. Register only for this experiment.
+    registration = ("75 OUT &HFD,2:A=PEEK(&HF342):"
+                    "POKE &HFCC9+(A AND 3)*16+(A AND 12)+1,32")
+    demo = demo.replace('80 CALL KBLVER', registration + '\\n80 CALL KBLVER')
     for name, text in [('COMBAUTO.BAS', boot), ('COMBTEXT.BAS', demo)]:
         out.joinpath(name).write_bytes(encode_msx_basic(text.replace('\r\n','\n').encode('ascii')))
 
