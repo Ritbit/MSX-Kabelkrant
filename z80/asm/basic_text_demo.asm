@@ -156,9 +156,7 @@ TextCommand:
 GetChar:
     dec hl
     ld ix,CHRGTR
-    call CALBAS
-    inc hl
-    ret
+    jp CALBAS                 ; HL now points to current char; caller consumes it
 ExpectComma:
     call GetChar
     cp ','
