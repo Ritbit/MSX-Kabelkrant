@@ -1,0 +1,49 @@
+name: Build Kabelkrant 6.2b release images
+on:
+  push:
+    branches: [release/6.2b-disk-images]
+    paths:
+      - '.github/workflows/release-62b.yml'
+      - 'tools/build_release_62b.py'
+      - 'src/AUTOEXEC.BAS'
+      - 'src/KBLINIT.SYS'
+      - 'src/LOOP.SYS'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Rebuild the MSX FAT12 disk and ZIP from the original
+        run: python3 tools/build_release_62b.py
+      - name: Verify correct disk size and original files
+        run: |
+          test "$(stat -c %s assets/kabelkrant-6.2b.dsk)" -eq 737280
+          python3 tools/build_release_62b.py
+          sha256sum assets/kabelkrant-6.2b.dsk assets/kabelkrant-6.2b.zip
+      - name: Commit generated binaries on release branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/kabelkrant-6.2b.dsk assets/kabelkrant-6.2b.zip
+          if git diff --cached --quiet; then
+            echo "Release binaries already up to date."
+          else
+            git commit -m "Build 6.2b bootable disk and source ZIP"
+            git push origin HEAD:release/6.2b-disk-images
+          fi
+      - name: Upload verified release assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: kabelkrant-6.2b-release
+          path: |
+            assets/kabelkrant-6.2b.dsk
+            assets/kabelkrant-6.2b.zip
+          if-no-files-found: error
