@@ -2,8 +2,8 @@
 
 This branch is an **assembly build prototype**, not a working MSX driver.
 Do not use `kernel.raw` with `BLOAD`: it lacks a BASIC-extension handler,
-installer, and safe resident-memory allocation. The original Kabelkrant
-and assets are left untouched.
+installer, and safe resident-memory allocation. The original graphical assets remain untouched; only the development-branch
+BASIC sources have been repaired.
 
 - `asm/font_lookup.asm`: KBF1 font lookup (unfinished runtime integration).
 - `asm/v9938_lmmm.asm`: V9938 LMMM command issuer (not yet emulator-tested).
@@ -27,18 +27,34 @@ after the BASIC calling interface, colour handling and memory placement work.
 
 ## Four-font reference baseline
 
-The original `KRANT4.SC7` graphic asset contains fonts **1, 3 and 4**
-but **no font 2**. The original metadata for font 4 (Y=160,174) points
-into empty space in `KRANT4.SC7`; actual rows are Y=134,149.
+## Four-font BASIC renderer (production source on this branch)
 
-`KRANT3.SC7` contains all four fonts at rows:
-1: (51,66), 2: (81,94), 3: (107,124,142), 4: (160,174).
-The original `LOOP.SYS` indiscriminately clears rows 164..212, which
-wipes the source for font 4 in that atlas.
+`src/KBLINIT.SYS` now loads `KRANT3.SC7`, the atlas containing all four
+fonts. `src/LOOP.SYS` reads their original Y positions:
 
-The isolated `FONTBAS.BAS` baseline deliberately uses `KRANT3.SC7`,
-draws font 4 before font 1, changes font 3's row metadata back to
-(107,124,142), and prepares scratch rows only for font 1. It uses
-K=15, so omitting the original AND recolour operation is safe here.
-These are **test-harness-only** changes: `src/LOOP.SYS`, `X.DAT`,
-`KRANT3.SC7` and `KRANT4.SC7` remain unchanged.
+| Font | Y starts |
+| --- | --- |
+| 1 | 51, 66 |
+| 2 | 81, 94 |
+| 3 | 107, 124, 142 |
+| 4 | 160, 174 |
+
+**Fast path:** For K=15 and X>=0, each glyph is copied directly from
+page 1 to page 0 using `TPSET`. No scratch clear/recolour is needed.
+For other colours or X<0 (right alignment), the whole line is assembled
+on page 1 at Y=190..207, colour-masked once, and copied to page 0.
+The source atlas extends through Y=188, so neither path erases font 4.
+
+Original `src/X.DAT` is unchanged. Its font-2 X(2,20) coordinate is
+erroneously 18 between 148 and 166; BASIC fixes this to 158 when loading
+the table, and the assembly `FONTS.DAT` converter applies the same
+correction.
+
+The `KBLBASE.DSK` Actions artifact includes `FONTBAS.BAS` (white,
+positive X) and `FONTCOL.BAS` (K=13, negative X) as regression programs.
+They run the *production* GOSUB 2500 routine, not a separate drawing
+implementation. Tested locally under openMSX with Philips NMS 8250 ROMs.
+
+The branch is development-only. The `kernel.raw` Z80 prototype still
+must not be loaded with `BLOAD`. `ASMTEXT.BAS` is an independent
+assembly experiment and is **not** a replacement for the BASIC routine.
