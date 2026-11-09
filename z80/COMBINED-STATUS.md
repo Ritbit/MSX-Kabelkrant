@@ -57,3 +57,19 @@ fallback if they preserve BASIC memory and drive C:.
 
 Do not shrink the RAMdisk without first identifying all driver and
 storage uses, then passing read/write tests on C:.
+
+## Follow-up: separate loader after warm restart (not yet successful)
+
+A local isolated test disk `KBLDUAL.DSK` loaded the historical
+`RAMDISK.BIN` through the normal AUTOEXEC keyboard-buffer warmstart
+handoff and attempted to run standalone `KBLTXT.BIN` at E004h
+afterwards. openMSX execution breakpoints showed **repeated entries
+at C000h** at emulated times 13.7, 35.1, 56.3, 77.5 and 98.7 seconds;
+the E006h TEXT-install breakpoint did not fire. Therefore a naive
+two-file setup with the existing standalone module does **not**
+yet pass integration either. The original 6.2 floppy does not exhibit
+this repeated-install behavior in the earlier control run.
+
+This result should not be mistaken for a completed two-stage loader.
+Next isolate the warmstart continuation and distinguish an unexpected
+MSX boot loop from interference with the active disk/mapper driver.
