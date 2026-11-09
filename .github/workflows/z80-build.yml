@@ -51,8 +51,9 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y mtools
           cp assets/kabelkrant-6.2.dsk z80/build/KBLASM.DSK
-          # RAMDISK.BIN restarts MSX; ASMBOOT injects the follow-up RUN via keyboard buffer.
-          # Using a plain RUN here silently stops the demo after RAMDISK initialization.
+          # The stand-alone emulator regression does not initialize RAMDISK.BIN.
+          # RAMDISK+C004 coexistence is tracked as a separate integration task.
+          printf '10 SCREEN 0:WIDTH 80:COLOR 15,4,4\r\n20 PRINT "KABELKRANT Z80 CALL TEXT TEST"\r\n30 RUN "ASMTEXT.BAS"\r\n' > z80/build/AUTOEXEC.BAS
           mcopy -o -i z80/build/KBLASM.DSK z80/build/AUTOEXEC.BAS ::AUTOEXEC.BAS
           mcopy -o -i z80/build/KBLASM.DSK z80/build/ASMTEXT.BAS ::ASMTEXT.BAS
           mcopy -o -i z80/build/KBLASM.DSK z80/build/FONTBAS.BAS ::FONTBAS.BAS
