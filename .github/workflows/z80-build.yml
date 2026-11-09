@@ -42,6 +42,9 @@ jobs:
           python3 z80/tools/make_font_baseline.py --source src/LOOP.SYS --output z80/build/FONTBAS.BAS
           python3 z80/tools/make_font_baseline.py --source src/LOOP.SYS --output z80/build/FONTCOL.BAS --colour-test
           python3 -m unittest discover -s z80/tests -p 'test_font_baseline.py' -v
+      - name: Generate A/B renderer benchmarks
+        run: |
+          python3 z80/tools/benchmark_basic.py --disk assets/kabelkrant-6.2.dsk --optimized src/LOOP.SYS --output z80/build
       - name: Create isolated MSX2 demo disk
         run: |
           sudo apt-get update -qq
@@ -63,6 +66,22 @@ jobs:
           mcopy -o -i z80/build/KBLBASE.DSK z80/build/FONTCOL.BAS ::FONTCOL.BAS
           mdir -i z80/build/KBLBASE.DSK ::FONTBAS.BAS
           test "$(stat -c %s z80/build/KBLBASE.DSK)" -eq 737280
+      - name: Create benchmark disk
+        run: |
+          cp assets/kabelkrant-6.2.dsk z80/build/KBLBENCH.DSK
+          printf '10 RUN "BENCH1.BAS"\r\n' > z80/build/BENCHAUTO.BAS
+          mcopy -o -i z80/build/KBLBENCH.DSK z80/build/BENCHAUTO.BAS ::AUTOEXEC.BAS
+          mcopy -o -i z80/build/KBLBENCH.DSK z80/build/BENCH1.BAS ::BENCH1.BAS
+          mcopy -o -i z80/build/KBLBENCH.DSK z80/build/BENCH3.BAS ::BENCH3.BAS
+          mdir -i z80/build/KBLBENCH.DSK ::BENCH1.BAS
+          mdir -i z80/build/KBLBENCH.DSK ::BENCH3.BAS
+          test "$(stat -c %s z80/build/KBLBENCH.DSK)" -eq 737280
+      - name: Upload original-versus-optimized BASIC benchmark disk
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLBENCH-original-vs-optimized-BASIC
+          path: z80/build/KBLBENCH.DSK
+          if-no-files-found: error
       - name: Upload original BASIC reference disk
         uses: actions/upload-artifact@v4
         with:
