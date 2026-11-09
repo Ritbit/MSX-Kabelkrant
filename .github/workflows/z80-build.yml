@@ -53,6 +53,20 @@ jobs:
           mcopy -o -i z80/build/KBLASM.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
           mdir -i z80/build/KBLASM.DSK ::
           test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
+      - name: Create original BASIC-only reference disk
+        run: |
+          cp assets/kabelkrant-6.2.dsk z80/build/KBLBASE.DSK
+          printf '10 RUN "FONTBAS.BAS"\r\n' > z80/build/BASEAUTO.BAS
+          mcopy -o -i z80/build/KBLBASE.DSK z80/build/BASEAUTO.BAS ::AUTOEXEC.BAS
+          mcopy -o -i z80/build/KBLBASE.DSK z80/build/FONTBAS.BAS ::FONTBAS.BAS
+          mdir -i z80/build/KBLBASE.DSK ::FONTBAS.BAS
+          test "$(stat -c %s z80/build/KBLBASE.DSK)" -eq 737280
+      - name: Upload original BASIC reference disk
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLBASE-original-BASIC-four-font-testdisk
+          path: z80/build/KBLBASE.DSK
+          if-no-files-found: error
       - name: Upload isolated demo disk (emulator test required)
         uses: actions/upload-artifact@v4
         with:
