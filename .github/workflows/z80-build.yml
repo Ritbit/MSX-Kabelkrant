@@ -1,0 +1,40 @@
+name: Z80 build (prototype)
+on:
+  push:
+    branches: [feature/z80-renderer]
+    paths: ['.github/workflows/z80-build.yml', 'z80/**', 'src/X.DAT']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build SjASMPlus 1.24.0
+        run: |
+          git clone --recursive --depth 1 --branch v1.24.0 https://github.com/z00m128/sjasmplus.git /tmp/sjasmplus
+          cmake -S /tmp/sjasmplus -B /tmp/sjasmplus-build -DCMAKE_BUILD_TYPE=Release -DENABLE_LUA=OFF -DCMAKE_INSTALL_PREFIX=/usr/local
+          cmake --build /tmp/sjasmplus-build --parallel 2
+          sudo cmake --install /tmp/sjasmplus-build
+          sjasmplus --version
+      - name: Convert and verify original fonts
+        run: python3 z80/tools/convert_fonts.py --xdat src/X.DAT --output z80/build/FONTS.DAT
+      - name: Run font conversion tests
+        run: python3 -m unittest discover -s z80/tests -p 'test_conversion.py' -v
+      - name: Assemble Z80 prototype
+        run: |
+          (cd z80/asm && sjasmplus --raw=../build/kernel.raw --lst=../build/kernel.lst --sym=../build/kernel.sym kernel.asm)
+          test -s z80/build/kernel.raw
+      - name: Upload prototype (NOT bootable)
+        uses: actions/upload-artifact@v4
+        with:
+          name: z80-prototype-NOT-BOOTABLE
+          path: |
+            z80/build/kernel.raw
+            z80/build/kernel.lst
+            z80/build/kernel.sym
+            z80/build/FONTS.DAT
+          if-no-files-found: error
