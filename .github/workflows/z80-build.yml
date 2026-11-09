@@ -28,6 +28,28 @@ jobs:
         run: |
           (cd z80/asm && sjasmplus --raw=../build/kernel.raw --lst=../build/kernel.lst --sym=../build/kernel.sym kernel.asm)
           test -s z80/build/kernel.raw
+      - name: Assemble standalone CALL TEXT demo
+        run: |
+          (cd z80/asm && sjasmplus --raw=../build/textdemo.raw --lst=../build/textdemo.lst --sym=../build/textdemo.sym basic_text_demo.asm)
+          python3 z80/tools/make_bload.py z80/build/textdemo.raw z80/build/KBLTXT.BIN
+          python3 -m unittest discover -s z80/tests -p 'test_bload.py' -v
+      - name: Create isolated MSX2 demo disk
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y mtools
+          cp assets/kabelkrant-6.2.dsk z80/build/KBLASM.DSK
+          printf '10 SCREEN 0:WIDTH 80:COLOR 15,4,4\r\n20 PRINT "KABELKRANT Z80 CALL TEXT TEST"\r\n30 RUN "ASMTEXT.BAS"\r\n' > z80/build/AUTOEXEC.BAS
+          mcopy -o -i z80/build/KBLASM.DSK z80/build/AUTOEXEC.BAS ::AUTOEXEC.BAS
+          mcopy -o -i z80/build/KBLASM.DSK z80/asm/ASMTEXT.BAS ::ASMTEXT.BAS
+          mcopy -o -i z80/build/KBLASM.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
+          mdir -i z80/build/KBLASM.DSK ::
+          test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
+      - name: Upload isolated demo disk (emulator test required)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLASM-experimental-MSX2-testdisk
+          path: z80/build/KBLASM.DSK
+          if-no-files-found: error
       - name: Upload prototype (NOT bootable)
         uses: actions/upload-artifact@v4
         with:
@@ -37,4 +59,8 @@ jobs:
             z80/build/kernel.lst
             z80/build/kernel.sym
             z80/build/FONTS.DAT
+            z80/build/textdemo.raw
+            z80/build/textdemo.lst
+            z80/build/textdemo.sym
+            z80/build/KBLTXT.BIN
           if-no-files-found: error
