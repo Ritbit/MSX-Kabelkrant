@@ -72,7 +72,7 @@ jobs:
       - name: Create combined RAMdisk + Z80 TEXT experimental test disk
         run: |
           cp assets/kabelkrant-6.2.dsk z80/build/KBLCOMB.DSK
-          mcopy -o -i z80/build/KBLCOMB.DSK z80/build/AUTOEXEC.BAS ::AUTOEXEC.BAS
+          mcopy -o -i z80/build/KBLCOMB.DSK z80/build/COMBAUTO.BAS ::AUTOEXEC.BAS
           mcopy -o -i z80/build/KBLCOMB.DSK z80/build/COMBTEXT.BAS ::COMBTEXT.BAS
           mcopy -o -i z80/build/KBLCOMB.DSK z80/build/KBLALL.BIN ::KBLALL.BIN
           mdir -i z80/build/KBLCOMB.DSK ::
