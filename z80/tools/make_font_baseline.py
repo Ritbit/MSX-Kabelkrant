@@ -1,12 +1,9 @@
 #!/usr/bin/env python3
-"""Generate four-font baseline from original LOOP.SYS using KRANT3.SC7.
+"""Generate four-font baseline directly from the repaired production BASIC source.
 
-KRANT4.SC7 omits font 2 and moves font 4 from Y=160/174 to 134/149.
-KRANT3.SC7 contains all four fonts, but the original routine clears its
-font-4 glyphs at Y>=164. We preserve every original draw/copy command,
-only omit the destructive preparation for fonts 2/3/4 when K=15 (white).
-KRANT3 font 3 has its original Y positions (107,124,142).
-No original source or graphical assets are modified.
+KRANT3.SC7 contains all four fonts. The renderer uses their natural
+Y positions, and only scratch rows 190..210 can be overwritten.
+The baseline is an exact copy of the production renderer.
 """
 import argparse
 from pathlib import Path
@@ -29,16 +26,6 @@ HEADER = [
     "130 GOTO 130",
 ]
 
-# Minimal white-only demo changes to prevent corrupting source pixels.
-# Font 1 uses the same source->scratch COPY as the original BASIC routine.
-REFERENCE_OVERRIDES = {
-    2530: "2530 INTERVAL OFF:SETPAGE 0,1",
-    2540: "2540 IF LT=1 THEN LINE(0,164)-(512,212),0,BF:COPY(0,51)-(512,80) TO (0,164)",
-    2550: "2550 SETPAGE 0,0:INTERVAL ON",
-    2675: "2675 'NO SCRATCH COLOUR RESTORE IN WHITE-ONLY TEST",
-    2830: "2830 DATA 43,83,96,107,124,142,16",
-}
-
 def extract_original(source: str) -> list[str]:
     selected = []
     for line in source.splitlines():
@@ -46,8 +33,8 @@ def extract_original(source: str) -> list[str]:
         if not m:
             continue
         num = int(m.group(1))
-        if (2500 <= num <= 2690) or (2700 <= num <= 2840):
-            selected.append(REFERENCE_OVERRIDES.get(num, line))
+        if (2500 <= num <= 2690) or (2700 <= num <= 2890):
+            selected.append(line)
     ids = {int(line.split()[0]) for line in selected}
     required = {2530,2540,2550,2555,2560,2580,2590,2600,2610,2620,2630,2640,2650,2660,2670,2675,2680,2690,2730,2740,2750,2760,2770,2810,2820,2830,2840}
     if not required.issubset(ids):
@@ -68,4 +55,4 @@ if __name__ == "__main__":
     output=make_program(a.source.read_text(encoding="latin-1"))
     a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_bytes(output)
-    print(f"{a.output}: {len(output)} bytes, four fonts from original BASIC with documented scratch fixes")
+    print(f"{a.output}: {len(output)} bytes, repaired production BASIC, four KRANT3 fonts")
