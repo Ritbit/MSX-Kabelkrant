@@ -26,9 +26,9 @@ OUT_NAME = 'KBLALL.BIN'
 
 
 def extension_source(source: str) -> str:
-    if source.count('\nCallHandler:\n') != 1 or source.count('\n    ORG 0E004h') != 1:
+    if source.count('\nCallHandler:\n') != 1 or source.count('\n    ORG 0C804h') != 1:
         raise ValueError('unexpected text-demo ASM structure')
-    constants = source[:source.index('\n    ORG 0E004h')]
+    constants = source[:source.index('\n    ORG 0C804h')]
     body = source[source.index('\nCallHandler:\n') + 1:]
     assert 'INCLUDE \'font_lookup.asm\'' in body
     assert 'INCLUDE \'v9938_lmmm.asm\'' in body
@@ -75,10 +75,10 @@ def build_programs(root: Path, out: Path) -> None:
     demo = (root / 'z80/asm/ASMTEXT.BAS').read_text(encoding='ascii')
     if 'KBLINIT.SYS' not in original_boot or 'RAMDISK.BIN' not in original_boot:
         raise ValueError('unexpected AUTOEXEC.BAS')
-    if '30 CLEAR 300,&HDFFF' not in demo or '70 BLOAD "KBLTXT.BIN",R' not in demo:
+    if '30 CLEAR 300,&HC7FF' not in demo or '70 BLOAD "KBLTXT.BIN",R' not in demo:
         raise ValueError('unexpected demo BASIC')
     boot = original_boot.replace('KBLINIT.SYS', 'COMBTEXT.BAS').replace('RAMDISK.BIN', OUT_NAME)
-    demo = demo.replace('30 CLEAR 300,&HDFFF', '30 CLEAR 300').replace(
+    demo = demo.replace('30 CLEAR 300,&HC7FF', '30 CLEAR 300').replace(
         '70 BLOAD "KBLTXT.BIN",R', "70 ' CALL extension is inside combined Disk-ROM")
     # The original installer restores page-1 mapper segment 4. The extension
     # ROM lives in segment 2, and its page-1 slot attribute is not registered
