@@ -42,6 +42,9 @@ def transform(init: str, loop: str) -> tuple[str, str, int]:
     if changed != 7:
         raise ValueError(f'Expected seven text CALL sites, found {changed}')
     loop='\n'.join(result)+'\n'
+    # The original Git source contains Unicode em dashes in two REM comments.
+    # MSX Disk BASIC ASCII only permits 7-bit text; normalize comments here.
+    loop=loop.replace('\u2014','-')
     # Assert the historical BASIC renderer still exists in the test image.
     if '2500 ' not in loop or '2690 ' not in loop or 'GOSUB 2500' in loop:
         raise ValueError('Unexpected font-renderer source')
@@ -56,7 +59,7 @@ def main():
     p.add_argument('--root',type=Path,default=Path('.'))
     p.add_argument('--output',type=Path,default=Path('z80/build'))
     args=p.parse_args()
-    init=(args.root/'src/KBLINIT.SYS').read_text(encoding='ascii')
+    init=(args.root/'src/KBLINIT.SYS').read_text(encoding='utf-8')
     loop=(args.root/'src/LOOP.SYS').read_text(encoding='ascii')
     init,loop,count=transform(init,loop)
     args.output.mkdir(parents=True,exist_ok=True)
