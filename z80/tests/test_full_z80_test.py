@@ -13,7 +13,7 @@ class FullZ80DiskTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         init = (ROOT / "src/KBLINIT.SYS").read_text(encoding="utf-8")
-        loop = (ROOT / "src/LOOP.SYS").read_text(encoding="ascii")
+        loop = (ROOT / "src/LOOP.SYS").read_text(encoding="utf-8")
         cls.original_init = init
         cls.original_loop = loop
         cls.init, cls.loop, cls.calls = transform(init, loop)
