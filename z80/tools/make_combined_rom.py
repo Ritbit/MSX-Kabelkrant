@@ -76,7 +76,7 @@ def build_programs(root: Path, out: Path) -> None:
     boot = original_boot.replace('KBLINIT.SYS', 'COMBTEXT.BAS').replace('RAMDISK.BIN', OUT_NAME)
     demo = demo.replace('30 CLEAR 300,&HDFFF', '30 CLEAR 300').replace(
         '70 BLOAD "KBLTXT.BIN",R', "70 ' CALL extension is inside combined Disk-ROM")
-    for name, text in [('AUTOEXEC.BAS', boot), ('COMBTEXT.BAS', demo)]:
+    for name, text in [('COMBAUTO.BAS', boot), ('COMBTEXT.BAS', demo)]:
         out.joinpath(name).write_bytes(encode_msx_basic(text.replace('\r\n','\n').encode('ascii')))
 
 
