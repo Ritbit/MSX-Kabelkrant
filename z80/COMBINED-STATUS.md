@@ -1,48 +1,59 @@
-# Combined RAMdisk + Z80 TEXT experimental integration
+# Combined RAMdisk + Z80 TEXT — confirmed memory collision
 
-Status: **build works, runtime integration does not yet work** (2026-11-09).
-Do **not** merge into main or distribute as a working image.
+**Runtime status (2026-11-09): NOT WORKING. Do not release.**
 
-## Construction
+## Confirmed using openMSX 19.1, Philips NMS 8250
 
-`z80/tools/make_combined_rom.py` preserves the original `src/RAMDISK.BIN`
-installer and disk-driver bytes except for (1) the existing LDIR copy size
-and (2) the previously empty STATEMENT pointer in the copied ROM header.
-The assembly text handler is appended at mapper-bank address `46F5h`.
-The resulting `KBLALL.BIN` is approximately 4.2 KB and fits inside the
-existing 16 KB mapper bank. The historical 6.2b assets are unchanged.
+At the failing `CALL KBLVER`, a CPU breakpoint **does reach 46F5h**
+in slot 3-2 and RAM mapper segment 2. `SLTATR[57]` is 20h and the
+Disk-ROM STATEMENT pointer at 4004h reads 46F5h. However the opcode
+at 46F5h is 00h rather than expected E5h.
 
-## Verified
+A write-watchpoint recorded **two writes** to physical 46F5h:
 
-- SjASMPlus assembly succeeds on GitHub Actions.
-- Unit tests check the original RAMdisk image, the modifications to its
-  relocation code and ROM header, and payload size/bounds.
-- A combined `KBLCOMB.DSK` is built and boots in openMSX 19.1 with
-  the Philips NMS 8250 ROMs, using the original warm-restart sequence.
-- The combined Disk-ROM is present in the mapper's physical segment 2.
-  At the point of failure, the original installer has reset mapper page 1
-  to segment 4; the demo explicitly selects segment 2.
-- The test registers BASIC's page-1 CALL slot attribute (RAMAD1=8Bh,
-  SLTATR[57]) and calls `CALL KBLVER`.
+- PC **C032h**: installation copies E5h (correct first handler opcode).
+- PC **41BFh**: original RAMdisk stores **00h** over it.
 
-## Unresolved
+The unchanged ROM code at **41B3h** is:
 
-The emulator still reports `Syntax error in 80` at `CALL KBLVER`.
-A conditional CPU breakpoint at `46F5h` with opcode `E5h` (the actual
-compiled entry) **never fires**. The earlier unqualified breakpoints at
-`46F5h` were false positives from other slots, not proof of extension
-execution.
+```asm
+LD HL,46F4h
+LD DE,46F5h
+LD BC,390Ah
+LD (HL),0
+LDIR
+```
 
-Next: investigate the firmware's CALL slot-scan / inter-slot dispatch
-path and make the ROM's STATEMENT handler selectable without hardcoded
-mapper writes in BASIC. The current `OUT &HFD,2` in the test script is a
-diagnostic workaround, **not a production-safe solution**.
+The RAMdisk deliberately zero-fills **46F4h–7FFEh** in that bank,
+using the remaining area as disk/storage workspace. Our appended TEXT
+engine at 46F5h is overwritten during normal installation. Enlarging
+the initial installer copy length does **not** make the location safe.
 
-## Trimming the original RAMdisk
+Earlier notes claimed BASIC could not reach the handler. That was
+incorrect: it reaches the right *address*, but the bytes are erased.
 
-Not recommended yet. Driver routines at `4000h..46F4h` service MSX Disk
-BASIC/DOS entrypoints; removing any without call-graph analysis may break
-drive C:. The 4.2 KB combined image fits in the *same* 16 KB mapper
-segment, so byte trimming alone does not save a segment of RAM. ROM error
-messages can be considered only after the combined loader works and the
-disk-driver code has been reverse engineered and regression tested.
+## Proven and unproven
+
+- Standalone `KBLTXT.BIN` (E004h) previously displayed all four fonts,
+  colours 15/13 and negative-X alignment under openMSX.
+- Combined `KBLALL.BIN` assembles and fits within one 16-KiB mapper
+  segment, but its runtime location **collides with RAMdisk storage**.
+- A build passing on GitHub Actions is *not* proof that the combined
+  executable works.
+- The historical driver and the released 6.2b remain untouched.
+
+## Revised design
+
+Preserve the RAMdisk driver, and initialize Z80 TEXT in **separately
+protected high RAM** after the RAMdisk warm restart. The original
+page-1 ROM header has a tiny reserved space that might accommodate
+a dispatch trampoline, but slot/mapper-safe entry, staging order and
+BASIC memory allocation require emulator validation.
+
+A single distributed binary with a two-stage loader is possible
+in principle, but **not yet proven**. Repeated boot and source-loading
+experiments have not passed end-to-end. Two binaries remain a valid
+fallback if they preserve BASIC memory and drive C:.
+
+Do not shrink the RAMdisk without first identifying all driver and
+storage uses, then passing read/write tests on C:.

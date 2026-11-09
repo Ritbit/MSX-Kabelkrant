@@ -7,7 +7,9 @@ only extend its LDIR copy length and set the empty BASIC statement pointer
 at ROM header 4004h. The new CALL handler lives after the existing ROM,
 in the same mapper bank, so it can be discovered on the next boot.
 
-This is an experimental build. The old DOS/Disk BASIC entry points are
+WARNING: The original RAMdisk zero-fills 46F4h..7FFEh, erasing the
+appended 46F5h handler. This builder is retained ONLY to reproduce the
+known-broken experiment. The old DOS/Disk BASIC entry points are
 intentionally NOT removed until hardware/emulator integration proves safe.
 """
 from pathlib import Path

@@ -93,3 +93,11 @@ A physically small binary is not proof of correct ROM dispatch.
   CI build alone is **not** an MSX runtime test.
 - Publish only isolated, tested release changes via a clean branch from
   `main`; never merge the whole development branch.
+
+## RAMdisk/TEXT collision — experimentally verified
+
+A runtime breakpoint showed BASIC enters the expected CALL handler
+address 46F5h in slot 3-2, but an LDIR at 41B3h in the original
+RAMdisk later zero-fills 46F4h–7FFEh. This overwrites the TEXT extension
+byte E5h with 00h. The old explanation ('CALL never reaches the ROM')
+is superseded. See `z80/COMBINED-STATUS.md` for write-watchpoint evidence.

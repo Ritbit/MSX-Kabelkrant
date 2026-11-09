@@ -3,17 +3,14 @@
 **Branch:** `feature/z80-renderer`. Development-only; never merge this
 file or the other three coordination docs to `main`.
 
-## Now — make combined ROM dispatch work
+## Now — confirmed RAMdisk memory collision
 
-- [ ] Determine why BASIC's CALL scan does not reach `46F5h` even with
-      mapper segment 2 visible and page-1 slot attribute set.
-- [ ] Trace ROM slot-selection / inter-slot dispatch before trying more
-      vector patches; capture actual PC, slot and mapper state.
-- [ ] Make `CALL KBLVER` succeed in `KBLCOMB.DSK` under openMSX.
-- [ ] Verify original drive C: startup and a basic file read/write after
-      integrating the new handler.
-- [ ] Remove temporary hardcoded `OUT &HFD,2` diagnostic workaround
-      when a correct installed handler is available.
+- [x] Trace BASIC CALL into slot 3-2/segment 2; it reaches 46F5h.
+- [x] Find destructive zero-fill at 41B3h (PC 41BFh writes 00h).
+- [ ] Safely stage TEXT in protected page-3 RAM after RAMdisk restart.
+- [ ] Validate CALL dispatch, drive C: read/write and BASIC memory limits.
+- [ ] Decide on one-file two-stage loader or a proven two-file fallback.
+- [ ] Remove diagnostic mapper pokes from any production candidate.
 
 ## Next — functional and performance parity
 
