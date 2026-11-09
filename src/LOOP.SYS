@@ -1,10 +1,10 @@
 10 ' Name     : LOOP.SYS
 20 ' Date     : 08-07-1994              1999:Changed line 3960 to A: Drive
 30 ' Function : Generates kabelkrant    1999:Changed line 3940 to EXT$=".txt"
-40 ' Part of  : Kabelkrant V6.2
+40 ' Part of  : Kabelkrant V6.2b
 50 ' Chains to: MAIN.SYS
 60 ' Options  : Chains by pressing space-bar.
-70 ' NOTE     : This version uses fast text rendering via assembly
+70 ' NOTE     : This version uses optimized BASIC text rendering
 80 ' Kabelkrant (c) 1994 Bas van Ritbergen / RitBit
 90 '
 100 POKE &HFBB1,0: ' 0 = Zet Crtl-Stop aan; ,1 = Zet Ctrl-Stop uit!!
