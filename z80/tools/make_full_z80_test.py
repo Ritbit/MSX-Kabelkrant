@@ -14,6 +14,41 @@ TEXT_CALL = 'CALL TEXT(A$,X,Y,LT,K)'
 INITIALIZER = '190 SETPAGE 0,1: CLS: BLOAD "KRANT3.SC7",S: SETPAGE 0,0: CLEAR 2000,&HC7FF'
 
 
+
+def split_long_data_lines(source: str, max_len: int = 210) -> str:
+    """Split overlong original DATA statements on free line numbers.
+
+    This preserves the sequential READ byte stream for the USR routines;
+    only output BASIC line boundaries change.
+    """
+    lines = source.splitlines()
+    result = []
+    for i,line in enumerate(lines):
+        if len(line) <= max_len:
+            result.append(line)
+            continue
+        match = re.fullmatch(r'(\\d+)\\s+DATA\\s+(.+)',line)
+        if not match:
+            raise ValueError(f'Non-DATA BASIC line too long: {line[:50]}')
+        n = int(match.group(1))
+        next_n = int(lines[i+1].split()[0]) if i+1 < len(lines) else 65530
+        pieces = match.group(2).split(',')
+        start_n = n
+        cur = []
+        for value in pieces:
+            candidate = ','.join(cur+[value])
+            if len(f'{start_n} DATA {candidate}') > max_len and cur:
+                result.append(f'{start_n} DATA '+','.join(cur))
+                start_n += 1
+                cur = []
+            cur.append(value)
+        if cur:
+            result.append(f'{start_n} DATA '+','.join(cur))
+        if start_n >= next_n:
+            raise ValueError(f'No free BASIC numbers after line {n}')
+    return '\\n'.join(result)+'\\n'
+
+
 def transform(init: str, loop: str) -> tuple[str, str, int]:
     lines=init.splitlines()
     i=next((i for i,line in enumerate(lines) if line.startswith('190 ')),None)
@@ -22,7 +57,7 @@ def transform(init: str, loop: str) -> tuple[str, str, int]:
     lines[i]=INITIALIZER
     # Reserve memory before loading the machine code.
     lines.insert(i+1,'195 BLOAD "KBLTXT.BIN",R')
-    init='\n'.join(lines)+'\n'
+    init=split_long_data_lines('\n'.join(lines)+'\n')
 
     changed=0
     result=[]
