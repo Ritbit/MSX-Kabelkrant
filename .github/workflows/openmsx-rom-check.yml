@@ -1,0 +1,52 @@
+name: Validate openMSX ROM environment
+on:
+  workflow_dispatch:
+  push:
+    branches: [feature/z80-renderer]
+    paths:
+      - '.github/workflows/openmsx-rom-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  rom-check:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install openMSX and display utilities
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends openmsx xvfb unzip
+          openmsx -version || true
+      - name: Download ROM collection into temporary working directory
+        env:
+          ROM_SET_URL: https://download.file-hunter.com/System%20ROMs/Full%20Set%20System%20ROMs%20for%20OpenMSX%20-%2028-10-2026.zip
+        run: |
+          mkdir -p "$RUNNER_TEMP/msx-systemroms"
+          curl --fail --show-error --silent --location --max-time 120 --max-filesize 100000000 \
+            "$ROM_SET_URL" -o "$RUNNER_TEMP/msx-systemroms.zip"
+          unzip -t "$RUNNER_TEMP/msx-systemroms.zip" >/dev/null
+          unzip -q "$RUNNER_TEMP/msx-systemroms.zip" -d "$RUNNER_TEMP/msx-systemroms"
+          echo "ROM archive downloaded and validated (not published)."
+          echo "ROM file count: $(find "$RUNNER_TEMP/msx-systemroms" -type f | wc -l)"
+          echo "ROM directory size: $(du -sh "$RUNNER_TEMP/msx-systemroms" | cut -f1)"
+      - name: Verify Philips NMS-8250 is configurable
+        env:
+          OPENMSX_USER_DATA: ${{ runner.temp }}/openmsx/share
+        run: |
+          mkdir -p "$OPENMSX_USER_DATA/systemroms"
+          cp -a "$RUNNER_TEMP/msx-systemroms/." "$OPENMSX_USER_DATA/systemroms/"
+          cat > "$RUNNER_TEMP/probe.tcl" <<'TCL'
+          puts "ROM_PROBE_BEGIN"
+          puts "MACHINE_TEST: [test_machine Philips_NMS_8250]"
+          puts "ROM_PROBE_END"
+          exit
+          TCL
+          timeout 30s xvfb-run -a openmsx -machine Philips_NMS_8250 -script "$RUNNER_TEMP/probe.tcl" 2>&1 | tee "$RUNNER_TEMP/openmsx-probe.log"
+          grep -q ROM_PROBE_END "$RUNNER_TEMP/openmsx-probe.log"
+      - name: Remove temporary ROMs
+        if: always()
+        run: |
+          rm -rf "$RUNNER_TEMP/msx-systemroms" "$RUNNER_TEMP/msx-systemroms.zip" "$RUNNER_TEMP/openmsx/share/systemroms"
