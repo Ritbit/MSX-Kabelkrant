@@ -87,6 +87,8 @@ jobs:
       - name: Build full Kabelkrant Z80 preview image (NOT A RELEASE)
         run: |
           cp z80/build/stable/assets/kabelkrant-6.2b.dsk z80/build/KBLZ80TEST.DSK
+          mcopy -i z80/build/KBLZ80TEST.DSK ::LOOP.SYS z80/build/full/LOOPBAS.SYS
+          mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/full/LOOPBAS.SYS ::LOOPBAS.SYS
           mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/full/KBLINIT.SYS ::KBLINIT.SYS
           mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/full/LOOP.SYS ::LOOP.SYS
           mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
