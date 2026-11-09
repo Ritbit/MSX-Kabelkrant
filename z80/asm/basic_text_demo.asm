@@ -1,6 +1,6 @@
 ; MSX2 Kabelkrant: experimental _TEXT (standalone, not production safe).
 ; BLOAD from C004 after CLEAR 300,&HBFFF in short test harness.
-; Restrictions for initial test: font 2-4, colour 15, X >= 0.
+; Restrictions for initial test: font 2-3, colour 15, X >= 0.
 ; Sample: CALL TEXT("HELLO",20,90,2,15)
 SLTATR EQU 0FCC9h
 RAMAD3 EQU 0F344h
