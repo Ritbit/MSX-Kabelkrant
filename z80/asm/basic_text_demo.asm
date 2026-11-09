@@ -1,5 +1,5 @@
 ; MSX2 Kabelkrant: experimental _TEXT (standalone, not production safe).
-; BLOAD from C004 after CLEAR 300,&HBFFF in short test harness.
+; BLOAD from A004 after CLEAR 300,&H9FFF; RAMDISK.BIN occupies C000-C7EF.
 ; Standalone test: four KRANT3 fonts, colours 13/15 and BASIC-style negative-X alignment.
 ; Character atlas is NEVER modified: no prep/copy into Y=164..188.
 ; Sample: CALL TEXT("HELLO",20,90,2,15)
@@ -17,7 +17,7 @@ FRESTR EQU 067D0h
 ERRHAND EQU 0406Fh
 CHPUT EQU 000A2h
 
-    ORG 0C004h
+    ORG 0A004h
     dw CallHandler
 Install:
     ld hl,EmbeddedFonts
@@ -72,7 +72,7 @@ CompareName:
     jr .loop
 TextName: db 'TEXT',0
 VerName:  db 'KBLVER',0
-VerMsg:   db 'KBL Z80 TEXT TEST 0.5 (ALIGN)',13,10,0
+VerMsg:   db 'KBL Z80 TEXT TEST 0.6 (A000)',13,10,0
 
 VersionCommand:
     ld de,VerMsg
