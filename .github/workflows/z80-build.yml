@@ -40,6 +40,7 @@ jobs:
       - name: Generate original BASIC four-font reference
         run: |
           python3 z80/tools/make_font_baseline.py --source src/LOOP.SYS --output z80/build/FONTBAS.BAS
+          python3 z80/tools/make_font_baseline.py --source src/LOOP.SYS --output z80/build/FONTCOL.BAS --colour-test
           python3 -m unittest discover -s z80/tests -p 'test_font_baseline.py' -v
       - name: Create isolated MSX2 demo disk
         run: |
@@ -59,6 +60,7 @@ jobs:
           printf '10 RUN "FONTBAS.BAS"\r\n' > z80/build/BASEAUTO.BAS
           mcopy -o -i z80/build/KBLBASE.DSK z80/build/BASEAUTO.BAS ::AUTOEXEC.BAS
           mcopy -o -i z80/build/KBLBASE.DSK z80/build/FONTBAS.BAS ::FONTBAS.BAS
+          mcopy -o -i z80/build/KBLBASE.DSK z80/build/FONTCOL.BAS ::FONTCOL.BAS
           mdir -i z80/build/KBLBASE.DSK ::FONTBAS.BAS
           test "$(stat -c %s z80/build/KBLBASE.DSK)" -eq 737280
       - name: Upload original BASIC reference disk
