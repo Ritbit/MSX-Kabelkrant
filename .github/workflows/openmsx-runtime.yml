@@ -1,0 +1,31 @@
+name: Export openMSX runtime for local private-ROM testing
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  bundle:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - name: Install openMSX system packages
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends openmsx openmsx-data
+          dpkg -L openmsx-data | grep -m 10 '/usr/share/openmsx/' || true
+          ldd /usr/bin/openmsx
+      - name: Package public openMSX executable and machine descriptions
+        run: |
+          mkdir -p package/usr/bin package/usr/share
+          cp /usr/bin/openmsx package/usr/bin/
+          cp -a /usr/share/openmsx package/usr/share/
+          tar -czf openmsx-runtime.tar.gz -C package usr
+          tar -tzf openmsx-runtime.tar.gz | head -15
+      - name: Export executable only (no copyrighted BIOS)
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmsx-linux-runtime-no-roms
+          path: openmsx-runtime.tar.gz
+          if-no-files-found: error
