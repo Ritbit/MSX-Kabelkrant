@@ -1,6 +1,9 @@
 name: Export openMSX runtime for local private-ROM testing
 on:
   workflow_dispatch:
+  push:
+    branches: [feature/z80-renderer]
+    paths: ['.github/workflows/openmsx-runtime.yml']
 
 permissions:
   contents: read
