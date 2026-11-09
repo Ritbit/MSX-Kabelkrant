@@ -1,6 +1,6 @@
 ; MSX2 Kabelkrant: experimental _TEXT (standalone, not production safe).
 ; BLOAD from C004 after CLEAR 300,&HBFFF in short test harness.
-; Standalone test: all four fonts on KRANT3.SC7, colours 13/15, positive X.
+; Standalone test: four KRANT3 fonts, colours 13/15 and BASIC-style negative-X alignment.
 ; Character atlas is NEVER modified: no prep/copy into Y=164..188.
 ; Sample: CALL TEXT("HELLO",20,90,2,15)
 SLTATR EQU 0FCC9h
@@ -72,7 +72,7 @@ CompareName:
     jr .loop
 TextName: db 'TEXT',0
 VerName:  db 'KBLVER',0
-VerMsg:   db 'KBL Z80 TEXT TEST 0.4 (MASK)',13,10,0
+VerMsg:   db 'KBL Z80 TEXT TEST 0.5 (ALIGN)',13,10,0
 
 VersionCommand:
     ld de,VerMsg
@@ -118,8 +118,6 @@ TextCommand:
     ld ix,FRMQNT
     call CALBAS
     ld (dest_x),de
-    bit 7,d
-    jp nz,IllegalFunction
     call ExpectComma
     ld ix,FRMQNT
     call CALBAS
@@ -149,6 +147,10 @@ TextCommand:
     cp 5
     jp nc,IllegalFunctionPop
     call SelectFont
+    jp c,IllegalFunctionPop
+    ld a,(dest_x+1)
+    bit 7,a
+    call nz,AlignTextRight
     jp c,IllegalFunctionPop
     call RenderText
     pop hl
@@ -181,6 +183,66 @@ BasicError:
 
 ; All source glyph rows come directly from KRANT3.SC7 on VRAM page 1.
 ; Never copy font1 glyphs into the font4 rows 160-188.
+
+; Negative X means right edge at ABS(X), as in LOOP.SYS 2685.
+; First measure the same proportional glyph widths used for rendering,
+; then draw at ABS(X)-width. Initial version rejects off-screen overflow.
+AlignTextRight:
+    ld hl,text_buffer
+    ld (layout_cursor),hl
+    ld a,(text_length)
+    ld (layout_remaining),a
+    ld hl,0
+    ld (layout_width),hl
+.next:
+    ld a,(layout_remaining)
+    or a
+    jr z,.finish
+    dec a
+    ld (layout_remaining),a
+    ld hl,(layout_cursor)
+    ld a,(hl)
+    inc hl
+    ld (layout_cursor),hl
+    call GlyphLookup
+    jr c,.space
+    ld de,(glyph_width)
+    jr .accumulate
+.space:
+    ld hl,(font_record)
+    inc hl
+    ld e,(hl)
+    ld d,0
+.accumulate:
+    ld hl,(layout_width)
+    add hl,de
+    ld (layout_width),hl
+    ld a,h
+    cp 2
+    jr nc,.invalid
+    jr .next
+.finish:
+    ld de,(dest_x)          ; negative signed X
+    ld hl,0
+    or a
+    sbc hl,de               ; ABS(X)
+    ld de,(layout_width)
+    or a
+    sbc hl,de               ; right edge - full text width
+    jr c,.invalid
+    ld a,h
+    cp 2
+    jr nc,.invalid
+    ld (dest_x),hl
+    or a
+    ret
+.invalid:
+    scf
+    ret
+
+layout_cursor: dw 0
+layout_remaining: db 0
+layout_width: dw 0
 
 RenderText:
     ld hl,text_buffer
