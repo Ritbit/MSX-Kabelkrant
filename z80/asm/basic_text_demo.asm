@@ -19,7 +19,13 @@ CHPUT EQU 000A2h
 
     ORG 0E004h
     dw CallHandler
+; MSX BASIC dispatches RAM page-3 extension calls through C004h,
+; regardless of the address used for our payload (E004h).
+; The original RAMDISK has already run its one-time C000h installer
+; when this vector is changed. Never install before RAMDISK.BIN.
 Install:
+    ld hl,CallHandler
+    ld (0C004h),hl
     ld hl,EmbeddedFonts
     call SetFontBase
     ld a,(RAMAD3)
