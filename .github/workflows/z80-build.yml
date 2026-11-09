@@ -74,6 +74,24 @@ jobs:
           mcopy -o -i z80/build/KBLASM.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
           mdir -i z80/build/KBLASM.DSK ::
           test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
+      - name: Generate full Kabelkrant Z80 test BASIC files
+        run: |
+          python3 z80/tools/make_full_z80_test.py --root . --output z80/build/full
+          python3 -m unittest discover -s z80/tests -p 'test_full_z80_test.py' -v
+      - name: Build full Kabelkrant Z80 preview image (NOT A RELEASE)
+        run: |
+          cp assets/kabelkrant-6.2b.dsk z80/build/KBLZ80TEST.DSK
+          mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/full/KBLINIT.SYS ::KBLINIT.SYS
+          mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/full/LOOP.SYS ::LOOP.SYS
+          mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
+          mdir -i z80/build/KBLZ80TEST.DSK ::KBLTXT.BIN
+          test "$(stat -c %s z80/build/KBLZ80TEST.DSK)" -eq 737280
+      - name: Upload full Kabelkrant Z80 preview disk (runtime testing required)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLZ80TEST-full-Kabelkrant-EXPERIMENTAL
+          path: z80/build/KBLZ80TEST.DSK
+          if-no-files-found: error
       - name: Create combined RAMdisk + Z80 TEXT experimental test disk
         run: |
           cp assets/kabelkrant-6.2.dsk z80/build/KBLCOMB.DSK
