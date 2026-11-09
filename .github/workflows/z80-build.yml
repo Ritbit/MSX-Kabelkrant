@@ -24,6 +24,8 @@ jobs:
         run: python3 z80/tools/convert_fonts.py --xdat src/X.DAT --output z80/build/FONTS.DAT
       - name: Run font conversion tests
         run: python3 -m unittest discover -s z80/tests -p 'test_conversion.py' -v
+      - name: Audit ASCII 33-127 font coverage
+        run: python3 -m unittest discover -s z80/tests -p 'test_charset.py' -v
       - name: Assemble Z80 prototype
         run: |
           (cd z80/asm && sjasmplus --raw=../build/kernel.raw --lst=../build/kernel.lst --sym=../build/kernel.sym kernel.asm)
