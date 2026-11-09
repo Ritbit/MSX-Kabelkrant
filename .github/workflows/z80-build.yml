@@ -78,9 +78,15 @@ jobs:
         run: |
           python3 z80/tools/make_full_z80_test.py --root . --output z80/build/full
           python3 -m unittest discover -s z80/tests -p 'test_full_z80_test.py' -v
+      - name: Checkout published 6.2b disk as read-only integration baseline
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: z80/build/stable
+          persist-credentials: false
       - name: Build full Kabelkrant Z80 preview image (NOT A RELEASE)
         run: |
-          cp assets/kabelkrant-6.2b.dsk z80/build/KBLZ80TEST.DSK
+          cp z80/build/stable/assets/kabelkrant-6.2b.dsk z80/build/KBLZ80TEST.DSK
           mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/full/KBLINIT.SYS ::KBLINIT.SYS
           mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/full/LOOP.SYS ::LOOP.SYS
           mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
