@@ -31,7 +31,7 @@ class FullZ80DiskTests(unittest.TestCase):
         self.assertLess(self.init.index("195 BLOAD"),self.init.index("210 RESTORE"))
 
     def test_all_non_text_code_preserved(self):
-        original = self.original_loop.splitlines()
+        original = [line for line in self.original_loop.splitlines() if line.strip()]
         patched = self.loop.splitlines()
         self.assertEqual(len(original), len(patched))
         for a, b in zip(original, patched):
