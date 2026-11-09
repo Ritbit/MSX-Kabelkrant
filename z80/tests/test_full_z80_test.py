@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 class FullZ80DiskTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        init = (ROOT / "src/KBLINIT.SYS").read_text(encoding="ascii")
+        init = (ROOT / "src/KBLINIT.SYS").read_text(encoding="utf-8")
         loop = (ROOT / "src/LOOP.SYS").read_text(encoding="ascii")
         cls.original_init = init
         cls.original_loop = loop
@@ -38,7 +38,7 @@ class FullZ80DiskTests(unittest.TestCase):
             if "GOSUB 2500" in a:
                 self.assertEqual(b,a.replace("GOSUB 2500","CALL TEXT(A$,X,Y,LT,K)"))
             else:
-                self.assertEqual(a,b)
+                self.assertEqual(a.replace('\u2014','-'),b)
         self.assertIn("RUN \"LOOP.SYS\"",self.init)
         self.assertIn("DEFUSR=AD:DEFUSR2=AD+11: DEFUSR1=AD+25",self.init)
 
