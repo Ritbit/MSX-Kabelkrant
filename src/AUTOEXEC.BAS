@@ -1,7 +1,7 @@
 10 ' Name     : AUTOEXEC.BAS
 20 ' Date     : 06-06-1994
 30 ' Function : Autostart of kabelkrant
-40 ' Part of  : Kabelkrant V6.2
+40 ' Part of  : Kabelkrant V6.2b
 50 ' Chains to: KBLINIT.SYS
 60 ' Options  : None
 70 '

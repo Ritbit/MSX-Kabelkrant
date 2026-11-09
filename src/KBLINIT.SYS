@@ -1,7 +1,7 @@
 10 ' Name     : KBLINIT.SYS
 20 ' Date     : 08-07-1994       1999:Changed line 230 to A: drive
 30 ' Function : initializes the ram/vram areas of Kabelkrant and setups system
-40 ' Part of  : Kabelkrant V6.2
+40 ' Part of  : Kabelkrant V6.2b
 50 ' Chains to: LOOP.SYS, which contains routines for showing the paper
 60 ' Options  : None
 70 '

@@ -2,7 +2,7 @@
 
 ![ZZBO Kabelkrant startup screen](docs/images/startup.png)
 
-You can see it working with a live demo here via the [WebMSX emulator](https://webmsx.org/?MACHINE=MSX2E&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/main/assets/kabelkrant-6.2.dsk)
+You can see it working with a live demo here via the [WebMSX emulator](https://webmsx.org/?MACHINE=MSX2E&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/main/assets/kabelkrant-6.2b.dsk)
 
 This repository preserves the source code of the **Kabelkrant**, a digital information bulletin system built in the early 1990s for **[ZZBO](https://nl.wikipedia.org/wiki/ZZBO)** — the *Zaanse Zieken en Bejaarden Omroep*, a local radio & television broadcaster serving care facilities in the Zaanstreek region of the Netherlands.
 
@@ -10,7 +10,7 @@ The system ran unattended on a **Philips NMS-8250 MSX2** computer, displaying ro
 
 The software is written almost entirely in **MSX BASIC**, with a small Z80 assembly RAM disk driver to keep page loading fast. It ran in production for several years.
 
-The version published here is **version 6.2 (1994)**. Two earlier generations are preserved in `archive/`, older versions did not survive the years unfortunately.
+The current downloadable release is **6.2b (2026 maintenance update)**, based on the original **6.2 (1994)**. The original v6.2 disk and ZIP remain in `assets/` for historical reference. Two earlier generations are preserved in `archive/`.
 
 # Why and a bit of history
 
@@ -19,7 +19,7 @@ In the late 80's and early 90's, the ZZBO, a local broadcaster serving care faci
 The first editions where merely static code an no page-maintenance system existed and it was basic text only.
 Later editions added a graphical page which highly increased the font quality. From version 4 I started to implement a BBS function so editors could dial in and edit content remotely, that was used for a couple of months but later they decided it was easier to have copies of the system on disks, edit that at home or in the studio and just swap the disks in the system onsite. the latest version with modem support was 5.3x as we removed all modem support in version 5.40 to never return.
 
-The final version was version 6 where the some bugfixes were done in 6.2 which is the version as shown here and discussed in the documentation. The older version 5.3x and 5.44 are in /archive/ for reference.
+The final historical production version was 6.2; the modern 6.2b maintenance release corrects and speeds up the BASIC font renderer without adding assembly code. The older version 5.3x and 5.44 are in /archive/ for reference.
 
 Over the years there were some ideas to let the system control video players so they could automate programs to be started automatically by that was never actually implemented, like switching the video output via the tape-cassette motor control, some remnants of that are still in the code as MOTOR ON and MOTOR OFF but were never actually used.
 
@@ -50,7 +50,7 @@ Over the years there were some ideas to let the system control video players so 
 | Fault screen | Graphics asset sheet |
 |---|---|
 | ![Storing screen](docs/images/Storing.png) | ![Graphics asset sheet](docs/images/Virtuele-Pagina-bekijken.png) |
-| Displayed when the service is interrupted | KRANT4.SC7: icons, hourglass frames, 4 font styles |
+| Displayed when the service is interrupted | Historical KRANT4.SC7 graphics atlas (3 fonts); v6.2b uses KRANT3.SC7 (4 fonts) |
 
 See [docs/SCREENSHOTS.md](docs/SCREENSHOTS.md) for the full screenshot gallery.
 
@@ -80,7 +80,7 @@ Although modest by modern standards, it solved a real communication problem with
 ├── LICENSE
 ├── CONTRIBUTING.md
 ├── CHANGELOG.md
-├── src/                            # Version 6.2 source (MSX BASIC)
+├── src/                            # Version 6.2b source (MSX BASIC)
 ├── archive/
 │   ├── 5.3x/                       # Earliest preserved version (~1990, BBS era)
 │   └── 5.44/                       # Intermediate version (removed modem support)
@@ -158,9 +158,9 @@ Recommended emulators:
 
 The source files must be placed on an MSX-DOS disk image with the correct layout. See [docs/SYSTEM-OVERVIEW.md](docs/SYSTEM-OVERVIEW.md) for the runtime requirements.
 
-Easier is to download the [.dsk](https://github.com/Ritbit/MSX-Kabelkrant/raw/refs/heads/main/assets/kabelkrant-6.2.dsk) disk-image for running on an MSX2-emulator or even a physical machine!
+Easier is to download the [.dsk](https://github.com/Ritbit/MSX-Kabelkrant/raw/refs/heads/main/assets/kabelkrant-6.2b.dsk) disk-image for running on an MSX2-emulator or even a physical machine!
 
-Or you can download a [zip-archive](https://github.com/Ritbit/MSX-Kabelkrant/raw/refs/heads/main/assets/kabelkrant-6.2.zip) with all the files in a ascii/readable format
+Or you can download a [zip-archive](https://github.com/Ritbit/MSX-Kabelkrant/raw/refs/heads/main/assets/kabelkrant-6.2b.zip) with all the files in a ascii/readable format
 
 ---
 

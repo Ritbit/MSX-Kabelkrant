@@ -1,5 +1,15 @@
 # Version History
 
+## Version 6.2b (2026 maintenance release)
+
+A modern maintenance update to the historical 6.2 release, not a
+new 1990s production version. It selects the complete `KRANT3.SC7`
+four-font atlas, corrects the X-coordinate typo in memory, and
+speeds up the existing MSX BASIC renderer. A rebuilt disk image
+and ZIP are available under `assets/kabelkrant-6.2b.*`.
+The original `assets/kabelkrant-6.2.*` files remain intact.
+
+
 Three generations of the Kabelkrant software are preserved in this repository.
 
 ```mermaid
