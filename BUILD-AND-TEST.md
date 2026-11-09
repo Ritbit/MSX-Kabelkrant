@@ -172,11 +172,65 @@ See the [WebMSX URL parameters](https://github.com/ppeccin/WebMSX/blob/master/do
 WebMSX is a separate manual validation route, not the evidence source
 for an openMSX/Tcl test.
 
-## 7. CI and acceptance criteria
+## 7. GitHub Actions build, test and emulator automation
 
-Workflow:
-[`.github/workflows/z80-build.yml`](.github/workflows/z80-build.yml)
-runs automatically on changes in `z80/**` and related build files.
+Workflow: [`.github/workflows/z80-build.yml`](.github/workflows/z80-build.yml).
+
+Every push affecting `z80/**`, `src/X.DAT` or the workflow runs the
+**build** job: assembles Z80, validates Python font/BLOAD/ROM structures,
+generates standalone and combined experimental diskimages, and uploads
+the artifacts. You can also start this workflow from GitHub **Actions >
+Z80 build and emulator smoke tests > Run workflow**, selecting
+`feature/z80-renderer` when available.
+
+An additional **openmsx-smoke** job consumes the standalone `KBLASM.DSK`
+artifact from that same run. It will execute the emulator **only when all
+four base64 ROM secrets exist**. Without them it records a
+`SKIPPED (ROM secrets not configured)` message in the run summary; a green
+build is then **not** evidence of a successful emulator execution.
+
+To enable that job, use GitHub repository **Settings > Secrets and
+variables > Actions > New repository secret** and add the following.
+Each secret contains only the base64 of the corresponding 16-KiB binary,
+without filenames or line wrapping.
+
+| GitHub Actions secret | Local ROM file |
+| --- | --- |
+| `MSX_NMS8250_BIOS_B64` | `nms8250-bios.rom` |
+| `MSX_NMS8250_BASIC_B64` | `nms8250-basic.rom` |
+| `MSX_NMS8250_SUB_B64` | `nms8250_msx2sub.rom` |
+| `MSX_NMS8250_DISK_B64` | `nms8250_disk.rom` |
+
+Generate each value locally (example for the first ROM):
+
+```sh
+base64 -w0 /path/to/nms8250-bios.rom
+```
+
+On macOS, use `base64 < /path/to/nms8250-bios.rom | tr -d '\\n'`.
+Paste the output **into GitHub's secret field**, not into a commit,
+issue, workflow source, build log, screenshot or GitHub Actions artifact.
+Make sure your ROM use is legally permitted.
+
+The emulator job installs openMSX, reconstructs the temporary ROM pool,
+boots the standalone `KBLASM.DSK` in headless NMS 8250 mode and
+captures `openmsx-smoke.png`. The job fails if openMSX exits abnormally,
+fails to write a screenshot, or the screenshot is implausibly empty.
+The screenshot is uploaded as
+`openmsx-NMS8250-standalone-smoke`. This is **not** yet pixel-exact
+functional validation; visually inspect the image or compare expected
+VRAM/pixels before calling a change correct. The combined `KBLCOMB.DSK`
+still has a known runtime failure and is intentionally not a passing
+emulator test.
+
+WebMSX testing remains manual for now. GitHub Actions does not currently
+drive WebMSX in a browser, and a GitHub Actions artifact URL cannot simply
+be substituted for a public raw `.dsk` URL. Browser automation would
+require a separate, reproducible browser-upload workflow and assertions.
+
+## 8. CI and acceptance criteria
+
+The same workflow builds automatically on changes in `z80/**` and related build files.
 It compiles SjASMPlus, runs Python tests, and uploads named artifacts:
 
 | Artifact | Meaning |
