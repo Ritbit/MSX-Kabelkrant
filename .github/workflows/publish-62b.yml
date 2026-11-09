@@ -1,0 +1,66 @@
+name: Publish Kabelkrant 6.2b GitHub Release
+on:
+  push:
+    branches: [release/6.2b-disk-images]
+    paths: ['.github/workflows/publish-62b.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout official release from main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          persist-credentials: false
+
+      - name: Verify release files match the reproducible build
+        run: |
+          python3 tools/build_release_62b.py
+          git diff --exit-code -- assets/kabelkrant-6.2b.dsk assets/kabelkrant-6.2b.zip
+          test "$(stat -c %s assets/kabelkrant-6.2b.dsk)" -eq 737280
+          sha256sum assets/kabelkrant-6.2b.dsk assets/kabelkrant-6.2b.zip
+
+      - name: Write release notes
+        run: |
+          cat > "$RUNNER_TEMP/release-notes.md" <<'EOF'
+          ## Kabelkrant 6.2b — BASIC maintenance release
+
+          This is a 2026 maintenance update to the original 1994 Kabelkrant v6.2.
+
+          - Fix all four proportional fonts by using the complete KRANT3.SC7 atlas.
+          - Repair the font-2 glyph coordinate typo at runtime without modifying X.DAT.
+          - Optimize MSX BASIC SCREEN 7 rendering; approximately 20–21% faster
+            for white, positive-X text in the isolated openMSX benchmarks.
+          - Retain the original RAMdisk, graphics, and all other historical data.
+          - No experimental Z80/assembly text engine is included.
+
+          **Files:**
+          - `kabelkrant-6.2b.dsk` — bootable 720 KB MSX2 disk image (WebMSX, openMSX, hardware)
+          - `kabelkrant-6.2b.zip` — individual disk files, including BASIC sources
+
+          The historical 6.2 images remain in the repository's `assets/` directory.
+          EOF
+
+      - name: Publish v6.2b release with disk and ZIP
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: Ritbit/MSX-Kabelkrant
+        run: |
+          set -euo pipefail
+          if gh release view v6.2b >/dev/null 2>&1; then
+            echo "Release v6.2b already exists; refusing to overwrite assets."
+            exit 1
+          fi
+          gh release create v6.2b \
+            assets/kabelkrant-6.2b.dsk assets/kabelkrant-6.2b.zip \
+            --target "$(git rev-parse HEAD)" \
+            --title "Kabelkrant 6.2b" \
+            --notes-file "$RUNNER_TEMP/release-notes.md" \
+            --latest
+          gh release view v6.2b --json url,assets,tagName,isDraft,isPrerelease
