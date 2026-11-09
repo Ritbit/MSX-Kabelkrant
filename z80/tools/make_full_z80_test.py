@@ -62,6 +62,8 @@ def transform(init: str, loop: str) -> tuple[str, str, int]:
     changed=0
     result=[]
     for line in loop.splitlines():
+        if not line.strip():
+            continue  # MSX Disk BASIC ASCII cannot contain blank unnumbered lines
         if re.match(r'^\d+\s',line) and int(line.split()[0]) < 2500:
             new=line.replace('GOSUB 2500',TEXT_CALL)
             changed+=new!=line
