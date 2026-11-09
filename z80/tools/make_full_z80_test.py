@@ -27,7 +27,7 @@ def split_long_data_lines(source: str, max_len: int = 210) -> str:
         if len(line) <= max_len:
             result.append(line)
             continue
-        match = re.fullmatch(r'(\\d+)\\s+DATA\\s+(.+)',line)
+        match = re.fullmatch(r'(\d+)\s+DATA\s+(.+)',line)
         if not match:
             raise ValueError(f'Non-DATA BASIC line too long: {line[:50]}')
         n = int(match.group(1))
@@ -46,7 +46,7 @@ def split_long_data_lines(source: str, max_len: int = 210) -> str:
             result.append(f'{start_n} DATA '+','.join(cur))
         if start_n >= next_n:
             raise ValueError(f'No free BASIC numbers after line {n}')
-    return '\\n'.join(result)+'\\n'
+    return '\n'.join(result)+'\n'
 
 
 def transform(init: str, loop: str) -> tuple[str, str, int]:
