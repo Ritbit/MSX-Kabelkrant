@@ -12,6 +12,17 @@ file or the other three coordination docs to `main`.
 - [ ] Decide on one-file two-stage loader or a proven two-file fallback.
 - [ ] Remove diagnostic mapper pokes from any production candidate.
 
+## Full Kabelkrant Z80 alpha (verified; not stable)
+
+- [x] Load original RAMdisk first and Z80 TEXT at C804h after warmstart.
+- [x] Remove unused BASIC font array and renderer from *test* LOOP.SYS;
+      include original LOOPBAS.SYS in the testdisk.
+- [x] Boot full application, draw a news page and verify Z80 CALL handler
+      repeatedly invoked in openMSX NMS 8250.
+- [ ] Debug unexpected reboot around 140–145 emulated seconds.
+- [ ] Run complete multi-page / editor / clock / C: I/O regressions with
+      this exact full disk image before claiming runtime stability.
+
 ## Next — functional and performance parity
 
 - [ ] Exercise all ASCII 33–127 per font; define a deliberate fallback

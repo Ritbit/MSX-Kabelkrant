@@ -101,3 +101,18 @@ address 46F5h in slot 3-2, but an LDIR at 41B3h in the original
 RAMdisk later zero-fills 46F4h–7FFEh. This overwrites the TEXT extension
 byte E5h with 00h. The old explanation ('CALL never reaches the ROM')
 is superseded. See `z80/COMBINED-STATUS.md` for write-watchpoint evidence.
+
+## Full application alpha milestone
+
+`z80/FULL-TEST.md` documents the **experimental**
+`KBLZ80TEST-full-Kabelkrant-EXPERIMENTAL` disk from GitHub Actions.
+It uses an unmodified v6.2b disk as the base, a separately loaded
+C804h Z80 TEXT module, original RAMdisk, and a smaller LOOP.SYS
+that omits the unused BASIC X(4,110) font table to preserve memory.
+The historical 6.2b LOOP.SYS is retained on the alpha disk as
+`LOOPBAS.SYS`.
+
+Verified in openMSX: RAMdisk boot, Z80 install, multiple CALL TEXT
+executions, rendered real news page. **Known regression:** machine
+re-enters the boot sequence at roughly 140–145 emulated seconds.
+Do not promote alpha as stable or merge the feature branch wholesale.
