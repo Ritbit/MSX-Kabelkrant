@@ -37,6 +37,8 @@ class FullZ80DiskTests(unittest.TestCase):
         for a, b in zip(original, patched):
             if "GOSUB 2500" in a:
                 self.assertEqual(b,a.replace("GOSUB 2500","CALL TEXT(A$,X,Y,LT,K)"))
+            elif a.startswith("105 CLEAR 1000:"):
+                self.assertEqual(b,a.replace("CLEAR 1000:","CLEAR 1000,&HC7FF:"))
             else:
                 self.assertEqual(a.replace('\u2014','-'),b)
         self.assertIn("RUN \"LOOP.SYS\"",self.init)
