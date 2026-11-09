@@ -1,5 +1,5 @@
 ; MSX2 Kabelkrant: experimental _TEXT (standalone, not production safe).
-; BLOAD from E004 after CLEAR 300,&HDFFF; RAMDISK.BIN occupies C000-C7EF.
+; BLOAD from C804 after CLEAR 300,&HC7FF; RAMDISK.BIN installer C000-C7EF.
 ; Standalone test: four KRANT3 fonts, colours 13/15 and BASIC-style negative-X alignment.
 ; Character atlas is NEVER modified: no prep/copy into Y=164..188.
 ; Sample: CALL TEXT("HELLO",20,90,2,15)
@@ -17,7 +17,7 @@ FRESTR EQU 067D0h
 ERRHAND EQU 0406Fh
 CHPUT EQU 000A2h
 
-    ORG 0E004h
+    ORG 0C804h
     dw CallHandler
 ; MSX BASIC dispatches RAM page-3 extension calls through C004h,
 ; regardless of the address used for our payload (E004h).
@@ -78,7 +78,7 @@ CompareName:
     jr .loop
 TextName: db 'TEXT',0
 VerName:  db 'KBLVER',0
-VerMsg:   db 'KBL Z80 TEXT TEST 0.7 (E000)',13,10,0
+VerMsg:   db 'KBL Z80 TEXT TEST 0.8 (C800)',13,10,0
 
 VersionCommand:
     ld de,VerMsg
