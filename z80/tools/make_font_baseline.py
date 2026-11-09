@@ -17,11 +17,29 @@ HEADER = [
     '40 SETPAGE 0,1:CLS:BLOAD "KRANT3.SC7",S:COLOR=RESTORE:SETPAGE 0,0:CLS',
     "50 DIM X(4,110),L1(4),L2(4),L3(4),Y1(4),Y2(4),Y3(4),H(4)",
     '60 COPY "X.DAT" TO X',
+    "65 X(2,20)=158",
     "70 GOSUB 2700:K=15",
-    '80 A$="ABCDEFGHIJKLMNOPQRSTUVWXYZ"',
+    '80 A$="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"',
     "90 LT=4:X=20:Y=5:GOSUB 2500",
     "100 LT=2:X=20:Y=55:GOSUB 2500",
-    "110 LT=3:X=20:Y=105:GOSUB 2500",
+    "110 LT=3:X=5:Y=105:GOSUB 2500",
+    "120 LT=1:X=20:Y=155:GOSUB 2500",
+    "130 GOTO 130",
+]
+
+COLOUR_HEADER = [
+    "10 ' COLOUR 13 AND RIGHT ALIGNMENT TEST (PRODUCTION BASIC)",
+    "20 DEFINT A-W,Z:DEFDBL X,Y",
+    "30 SCREEN 7:COLOR 15,0,0:COLOR=(0,1,1,3):CLS",
+    '40 SETPAGE 0,1:CLS:BLOAD "KRANT3.SC7",S:COLOR=RESTORE:SETPAGE 0,0:CLS',
+    "50 DIM X(4,110),L1(4),L2(4),L3(4),Y1(4),Y2(4),Y3(4),H(4)",
+    '60 COPY "X.DAT" TO X',
+    "65 X(2,20)=158",
+    "70 GOSUB 2700:K=13",
+    '80 A$="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"',
+    "90 LT=4:X=-505:Y=5:GOSUB 2500",
+    "100 LT=2:X=-505:Y=55:GOSUB 2500",
+    "110 LT=3:X=-505:Y=105:GOSUB 2500",
     "120 LT=1:X=20:Y=155:GOSUB 2500",
     "130 GOTO 130",
 ]
@@ -41,8 +59,9 @@ def extract_original(source: str) -> list[str]:
         raise ValueError(f"missing original BASIC lines: {sorted(required-ids)}")
     return selected
 
-def make_program(source: str) -> bytes:
-    basic = ("\n".join(HEADER + extract_original(source)) + "\n").encode("ascii")
+def make_program(source: str, colour: bool = False) -> bytes:
+    header = COLOUR_HEADER if colour else HEADER
+    basic = ("\n".join(header + extract_original(source)) + "\n").encode("ascii")
     result = encode_msx_basic(basic)
     validate_msx_basic(result)
     return result
@@ -51,8 +70,9 @@ if __name__ == "__main__":
     p=argparse.ArgumentParser()
     p.add_argument("--source",type=Path,default=Path("src/LOOP.SYS"))
     p.add_argument("--output",type=Path,default=Path("z80/build/FONTBAS.BAS"))
+    p.add_argument("--colour-test",action="store_true")
     a=p.parse_args()
-    output=make_program(a.source.read_text(encoding="latin-1"))
+    output=make_program(a.source.read_text(encoding="latin-1"), colour=a.colour_test)
     a.output.parent.mkdir(parents=True,exist_ok=True)
     a.output.write_bytes(output)
     print(f"{a.output}: {len(output)} bytes, repaired production BASIC, four KRANT3 fonts")
