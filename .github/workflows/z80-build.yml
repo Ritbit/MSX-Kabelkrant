@@ -1,4 +1,4 @@
-name: Z80 build (prototype)
+name: Z80 build and emulator smoke tests
 on:
   push:
     branches: [feature/z80-renderer]
@@ -137,3 +137,100 @@ jobs:
             z80/build/textdemo.sym
             z80/build/KBLTXT.BIN
           if-no-files-found: error
+
+  # The build always runs. This emulator job only starts when all four
+  # user-provided ROM secrets exist. No BIOS bytes enter the repository or
+  # published artifacts. See BUILD-AND-TEST.md for secret setup.
+  openmsx-smoke:
+    name: openMSX NMS 8250 runtime smoke
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    env:
+      MSX_NMS8250_BIOS_B64: ${{ secrets.MSX_NMS8250_BIOS_B64 }}
+      MSX_NMS8250_BASIC_B64: ${{ secrets.MSX_NMS8250_BASIC_B64 }}
+      MSX_NMS8250_SUB_B64: ${{ secrets.MSX_NMS8250_SUB_B64 }}
+      MSX_NMS8250_DISK_B64: ${{ secrets.MSX_NMS8250_DISK_B64 }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download standalone Z80 disk from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: KBLASM-experimental-MSX2-testdisk
+          path: z80/build
+
+      - name: Determine whether system ROMs were configured
+        shell: bash
+        run: |
+          if [[ -n "$MSX_NMS8250_BIOS_B64" && -n "$MSX_NMS8250_BASIC_B64" && -n "$MSX_NMS8250_SUB_B64" && -n "$MSX_NMS8250_DISK_B64" ]]; then
+            echo "ROM_READY=true" >> "$GITHUB_ENV"
+          else
+            echo "ROM_READY=false" >> "$GITHUB_ENV"
+            echo "::warning::openMSX runtime smoke SKIPPED: four MSX_NMS8250_*_B64 repository secrets are needed."
+            echo "### openMSX runtime: SKIPPED (ROM secrets not configured)" >> "$GITHUB_STEP_SUMMARY"
+            echo "Build and Python unit tests are not emulator execution." >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Install headless emulator
+        if: env.ROM_READY == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil
+          test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
+
+      - name: Decode four NMS 8250 ROMs into ephemeral private directory
+        if: env.ROM_READY == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          rom_dir="$RUNNER_TEMP/openmsx-roms"
+          mkdir -p "$rom_dir"
+          printf '%s' "$MSX_NMS8250_BIOS_B64" | base64 --decode > "$rom_dir/bios.rom"
+          printf '%s' "$MSX_NMS8250_BASIC_B64" | base64 --decode > "$rom_dir/basic.rom"
+          printf '%s' "$MSX_NMS8250_SUB_B64" | base64 --decode > "$rom_dir/sub.rom"
+          printf '%s' "$MSX_NMS8250_DISK_B64" | base64 --decode > "$rom_dir/disk.rom"
+          for part in bios basic sub disk; do
+            test "$(stat -c %s "$rom_dir/$part.rom")" -eq 16384
+          done
+          # The NMS 8250 expects a combined 32KiB MSX BIOS+BASIC file.
+          cat "$rom_dir/bios.rom" "$rom_dir/basic.rom" > "$rom_dir/nms8250_basic-bios2.rom"
+          rom_pool="$HOME/.openMSX/share/systemroms"
+          mkdir -p "$rom_pool"
+          cp "$rom_dir/nms8250_basic-bios2.rom" "$rom_pool/"
+          cp "$rom_dir/sub.rom" "$rom_pool/nms8250_msx2sub.rom"
+          cp "$rom_dir/disk.rom" "$rom_pool/nms8250_disk.rom"
+          # Do not list, hexdump, or upload private system ROM contents.
+          echo "Installed 3 temporary system ROM files for openMSX."
+
+      - name: Boot standalone Z80 demo in openMSX and capture screen
+        if: env.ROM_READY == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 120s xvfb-run -a openmsx \
+            -machine Philips_NMS_8250 \
+            -diska z80/build/KBLASM.DSK \
+            -script z80/tools/openmsx_smoke.tcl \
+            2>&1 | tee "$RUNNER_TEMP/openmsx-smoke.log"
+          grep -q 'OPENMSX_SMOKE_SCREENSHOT:' "$RUNNER_TEMP/openmsx-smoke.log"
+          test -s z80/build/openmsx-smoke.png
+          python3 z80/tools/check_openmsx_smoke.py z80/build/openmsx-smoke.png
+          echo "### openMSX: standalone smoke PASSED" >> "$GITHUB_STEP_SUMMARY"
+          echo "Four fonts/colour image captured; visual/pixel-equivalence not yet asserted." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload emulator screenshot and smoke log (no ROMs)
+        if: env.ROM_READY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmsx-NMS8250-standalone-smoke
+          path: z80/build/openmsx-smoke.png
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Remove private ROM files
+        if: always()
+        shell: bash
+        run: |
+          rm -rf "$RUNNER_TEMP/openmsx-roms" "$HOME/.openMSX/share/systemroms"
