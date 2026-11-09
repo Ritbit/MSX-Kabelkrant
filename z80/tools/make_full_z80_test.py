@@ -79,6 +79,11 @@ def transform(init: str, loop: str) -> tuple[str, str, int]:
     if changed != 7:
         raise ValueError(f'Expected seven text CALL sites, found {changed}')
     loop='\n'.join(result)+'\n'
+    # LOOP.SYS executes CLEAR again at startup; keep the Z80 RAM reservation.
+    if '105 CLEAR 1000: DEFINTA-Z: DEFDBL X,Y' not in loop:
+        raise ValueError('Unexpected LOOP.SYS CLEAR statement')
+    loop=loop.replace('105 CLEAR 1000: DEFINTA-Z: DEFDBL X,Y',
+                      '105 CLEAR 1000,&HC7FF: DEFINTA-Z: DEFDBL X,Y')
     # The original Git source contains Unicode em dashes in two REM comments.
     # MSX Disk BASIC ASCII only permits 7-bit text; normalize comments here.
     loop=loop.replace('\u2014','-')
