@@ -11,7 +11,6 @@ This is an experimental build. The old DOS/Disk BASIC entry points are
 intentionally NOT removed until hardware/emulator integration proves safe.
 """
 from pathlib import Path
-from hashlib import sha256
 import argparse
 import struct
 from msx_basic_ascii import encode_msx_basic
@@ -85,14 +84,23 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument('--root', type=Path, default=Path('.'))
     p.add_argument('--output', type=Path, default=Path('z80/build'))
+    p.add_argument('--extension', type=Path, help='Previously assembled 46F5h Z80 ROM extension')
     args = p.parse_args()
     out = args.output
     out.mkdir(parents=True, exist_ok=True)
-    asm = extension_source((args.root/'z80/asm/basic_text_demo.asm').read_text())
-    (args.root/'z80/asm/.generated_combined.asm').write_text(asm)
-    print('Generated combined assembly at ROM address 46F5h')
-    print('Next assemble .generated_combined.asm into combined_text.raw')
-    build_programs(args.root,out)
+    if args.extension:
+        original = (args.root/'src/RAMDISK.BIN').read_bytes()
+        extension = args.extension.read_bytes()
+        result = combine(original, extension)
+        (out/OUT_NAME).write_bytes(result)
+        print(f'{out/OUT_NAME}: {len(result)} bytes, original RAMdisk plus ROM CALL TEXT')
+        print(f'ROM copy size: {len(original)-7-ROM_OFFSET+len(extension)} bytes')
+        build_programs(args.root,out)
+    else:
+        asm = extension_source((args.root/'z80/asm/basic_text_demo.asm').read_text())
+        (args.root/'z80/asm/.generated_combined.asm').write_text(asm)
+        print('Generated combined assembly at ROM address 46F5h')
+        print('Next assemble .generated_combined.asm into combined_text.raw')
 
 
 if __name__ == '__main__':
