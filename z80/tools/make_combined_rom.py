@@ -83,7 +83,7 @@ def build_programs(root: Path, out: Path) -> None:
     # during the legacy warm-start handoff. Register only for this experiment.
     registration = ("75 OUT &HFD,2:A=PEEK(&HF342):"
                     "POKE &HFCC9+(A AND 3)*16+(A AND 12)+1,32")
-    demo = demo.replace('80 CALL KBLVER', registration + '\\n80 CALL KBLVER')
+    demo = demo.replace('80 CALL KBLVER', registration + '\n80 CALL KBLVER')
     for name, text in [('COMBAUTO.BAS', boot), ('COMBTEXT.BAS', demo)]:
         out.joinpath(name).write_bytes(encode_msx_basic(text.replace('\r\n','\n').encode('ascii')))
 
