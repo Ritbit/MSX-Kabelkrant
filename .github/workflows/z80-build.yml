@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -100,6 +100,25 @@ jobs:
           name: KBLZ80TEST-full-Kabelkrant-EXPERIMENTAL
           path: z80/build/KBLZ80TEST.DSK
           if-no-files-found: error
+      - name: Publish WebMSX-ready development disk at a permanent raw URL
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p assets
+          cp z80/build/KBLZ80TEST.DSK assets/KBLZ80TEST.DSK
+          test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
+          git add -f assets/KBLZ80TEST.DSK
+          if git diff --cached --quiet; then
+            echo "Preview disk unchanged; no commit required."
+          else
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git commit -m "build(z80): publish experimental WebMSX preview disk [skip ci]"
+            git push origin HEAD:feature/z80-renderer
+          fi
+          echo "### WebMSX preview (experimental, reset regression known)" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://webmsx.org/?MACHINE=MSX2E&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLZ80TEST.DSK" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Create combined RAMdisk + Z80 TEXT experimental test disk
         run: |
           cp assets/kabelkrant-6.2.dsk z80/build/KBLCOMB.DSK
