@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Wrap SjASMPlus raw C004h payload in an MSX BASIC BLOAD/R header."""
+"""Wrap SjASMPlus raw A004h payload in an MSX BASIC BLOAD/R header."""
 from pathlib import Path
 import argparse
 import struct
 
-def convert(payload: bytes, load: int = 0xC004, entry: int = 0xC006) -> bytes:
-    if not payload or load + len(payload) > 0xF000:
+def convert(payload: bytes, load: int = 0xA004, entry: int = 0xA006) -> bytes:
+    if not payload or load < 0xA004 or load + len(payload) > 0xC000:
         raise ValueError("unsafe BLOAD payload")
     return b"\xFE" + struct.pack("<HHH",load,load+len(payload)-1,entry) + payload
 
