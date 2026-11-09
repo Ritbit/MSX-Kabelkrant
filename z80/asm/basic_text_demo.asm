@@ -1,6 +1,7 @@
 ; MSX2 Kabelkrant: experimental _TEXT (standalone, not production safe).
 ; BLOAD from C004 after CLEAR 300,&HBFFF in short test harness.
-; Restrictions for initial test: font 2-3, colour 15, X >= 0.
+; Restrictions for initial test: font 1 or 3, colour 15, X >= 0.
+; Font 1 requires copying KRANT4.SC7 atlas rows 51..80 to rows 164..193.
 ; Sample: CALL TEXT("HELLO",20,90,2,15)
 SLTATR EQU 0FCC9h
 RAMAD3 EQU 0F344h
@@ -143,12 +144,16 @@ TextCommand:
     cp 15
     jp nz,IllegalFunctionPop
     ld a,(text_font)
-    cp 2
-    jp c,IllegalFunctionPop
-    cp 5
-    jp nc,IllegalFunctionPop
+    cp 1
+    jr z,.font_supported
+    cp 3
+    jp nz,IllegalFunctionPop
+.font_supported:
     call SelectFont
     jp c,IllegalFunctionPop
+    ld a,(text_font)
+    cp 1
+    call z,PrepareFont1
     call RenderText
     pop hl
     ret
@@ -176,6 +181,34 @@ IllegalFunction:
 BasicError:
     ld ix,ERRHAND
     jp CALBAS
+
+
+; Reproduce the original LOOP.SYS 2540 font-1 preparation:
+; COPY(0,51)-(512,80),1 TO (0,164),1
+; The source remains the unmodified KRANT4.SC7 graphics page.
+; Initial demo supports white only (colour 15), so the subsequent
+; LINE ... ,15,BF,AND is a no-op and can safely be omitted.
+PrepareFont1:
+    xor a
+    ld (LmSX),a
+    ld (LmSX+1),a
+    ld (LmDX),a
+    ld (LmDX+1),a
+    ld hl,256+51
+    ld (LmSY),hl
+    ld hl,256+164
+    ld (LmDY),hl
+    ld hl,512
+    ld (LmNX),hl
+    ld hl,30
+    ld (LmNY),hl
+    xor a
+    ld (LmCLR),a
+    ld (LmARG),a
+    ld a,090h                  ; LMMM/IMP (not transparent)
+    ld (LmCMD),a
+    call LmmmLaunch
+    ret
 
 RenderText:
     ld hl,text_buffer
