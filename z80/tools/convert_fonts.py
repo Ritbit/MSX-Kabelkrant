@@ -10,9 +10,9 @@ import argparse
 import struct
 
 FONT_META = {
-    1: (14, (52, 96, 0), (164, 179, 0)),
+    1: (14, (52, 96, 0), (51, 66, 0)),
     2: (12, (56, 96, 0), (81, 94, 0)),
-    3: (16, (43, 83, 96), (81, 98, 116)),
+    3: (16, (43, 83, 96), (107, 124, 142)),
     4: (14, (49, 96, 0), (160, 174, 0)),
 }
 
@@ -38,6 +38,13 @@ def convert(raw: bytes) -> bytes:
     if len(raw) != 5 * 111 * 8:
         raise ValueError('src/X.DAT must contain exactly 555 BASIC doubles')
     values = [decode_number(raw[i:i + 8]) for i in range(0, len(raw), 8)]
+    # X.DAT: font 2 X(2,20)=18 is an original typo between 148 and 166.
+    # Correct the generated descriptor while preserving the raw source file.
+    k = 20 * 5 + 2
+    if values[k] == 18 and values[k-5] == 148 and values[k+5] == 166:
+        values[k] = 158
+    if values[k] != 158:
+        raise ValueError("unexpected font 2 coordinate at X(2,20)")
     output = bytearray(b'KBF1' + bytes([1, 4, 0, 0]))
     for font, (height, limits, ys) in FONT_META.items():
         coords = [values[index * 5 + font] for index in range(111)]
