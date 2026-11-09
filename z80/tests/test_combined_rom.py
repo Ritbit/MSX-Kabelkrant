@@ -42,7 +42,7 @@ class CombinedRomTests(unittest.TestCase):
         text = (ROOT / 'z80/asm/basic_text_demo.asm').read_text()
         asm = extension_source(text)
         self.assertIn('    ORG 046F5h', asm)
-        self.assertIn("CallHandler:\n    ld hl,EmbeddedFonts", asm)
+        self.assertIn("CallHandler:\n    push hl\n    ld hl,EmbeddedFonts", asm)
         self.assertIn("INCLUDE 'v9938_lmmm.asm'", asm)
 
     def test_overlarge_extension_rejected(self):
