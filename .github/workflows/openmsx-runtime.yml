@@ -21,8 +21,9 @@ jobs:
           ldd /usr/bin/openmsx
       - name: Package public openMSX executable and machine descriptions
         run: |
-          mkdir -p package/usr/bin package/usr/share
+          mkdir -p package/usr/bin package/usr/share package/usr/lib
           cp /usr/bin/openmsx package/usr/bin/
+          cp -L /usr/lib/x86_64-linux-gnu/libSDL2_ttf-2.0.so.0 package/usr/lib/
           cp -a /usr/share/openmsx package/usr/share/
           tar -czf openmsx-runtime.tar.gz -C package usr
           tar -tzf openmsx-runtime.tar.gz | head -15
