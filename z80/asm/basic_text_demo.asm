@@ -72,7 +72,7 @@ CompareName:
     jr .loop
 TextName: db 'TEXT',0
 VerName:  db 'KBLVER',0
-VerMsg:   db 'KBL Z80 TEXT TEST 0.3 (COLOUR)',13,10,0
+VerMsg:   db 'KBL Z80 TEXT TEST 0.4 (MASK)',13,10,0
 
 VersionCommand:
     ld de,VerMsg
@@ -289,33 +289,69 @@ GlyphBlit:
     call LmmmLaunch
     ret
 
-; K!=15: convert only one glyph, using page-1 scratch area Y=190.
-; This does NOT touch the KRANT3.SC7 glyph atlas (last row Y=188).
-; LMMM/IMP copies glyph and zero pixels to scratch; LMMV/AND applies
-; the colour mask (15 AND K = K, 0 AND K = 0), then LMMM/TPSET to screen.
-; LmmmLaunch waits for idle before issuing each command.
+; Convert one glyph from source colours {15=ink,1=background} to
+; {K=ink,0=transparent}. Two page-1 scratch rects are used:
+; A=(0,190)..(width-1,207), B=(0,212)..(width-1,229).
+; B is below the BASIC-accessible image but inside page-1 framebuffer;
+; neither scratch area touches palette/sprite data or the font atlas.
+; IMPORTANT: V9938 logical opcodes are AND=1, OR=2, NOT=4;
+; transparent NOT (TNOT) = 0xC. LMMM=0x90, LMMV=0x80.
 GlyphBlitColoured:
     ld hl,(LmDX)
     ld (ColourOutputX),hl
     ld hl,(LmDY)
     ld (ColourOutputY),hl
+
+    ; A := source glyph (15 or 1).
     ld hl,0
     ld (LmDX),hl
     ld hl,256+190
     ld (LmDY),hl
-    ld a,090h              ; LMMM, logical IMP
+    ld a,090h                ; LMMM IMP
     ld (LmCMD),a
     call LmmmLaunch
 
-    ld a,(text_colour)
+    ; A := A AND 14: glyph=14, background=0.
+    ld a,14
     ld (LmCLR),a
-    ld a,084h              ; LMMV, logical AND
+    ld a,081h                ; LMMV AND
     ld (LmCMD),a
     call LmmmLaunch
 
+    ; B := 0.
+    ld hl,256+212
+    ld (LmDY),hl
+    xor a
+    ld (LmCLR),a
+    ld a,080h                ; LMMV IMP
+    ld (LmCMD),a
+    call LmmmLaunch
+
+    ; B := transparent NOT(A): glyph=1, background=0.
     ld hl,0
     ld (LmSX),hl
     ld hl,256+190
+    ld (LmSY),hl
+    ld a,09Ch                ; LMMM TNOT, skips zero source
+    ld (LmCMD),a
+    call LmmmLaunch
+
+    ; B := B OR A: glyph=15, background=0.
+    ld a,09Ah                ; LMMM TOR
+    ld (LmCMD),a
+    call LmmmLaunch
+
+    ; B := B AND K: glyph=K, background=0.
+    ld a,(text_colour)
+    ld (LmCLR),a
+    ld a,081h                ; LMMV AND
+    ld (LmCMD),a
+    call LmmmLaunch
+
+    ; Transfer B transparently onto visible page 0.
+    ld hl,0
+    ld (LmSX),hl
+    ld hl,256+212
     ld (LmSY),hl
     ld hl,(ColourOutputX)
     ld (LmDX),hl
@@ -323,7 +359,7 @@ GlyphBlitColoured:
     ld (LmDY),hl
     xor a
     ld (LmCLR),a
-    ld a,098h              ; LMMM, TPSET to destination
+    ld a,098h                ; LMMM TIMP
     ld (LmCMD),a
     call LmmmLaunch
     ret
