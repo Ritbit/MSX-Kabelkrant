@@ -1,5 +1,7 @@
 # Kabelkrant Z80 work-in-progress
 
+**Build and emulator tests:** [`BUILD-AND-TEST.md`](../BUILD-AND-TEST.md) (SjASMPlus, FAT12 disk images, openMSX/NMS 8250, WebMSX).
+
 This branch is an **assembly build prototype**, not a working MSX driver.
 Do not use `kernel.raw` with `BLOAD`: it lacks a BASIC-extension handler,
 installer, and safe resident-memory allocation. The original graphical assets remain untouched; only the development-branch

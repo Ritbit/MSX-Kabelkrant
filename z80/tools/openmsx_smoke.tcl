@@ -1,0 +1,9 @@
+# openMSX automated screenshot capture for the standalone Z80 text demo.
+# Use with: openmsx -machine Philips_NMS_8250 -diska z80/build/KBLASM.DSK -script z80/tools/openmsx_smoke.tcl
+# 25 MSX seconds allow the auto-boot, disk BASIC load and four-font rendering.
+after time 25 {
+    set path [file normalize "z80/build/openmsx-smoke.png"]
+    screenshot -raw $path
+    puts "OPENMSX_SMOKE_SCREENSHOT: $path"
+    exit
+}
