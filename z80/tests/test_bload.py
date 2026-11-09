@@ -7,7 +7,7 @@ class BloadTests(unittest.TestCase):
     def test_header(self):
         import struct
         d=convert(b"hello")
-        self.assertEqual(d[:7],b"\xfe"+struct.pack("<HHH",0xA004,0xA008,0xA006))
+        self.assertEqual(d[:7],b"\xfe"+struct.pack("<HHH",0xE004,0xE008,0xE006))
         self.assertEqual(d[7:],b"hello")
     def test_reject_overflow(self):
         with self.assertRaises(ValueError):
