@@ -37,6 +37,10 @@ jobs:
         run: |
           python3 -m unittest discover -s z80/tests -p 'test_msx_basic_ascii.py' -v
           python3 z80/tools/msx_basic_ascii.py z80/asm/ASMTEXT.BAS z80/build/ASMTEXT.BAS
+      - name: Generate original BASIC four-font reference
+        run: |
+          python3 z80/tools/make_font_baseline.py --source src/LOOP.SYS --output z80/build/FONTBAS.BAS
+          python3 -m unittest discover -s z80/tests -p 'test_font_baseline.py' -v
       - name: Create isolated MSX2 demo disk
         run: |
           sudo apt-get update -qq
@@ -45,6 +49,7 @@ jobs:
           printf '10 SCREEN 0:WIDTH 80:COLOR 15,4,4\r\n20 PRINT "KABELKRANT Z80 CALL TEXT TEST"\r\n30 RUN "ASMTEXT.BAS"\r\n' > z80/build/AUTOEXEC.BAS
           mcopy -o -i z80/build/KBLASM.DSK z80/build/AUTOEXEC.BAS ::AUTOEXEC.BAS
           mcopy -o -i z80/build/KBLASM.DSK z80/build/ASMTEXT.BAS ::ASMTEXT.BAS
+          mcopy -o -i z80/build/KBLASM.DSK z80/build/FONTBAS.BAS ::FONTBAS.BAS
           mcopy -o -i z80/build/KBLASM.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
           mdir -i z80/build/KBLASM.DSK ::
           test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
