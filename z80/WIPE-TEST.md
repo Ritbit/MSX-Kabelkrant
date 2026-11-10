@@ -63,3 +63,32 @@ A separate cache-safe preview is published as `KBLWIPE2FIX.DSK`:
 https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE2FIX.DSK
 
 Runtime direction still requires visual confirmation of this corrected build.
+
+## Effects #3 and #4: horizontal wipes (2026-11-10)
+
+The isolated V9938 LMMV kernel in `wipe_horizontal_kernel.asm` fills
+two-pixel-wide columns over y=50..211 (162 scanlines), black, SCREEN 7:
+
+- Wipe #3: x=0,2,...510 (left to right); original BASIC line 3260
+- Wipe #4: x=510,508,...0 (right to left); original BASIC line 3270
+
+Each effect runs 256 strips. JIFFY pacing occurs after every four
+completed strips: approximately 64 video frames of deliberate delay,
+or 1.28 s at 50 Hz before VDP overhead. The final visible pixel
+is x=511; the original BASIC coordinate x=512 is beyond SCREEN 7.
+
+The direction is set through explicit numerical assembly constants, not
+`IFDEF`. CI verifies **actual BLOAD machine-code bytes** for each first
+X coordinate, rejects identical binaries, opens both built FAT12 disk
+images, and verifies their embedded WIPE3/4 binaries and AUTOEXEC content.
+
+**Test only these isolated previews, not the live newspaper:**
+
+- Wipe #3, left to right:
+  https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE3.DSK
+- Wipe #4, right to left:
+  https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE4.DSK
+
+The CI binary/disk verification has passed; **visual direction and
+animation pacing still require WebMSX confirmation**. Do not yet replace
+the original BASIC transitions.
