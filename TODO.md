@@ -48,7 +48,8 @@ file or the other three coordination docs to `main`.
 - [x] Validate corrected #14 terminal black fill in WebMSX; user accepts remaining diagonal artifacts.
 - [x] Add compiled wipe+TEXT memory-budget audit and dedicated integration design (`z80/WIPE-INTEGRATION.md`).
 - [x] Implement shared `CALL WIPE(n)` engine for all 14 in a **separate** opt-in onefile image (`KBLWIPEINT14.DSK`): 3775 bytes within 4096-byte reserved area; retain 1..8 and 1..12 fallback alphas.
-- [ ] Run new integrated full newspaper through WebMSX/openMSX (rom-backed); validate wipe directions, text, clock, C: I/O, editor, repeated cycles. CI build alone is not runtime approval.
+- [x] User confirmed **KBLWIPEINT14.DSK runs the Kabelkrant and all fourteen integrated Z80 wipes in WebMSX** (2026-11-10). This is a manual functional smoke test; not yet C: or editor regression approval.
+- [ ] Validate drive C: read/write, editor/menu paths, repeated unattended cycles and clock stability on **the exact integrated 14-wipe disk**. Preserve rollback preview.
 - [ ] Port title-bar wipe if benchmarks warrant it.
 - [ ] Benchmark screen transitions, intro and hourglass before porting.
 - [ ] Full Kabelkrant multi-page integration tests and clean release PR.
