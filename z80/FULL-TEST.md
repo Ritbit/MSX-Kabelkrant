@@ -91,9 +91,11 @@ https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1
 
 ## Experimental single-BLOAD alternative (2026-11-10)
 
-A **separate** `KBLONEFILE.DSK` has been generated on the feature branch
-without replacing the known-working `KBLZ80TEST.DSK`. It is NOT runtime
-validated and must not be promoted to a release:
+A **separate** `KBLONEFILE.DSK` is generated on the feature branch
+without replacing the known-working `KBLZ80TEST.DSK`. On 2026-11-10 the
+user confirmed it **boots and displays the newspaper without any error
+codes** after moving `CLEAR 2000,&HC7FF` ahead of the intro. This is a
+successful WebMSX smoke test, NOT proof of long-run stability:
 
 - `z80/tools/make_onefile_preview.py` copies the exact historical
   `RAMDISK.BIN` C000–C7EF payload unchanged, pads to C804 and appends
@@ -104,9 +106,11 @@ validated and must not be promoted to a release:
   `195 DEFUSR3=&HC806: A=USR3(0)` for the second BLOAD.
 - Unit tests check binary layout/preservation. GitHub Actions builds
   and publishes the experimental disk separately.
-- **Unknown:** whether the C804 payload survives RAMdisk's warmstart,
-  slot/mapper switching and C: initialization. A successful build is
-  *not* evidence that `USR3` can reach the staged module.
+- The staged C806 entry survives warmstart, early `CLEAR`, intro and
+  the later `CLEAR` in the observed WebMSX run. The onefile BASIC code
+  invokes `USR3` to install TEXT and the newspaper displays normally.
+  Drive C: read/write integrity, repeated page cycles and operator/editor
+  flows are not yet independently checked.
 
 Manual WebMSX experiment (do not confuse with the working alpha):
 
@@ -116,11 +120,14 @@ https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1
 
 ### Onefile symptom and diagnostic checkpoints
 
-The user reports the single-BLOAD build appears to hang after the opening
-logo, whereas `KBLZ80TEST.DSK` proceeds through the news pages. The
-current onefile experiment installs these explicit C806 opcode probes:
+The first single-BLOAD build hung at the logo; the diagnostic build
+reported `E2`, revealing loss of C806 during the intro. Reserving
+`HIMEM=&HC7FF` with `CLEAR 2000,&HC7FF` **before** SCREEN 7 and the intro
+removed this failure in the user's WebMSX test. The onefile experiment
+still contains explicit C806 opcode probes:
 
 - `E1`: the TEXT payload is absent by early KBLINIT, after RAMdisk warmstart.
+- `E1B`: the payload is overwritten by the early HIMEM `CLEAR`.
 - `E2`: the payload was present at E1 but disappeared during intro drawing.
 - `E3`: the payload survived the intro but not the BASIC `CLEAR`.
 
@@ -133,8 +140,9 @@ an openMSX CPU trace at C806 and the BASIC error/handler path.
 Only the **experimental onefile** version gets these checks; the working
 two-file preview remains untouched.
 
-If it fails, first trace C806 and C004 after warmstart under openMSX
-before changing any historical RAMdisk bytes.
+If later regressions occur, trace C806 and C004 under openMSX before
+changing any historical RAMdisk bytes. The onefile user-visible boot
+result is positive but a complete C: regression remains required.
 
 ## Next tests
 
