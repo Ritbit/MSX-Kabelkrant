@@ -1,5 +1,5 @@
 ; Special fixed-size title-bar wipe, no rectangular parameter parser.
-; Calls WIPE(15) to erase ONLY title bar interiors, x0..511:
+; Calls WIPE(15) to erase ONLY title bar interiors, x0..434, preserving the clock X435..511:
 ;  top y9..22  (14 rows), bottom y30..43 (14 rows).
 ; Borders at 8,23,29,44 and the clock graphics remain untouched.
 ; Two V9938 LMMV commands per 8px column; frame every two columns.
@@ -11,7 +11,7 @@ WipeTitleBars:
     push hl
     ld hl,0
     ld (TitleX),hl
-    ld b,64
+    ld b,55
     ld hl,8
     ld (LmNX),hl
     ld hl,14
@@ -22,6 +22,12 @@ WipeTitleBars:
     ld a,080h
     ld (LmCMD),a
 .loop:
+    ld a,b
+    cp 1
+    jr nz,.wide
+    ld hl,3              ; last slice x432..434, never hit clock
+    ld (LmNX),hl
+.wide:
     ld hl,(TitleX)
     ld (LmDX),hl
     ld hl,9
