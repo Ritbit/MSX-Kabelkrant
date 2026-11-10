@@ -16,21 +16,32 @@ that BASIC routine **only** in the separate generated
 `KBLTITLE.DSK` disk. It never changes the random page-wipe selection
 or the existing `CALL WIPE(1..14)` semantics.
 
-## Exact drawn area
+## Corrected method: restore background from a left-hand VRAM template
 
-- Top title-band interior: X=0..434, Y=9..22.
-- Lower title-band interior: X=0..434, Y=30..43.
-- Retains border rows Y=8,23,29,44 and the space between title bars.
-- **Retains right-hand clock overlay X=435..511.**
-- 54 passes of 8px and a final 3px pass cover precisely 435 columns.
-- Each pass executes two V9938 LMMV IMP colour-0 commands,
-  one for each 14px-high strip, and waits for VDP idle.
-- Frame pacing is 1 JIFFY tick per two passes (around 27 ticks of
-  pacing; VDP command execution adds time).
+WebMSX screenshot showed that the first revision's two black LMMV fills
+removed the coloured title-bar backgrounds and borders, while bits of
+right-aligned text remained visible. This behaviour is **not accepted**.
 
-The normal page wipes still use their original fixed newspaper area
-X=0..511, Y=50..211. No extra coordinate parameters, clipping rules,
-or scaling tables are needed for these two title bars.
+The corrected dedicated routine uses a V9938 **LMMM IMP VRAM-to-VRAM
+copy**, matching the idea of original BASIC
+`COPY(0,0)-(10,48),0 TO(A,0),0`, rather than drawing black:
+
+- Source: immutable clean template at **X=0..9, Y=0..48**.
+- Destination: **X=0..434, Y=0..48**, in **43 passes of 10px**
+  followed by **1 pass of 5px**.
+- Original per-row colours, horizontal lines, gaps and outlines are
+  copied from the template.
+- No writes to **X=435..511** (clock and right-hand graphics).
+- Calls `LmmmLaunch`, then `WipeSharedIdle`, with deliberate
+  JIFFY pacing every two passes.
+- Keeps `CALL WIPE(1..14)` and existing newspaper loop unchanged.
+- New live visual confirmation is required. Do not claim a successful
+  visual test simply because the assembly and disk checks pass.
+
+The first implementation of `wipe_title_bars.asm` has been replaced.
+The previously published `KBLTITLE.DSK` will be replaced only if CI
+passes and a new cache-safe filename is published for this correction.
+No five-argument generic geometry/parser overhead is introduced.
 
 ## Integration and test
 
