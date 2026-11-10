@@ -4,7 +4,7 @@
 > `AGENTS.md`, `PLAN.md`, `TODO.md`, `BUILD-AND-TEST.md`,
 > `HOWTO-TESTING.md` belong to
 > `feature/z80-renderer` **only**. Never include them in a PR to `main`.
-> Updated 2026-11-09; verify current GitHub Actions results before trusting
+> Updated 2026-11-10; verify current GitHub Actions results before trusting
 > historical status claims.
 
 ## Goal and non-goals
@@ -115,6 +115,13 @@ The historical 6.2b LOOP.SYS is retained on the alpha disk as
 `LOOPBAS.SYS`.
 
 Verified in openMSX: RAMdisk boot, Z80 install, multiple CALL TEXT
-executions, rendered real news page. **Known regression:** machine
-re-enters the boot sequence at roughly 140–145 emulated seconds.
+executions, rendered real news page. **Historical regression:** earlier alpha re-entered the boot sequence after several pages. The zero-length-string `LDIR` corruption and page-loop stack defect were corrected; the user confirmed WebMSX page cycles afterward (see `TODO.md` and `z80/FULL-TEST.md`). This does not yet establish unattended long-run stability.
 Do not promote alpha as stable or merge the feature branch wholesale.
+
+## Current integration status (2026-11-10; authoritative recent checkpoint)
+
+- The earlier `KBLCOMB.DSK` ROM-overlay experiment is **known broken** and superseded by separate high-RAM staging; do not mistake its old failure for the working onefile alpha.
+- User-confirmed WebMSX: integrated 14 Z80 wipes on `KBLWIPEINT14.DSK`; accepted title-background-copy variant `KBLTITLECOPY.DSK`. These are valid manual smoke results, **not** complete regression evidence.
+- [GitHub Actions run 42889296897](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42889296897): all 72 build-job steps successful, including disk-image tests. ROM-backed NMS8250 job failed **before emulator launch**, because both previously supplied remote ROM endpoints returned HTTP 405. Do not retry without new access evidence.
+- Automated C: read/write/compare/delete proof, 210s loop captures and image checks are already wired into `.github/workflows/z80-build.yml`, but not executed in that run. They require a verified private ROM pool, ideally the three-file 32+16+16 KiB Actions secrets.
+- Always read `HOWTO-TESTING.md` for reproducible ROM setup and evidence levels, and `TODO.md` for current next tasks. Never demand exact upstream ROM filenames.
