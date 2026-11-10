@@ -43,9 +43,11 @@ file or the other three coordination docs to `main`.
 
 - [x] Build isolated Z80/V9938 wipe #1 (top-down) drawing kernel; compile and geometry-check under CI, without changing the live newspaper.
 - [x] User confirmed isolated wipes #1–#13 work in WebMSX, including corrected wipe #2.
+- [x] User accepts wipe #14 with known residual diagonal artifacts after alignment + terminal black clear; functional, not pixel-perfect.
 - [x] User visually confirmed wipe #13.
-- [ ] Visually verify corrected #14 inner-rectangle vertical centering (CI-checked KBLWIPE14FIX.DSK).
-- [ ] Integrate opt-in `CALL WIPE(n)` into single-file kernel only after all individual wipes pass.
+- [x] Validate corrected #14 terminal black fill in WebMSX; user accepts remaining diagonal artifacts.
+- [x] Add compiled wipe+TEXT memory-budget audit and dedicated integration design (`z80/WIPE-INTEGRATION.md`).
+- [ ] Implement shared `CALL WIPE(n)` engine in a separate opt-in onefile test image; keep current rollback disk untouched.
 - [ ] Port title-bar wipe if benchmarks warrant it.
 - [ ] Benchmark screen transitions, intro and hourglass before porting.
 - [ ] Full Kabelkrant multi-page integration tests and clean release PR.
