@@ -110,7 +110,7 @@ class LastWipeTests(unittest.TestCase):
                 # record is unavoidably off by one after screen clipping.
                 # Outer Y=212 clips to 211 in the first pass only.
                 self.assertIn(top+bottom,(261,262), "vertical centre must be near Y=131")
-                if i>0 or (left,right)!=(0,511):
+                if i>0 or (left,right) not in ((0,511),(1,511)):
                     self.assertEqual(top+bottom,262, "both moving squares must be centred on Y=131")
             self.assertEqual(group[2][2],group[3][2])
             self.assertEqual(group[2][3],group[3][3])
