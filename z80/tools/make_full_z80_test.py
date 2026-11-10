@@ -49,14 +49,14 @@ def split_long_data_lines(source: str, max_len: int = 210) -> str:
     return '\n'.join(result)+'\n'
 
 
-def transform(init: str, loop: str) -> tuple[str, str, int]:
+def transform(init: str, loop: str, one_file: bool = False) -> tuple[str, str, int]:
     lines=init.splitlines()
     i=next((i for i,line in enumerate(lines) if line.startswith('190 ')),None)
     if i is None or 'CLEAR 2000' not in lines[i]:
         raise ValueError('Unexpected KBLINIT.SYS memory setup')
     lines[i]=INITIALIZER
     # Reserve memory before loading the machine code.
-    lines.insert(i+1,'195 BLOAD "KBLTXT.BIN",R')
+    lines.insert(i+1, '195 DEFUSR3=&HC806: A=USR3(0)' if one_file else '195 BLOAD "KBLTXT.BIN",R')
     init=split_long_data_lines('\n'.join(lines)+'\n')
 
     # The Z80 engine embeds the font coordinates: X(4,110) in BASIC
@@ -108,15 +108,16 @@ def transform(init: str, loop: str) -> tuple[str, str, int]:
 def main():
     p=argparse.ArgumentParser()
     p.add_argument('--root',type=Path,default=Path('.'))
+    p.add_argument('--one-file',action='store_true',help='Use the staged TEXT payload in KBLRAMTX.BIN instead of a second BLOAD')
     p.add_argument('--output',type=Path,default=Path('z80/build'))
     args=p.parse_args()
     init=(args.root/'src/KBLINIT.SYS').read_text(encoding='utf-8')
     loop=(args.root/'src/LOOP.SYS').read_text(encoding='utf-8')
-    init,loop,count=transform(init,loop)
+    init,loop,count=transform(init,loop,one_file=args.one_file)
     args.output.mkdir(parents=True,exist_ok=True)
     for name,value in [('KBLINIT.SYS',init),('LOOP.SYS',loop)]:
         (args.output/name).write_bytes(encode_msx_basic(value.encode('ascii')))
-    print(f'Full Kabelkrant Z80 experiment: {count} CALL TEXT sites, RAMdisk unchanged')
+    print(f'Full Kabelkrant Z80 experiment: {count} CALL TEXT sites, one_file={args.one_file}')
 
 
 if __name__=='__main__':
