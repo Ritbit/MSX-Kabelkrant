@@ -1,6 +1,17 @@
-# Combined RAMdisk + Z80 TEXT — confirmed memory collision
+# RAMdisk + Z80 TEXT — previous collision and new one-file alpha
 
-**Runtime status (2026-11-09): NOT WORKING. Do not release.**
+**Old `KBLALL.BIN` (2026-11-09): NOT WORKING. Do not release.**
+
+**New and distinct `KBLRAMTX.BIN` in `KBLONEFILE.DSK` (2026-11-10):**
+User-confirmed working WebMSX boot and newspaper display, with no E1/E1B/E2/E3
+error codes. This design preserves the original C000..C7EF RAMdisk
+installer and stages TEXT at C804 in high memory. `KBLINIT.SYS` now
+reserves HIMEM at C7FF **before** initializing SCREEN 7 and rendering the
+intro; previously the probe showed E2 after the logo. `DEFUSR3=&HC806`
+activates TEXT after warmstart. This is a positive manual smoke test,
+**not** full C: drive, editor, repeated-cycle or hardware validation.
+The two-file `KBLZ80TEST.DSK` remains the proven fallback.
+
 
 ## Confirmed using openMSX 19.1, Philips NMS 8250
 
