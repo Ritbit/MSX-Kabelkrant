@@ -1,6 +1,6 @@
 # Integrating 14 wipe effects into the single-BLOAD Z80 Kabelkrant
 
-**Status:** design/memory audit, not yet loaded into the live newspaper.
+**Status:** all fourteen effects compiled into a separate opt-in onefile alpha; integrated WebMSX runtime verification pending.
 **Branch:** `feature/z80-renderer`; never modify v6.2b on main.
 
 ## Validated baseline
@@ -63,3 +63,44 @@ visual artifact. Do not describe #14 as pixel-perfect parity.
 
 No changes to `main`, no merge of branch-only coordination documents.
 The existing working `KBLONEFILE.DSK` remains the rollback baseline.
+
+## Implemented 2026-11-10 — shared-engine integration alphas
+
+All three test disks are on the **feature branch only**, compiled from
+one source via `z80/tools/make_wipe_integration.py`. They share the
+same BLOAD and BASIC 6.2b baseline:
+
+| Disk | Z80 wipes called from LOOP.SYS | Resident TEXT+WIPE bytes | Status |
+|---|---|---:|---|
+| `KBLWIPEINT.DSK` | #1–#8 | 2630 | Build/FAT12 checks passed; manual runtime pending |
+| `KBLWIPEINT12.DSK` | #1–#12 | 3362 | Build/FAT12 checks passed; manual runtime pending |
+| `KBLWIPEINT14.DSK` | #1–#14 | 3775 | Build/FAT12 checks passed; manual runtime pending |
+
+The full variant resides at **C804..D6C2**, under the current exclusive
+boundary D804, leaving **321 bytes** of headroom. Original RAMdisk
+installer C000..C7EF is byte-preserved. The single-loader mechanism and
+`CALL TEXT` fonts are retained. A single `CALL WIPE(n)` handler
+dispatches modes 1–14. New contour modes share one drawing helper;
+wipes #9/#10 use a 256-byte coordinate table, and #13/#14 compute
+geometry procedurally.
+
+In these experimental images only, LOOP.SYS uses `CALL WIPE(A)` for
+the enabled effect numbers and otherwise follows the historical BASIC
+transition dispatcher. The full image enables all 14. The accepted
+`KBLONEFILE.DSK` and release v6.2b are not overwritten.
+
+**Important runtime distinction:** GitHub Actions currently reports a
+successful openMSX job even when the actual emulator step is *skipped*
+because the four ROM secrets are absent. Check that specific step's
+conclusion before claiming runtime verification. At this point only
+assembly, content integrity, static geometry, and resident bounds have
+been checked on the *integrated* variant. The earlier standalones were
+visually tested, not the shared dispatch.
+
+For full integrated test, load:
+
+https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPEINT14.DSK
+
+Verify news cycle, Z80 text, wipe directions, C: RAMdisk read/write,
+editor/menu, and page/clock stability before promoting this disk.
+Wipe #14 is accepted with known visual diagonal traces, not pixel-perfect.
