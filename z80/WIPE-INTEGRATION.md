@@ -12,6 +12,11 @@
 - Successful CI built TEXT binary `KBLTXT.BIN` at 2138 total BLOAD
   bytes, i.e. **2131 bytes of payload**. Remaining space within the
   current 4KiB budget is **1965 bytes**.
+- The CI audit measured **12,263 bytes** for TEXT plus all fourteen
+  standalone payloads versus **4,096 bytes** of currently reserved space.
+  This naive total includes duplicate helper code and is not the final
+  expected size of a shared engine; nevertheless blind concatenation
+  demonstrably cannot fit.
 - Original 14 standalone wipes are not composable by concatenation:
   they start at the same C804 address, each has its own BLOAD vector,
   LMMV/CE/JIFFY helper, and the box/column effects embed hundreds of
