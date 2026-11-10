@@ -135,7 +135,7 @@ class LastWipeTests(unittest.TestCase):
         tail=ASM14.split("FinalFullClear:",1)
         self.assertEqual(len(tail),2,"missing unconditional final clear")
         before,after=tail
-        self.assertIn("jr nz,.next_step",before[-120:])
+        self.assertIn("jr nz,.next_step",before.split(".next_step:",1)[-1])
         instructions=after.split("    pop hl",1)[0]
         required=(
             "ld hl,0\\n    ld (LmDX),hl",
