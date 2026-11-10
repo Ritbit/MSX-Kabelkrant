@@ -61,6 +61,10 @@ jobs:
           python3 z80/tools/make_bload.py z80/build/wipe9.raw z80/build/WIPE9.BIN
           (cd z80/asm && sjasmplus --raw=../build/wipe10.raw --lst=../build/wipe10.lst wipe_box_out.asm)
           python3 z80/tools/make_bload.py z80/build/wipe10.raw z80/build/WIPE10.BIN
+          (cd z80/asm && sjasmplus --raw=../build/wipe11.raw --lst=../build/wipe11.lst wipe11.asm)
+          python3 z80/tools/make_bload.py z80/build/wipe11.raw z80/build/WIPE11.BIN
+          (cd z80/asm && sjasmplus --raw=../build/wipe12.raw --lst=../build/wipe12.lst wipe12.asm)
+          python3 z80/tools/make_bload.py z80/build/wipe12.raw z80/build/WIPE12.BIN
       - name: Assemble standalone CALL TEXT demo
         run: |
           (cd z80/asm && sjasmplus --raw=../build/textdemo.raw --lst=../build/textdemo.lst --sym=../build/textdemo.sym basic_text_demo.asm)
@@ -232,6 +236,37 @@ jobs:
             test "$(stat -c %s "z80/build/KBLWIPE${num}.DSK")" -eq 737280
           done
           python3 -m unittest discover -s z80/tests -p 'test_box_wipes.py' -v
+      - name: Build and verify interlaced wipe #11/#12 disks
+        run: |
+          set -euo pipefail
+          for num in 11 12; do
+            cp assets/kabelkrant-6.2.dsk "z80/build/KBLWIPE${num}.DSK"
+            if [[ "$num" -eq 11 ]]; then
+              description="TOP BOTTOM INTERLACED"
+            else
+              description="LEFT RIGHT INTERLACED"
+            fi
+            printf '%s\r\n' \
+              '10 CLEAR 1000,&HC7FF:SCREEN 7:COLOR 15,0,0' \
+              "20 CLS:LINE(0,50)-(511,211),14,BF:LOCATE 0,0:PRINT \"WIPE ${num}: ${description}\"" \
+              '30 LINE(0,50)-(511,211),1,B' \
+              '40 FOR T=1 TO 1000:NEXT T' \
+              "50 BLOAD \"WIPE${num}.BIN\",R" \
+              '60 FOR T=1 TO 1000:NEXT T' \
+              '70 GOTO 20' > "z80/build/WIPEAUTO${num}.BAS"
+            mcopy -o -i "z80/build/KBLWIPE${num}.DSK" "z80/build/WIPEAUTO${num}.BAS" ::AUTOEXEC.BAS
+            mcopy -o -i "z80/build/KBLWIPE${num}.DSK" "z80/build/WIPE${num}.BIN" "::WIPE${num}.BIN"
+            test "$(stat -c %s "z80/build/KBLWIPE${num}.DSK")" -eq 737280
+          done
+          python3 -m unittest discover -s z80/tests -p 'test_interlaced_wipes.py' -v
+      - name: Upload interlaced wipe demos (experimental)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLWIPE11-12-INTERLACED-EXPERIMENTAL
+          path: |
+            z80/build/KBLWIPE11.DSK
+            z80/build/KBLWIPE12.DSK
+          if-no-files-found: error
       - name: Upload rectangular-outline wipe demos (experimental)
         uses: actions/upload-artifact@v4
         with:
@@ -353,9 +388,11 @@ jobs:
           cp z80/build/KBLWIPE8.DSK assets/KBLWIPE8.DSK
           cp z80/build/KBLWIPE9.DSK assets/KBLWIPE9.DSK
           cp z80/build/KBLWIPE10.DSK assets/KBLWIPE10.DSK
+          cp z80/build/KBLWIPE11.DSK assets/KBLWIPE11.DSK
+          cp z80/build/KBLWIPE12.DSK assets/KBLWIPE12.DSK
           test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
