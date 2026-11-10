@@ -544,6 +544,38 @@ jobs:
             z80/build/KBLRAMWIPE14.BIN
             z80/build/textwipe14.lst
           if-no-files-found: error
+      - name: Build isolated two-title-bar Z80 wipe alpha
+        run: |
+          set -euo pipefail
+          python3 z80/tools/make_title_wipe.py \
+            --asm z80/asm/.generated_title_wipe.asm \
+            --lean-loop z80/build/wipe_lean/LOOP.SYS \
+            --output-loop z80/build/title_wipe/LOOP.SYS
+          (cd z80/asm && sjasmplus --raw=../build/title_wipe.raw --lst=../build/title_wipe.lst --sym=../build/title_wipe.sym .generated_title_wipe.asm)
+          python3 z80/tools/make_bload.py z80/build/title_wipe.raw z80/build/KBLTXTTITLE.BIN
+          python3 - <<'PY'
+          from pathlib import Path
+          from struct import unpack_from
+          b=Path('z80/build/KBLTXTTITLE.BIN').read_bytes()
+          start,end,entry=unpack_from('<HHH',b,1)
+          assert (start,entry)==(0xC804,0xC806)
+          assert end<0xD804, f"Title extension exceeds safe 4KiB slot: {end:04X}"
+          print(f'Dedicated title wipe resident code: {len(b)-7} bytes; {0xD804-end-1} bytes free')
+          PY
+          python3 z80/tools/make_onefile_preview.py --ramdisk src/RAMDISK.BIN --text z80/build/KBLTXTTITLE.BIN --output z80/build/KBLRAMTITLE.BIN
+          cp z80/build/KBLWIPELEAN.DSK z80/build/KBLTITLE.DSK
+          mcopy -o -i z80/build/KBLTITLE.DSK z80/build/title_wipe/LOOP.SYS ::LOOP.SYS
+          mcopy -o -i z80/build/KBLTITLE.DSK z80/build/KBLRAMTITLE.BIN ::RAMDISK.BIN
+          python3 -m unittest discover -s z80/tests -p 'test_title_wipe.py' -v
+      - name: Upload dedicated title-bar wipe alpha (manual WebMSX required)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLTITLE-ONLY-TWO-BARS-ALPHA
+          path: |
+            z80/build/KBLTITLE.DSK
+            z80/build/KBLRAMTITLE.BIN
+            z80/build/title_wipe.lst
+          if-no-files-found: error
       - name: Verify published one-BLOAD disk structure and unchanged files
         run: python3 -m unittest discover -s z80/tests -p 'test_onefile_disk_image.py' -v
       - name: Upload single-BLOAD experimental disk (NOT RUNTIME VERIFIED)
@@ -576,6 +608,7 @@ jobs:
           cp z80/build/KBLWIPELEAN.DSK assets/KBLWIPELEAN.DSK
           cp z80/build/KBLWIBENCH.DSK assets/KBLWIBENCH.DSK
           cp z80/build/KBLWIAUTO.DSK assets/KBLWIAUTO.DSK
+          cp z80/build/KBLTITLE.DSK assets/KBLTITLE.DSK
           cp z80/build/KBLCTEST.DSK assets/KBLCTEST.DSK
           cp z80/build/KBLWIPE.DSK assets/KBLWIPE.DSK
           cp z80/build/KBLWIPE2.DSK assets/KBLWIPE2.DSK
@@ -596,7 +629,7 @@ jobs:
           cp z80/build/KBLWIPE14FIX2.DSK assets/KBLWIPE14FIX2.DSK
           test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK assets/KBLWIPE14FIX.DSK assets/KBLWIPE14FIX2.DSK assets/KBLWIPEINT.DSK assets/KBLWIPEINT12.DSK assets/KBLWIPEINT14.DSK assets/KBLCTEST.DSK assets/KBLWIPELEAN.DSK assets/KBLWIBENCH.DSK assets/KBLWIAUTO.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK assets/KBLWIPE14FIX.DSK assets/KBLWIPE14FIX2.DSK assets/KBLWIPEINT.DSK assets/KBLWIPEINT12.DSK assets/KBLWIPEINT14.DSK assets/KBLCTEST.DSK assets/KBLWIPELEAN.DSK assets/KBLWIBENCH.DSK assets/KBLWIAUTO.DSK assets/KBLTITLE.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
