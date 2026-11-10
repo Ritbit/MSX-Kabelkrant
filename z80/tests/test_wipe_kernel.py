@@ -19,15 +19,20 @@ class WipeKernelTests(unittest.TestCase):
         self.assertEqual(len(expected), 81)
         self.assertEqual(expected[0], (0, 50, 511, 51))
         self.assertEqual(expected[-1], (0, 210, 511, 211))
-        self.assertIn("ld hl,50\n    ld (LmDY),hl", ASM)
+        self.assertIn("ld hl,50                 ; forward", ASM)
+        self.assertIn("ld hl,210                ; reverse", ASM)
         self.assertIn("ld hl,512\n    ld (LmNX),hl", ASM)
         self.assertIn("ld hl,2\n    ld (LmNY),hl", ASM)
         self.assertIn("cp 212", ASM)
+        self.assertIn("cp 50", ASM)
+        self.assertIn("WIPE_REVERSE EQU 1", (ROOT/"z80"/"asm"/"wipe_reverse.asm").read_text())
 
     def test_v9938_fill_command_and_wait(self):
         self.assertIn("ld a,080h", ASM)  # LMMV IMP
         self.assertIn("call LmmmLaunch", ASM)
         self.assertIn("call WipeWaitIdle", ASM)
+        self.assertIn("call WipeWaitFrame", ASM)
+        self.assertIn("JIFFY EQU 0FC9Eh", ASM)
         self.assertIn("ld (LmCLR),a", ASM)
         self.assertIn("ld (LmARG),a", ASM)
         self.assertNotIn("CALL TEXT", ASM)
