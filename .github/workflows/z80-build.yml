@@ -119,6 +119,8 @@ jobs:
           test "$(stat -c %s z80/build/KBLONEFILE.DSK)" -eq 737280
           test "$(mcopy -i z80/build/KBLONEFILE.DSK ::RAMDISK.BIN - | wc -c)" -eq "$(stat -c %s z80/build/KBLRAMTX.BIN)"
           mdir -i z80/build/KBLONEFILE.DSK ::RAMDISK.BIN
+      - name: Verify published one-BLOAD disk structure and unchanged files
+        run: python3 -m unittest discover -s z80/tests -p 'test_onefile_disk_image.py' -v
       - name: Upload single-BLOAD experimental disk (NOT RUNTIME VERIFIED)
         uses: actions/upload-artifact@v4
         with:
