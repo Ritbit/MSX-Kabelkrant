@@ -30,6 +30,15 @@ class ColourMaskTests(unittest.TestCase):
         self.assertNotIn("ld a,09Ch", PATH)  # TNOT drops original outline
         self.assertNotIn("ld a,09Ah", PATH)  # TOR no longer necessary
 
+    def test_empty_string_never_enters_ldir(self):
+        # Z80 LDIR with BC=0 copies a full 64KiB: input can be empty.
+        source = ASM
+        start = source.index("    ld a,(text_length)\n    ld c,a\n    ld b,0")
+        end = source.index("    ld ix,FRESTR", start)
+        copy = source[start:end]
+        self.assertIn("    or a\n    jr z,.text_copied\n    ldir\n.text_copied:", copy)
+        self.assertEqual(copy.count("    ldir"), 1)
+
     def test_mask_is_applied_before_transparent_copy(self):
         self.assertLess(PATH.index("ld a,090h"), PATH.index("ld a,081h"))
         self.assertLess(PATH.index("ld a,081h"), PATH.index("ld a,098h"))
