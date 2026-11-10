@@ -42,8 +42,9 @@ file or the other three coordination docs to `main`.
 ## Later — acceleration roadmap
 
 - [x] Build isolated Z80/V9938 wipe #1 (top-down) drawing kernel; compile and geometry-check under CI, without changing the live newspaper.
-- [x] User confirmed isolated wipes #1–#12 work in WebMSX, including corrected wipe #2.
-- [ ] Visually verify CI-checked final wipes #13/#14 (built and published separately).
+- [x] User confirmed isolated wipes #1–#13 work in WebMSX, including corrected wipe #2.
+- [x] User visually confirmed wipe #13.
+- [ ] Visually verify corrected #14 inner-rectangle vertical centering (CI-checked KBLWIPE14FIX.DSK).
 - [ ] Integrate opt-in `CALL WIPE(n)` into single-file kernel only after all individual wipes pass.
 - [ ] Port title-bar wipe if benchmarks warrant it.
 - [ ] Benchmark screen transitions, intro and hourglass before porting.
