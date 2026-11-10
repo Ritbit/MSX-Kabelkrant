@@ -11,6 +11,19 @@
 5. No external system ROMs in commits, public workflows, logs, PRs, disk-image artifacts or releases. Use only legitimately obtained ROMs.
 6. Preserve original ROMs, `src/RAMDISK.BIN`, historical assets and stable 6.2b. Never merge the whole Z80 feature branch into `main`.
 
+## NMS8250 ROM download references (links only)
+
+The following four URLs were supplied by the project maintainer. **Store these source URLs in documentation, not the ROM binary data in Git.** The remote source filenames are illustrative, not a requirement for identifying ROM images: verify actual ROM size, hash and suitability for the openMSX machine configuration.
+
+| Purpose | Source URL | Expected size | Optional GitHub Actions secret |
+| --- | --- | --- | --- |
+| MSX BIOS | https://download.file-hunter.com/System%20ROMs/machines/philips/nms8250-bios.rom | 16 KiB | `MSX_NMS8250_BIOS_B64` |
+| MSX BASIC | https://download.file-hunter.com/System%20ROMs/machines/philips/nms8250-basic.rom | 16 KiB | `MSX_NMS8250_BASIC_B64` |
+| MSX2 SUB-ROM | https://download.file-hunter.com/System%20ROMs/machines/philips/nms8250_msx2sub.rom | 16 KiB | `MSX_NMS8250_SUB_B64` |
+| MSX Disk ROM | https://download.file-hunter.com/System%20ROMs/machines/philips/nms8250_disk.rom | 16 KiB | `MSX_NMS8250_DISK_B64` |
+
+These URLs have **not** been established as reachable from GitHub Actions. The earlier direct combined-ROM and ZIP URLs returned HTTP 405 in run 42889296897; test these four *distinct* links separately before relying on direct CI downloads. Do not silently substitute downloads from an unverified mirror, and respect the source's access rules. GitHub Actions secrets are an optional alternative for private runtime provision, not ROM files in the repository. Keep ROM bytes outside commits, artifacts, and logs; consult the applicable distribution rights.
+
 ## Philips NMS8250 ROM identification and configuration
 
 An NMS8250 set may contain a **32 KiB BIOS+BASIC** image plus **16 KiB SUB** and **16 KiB disk** ROMs, or the BIOS and BASIC may be provided as separate **16 KiB** halves. Both packaging styles are possible. Sizes are useful clues **but not definitive identification**.
