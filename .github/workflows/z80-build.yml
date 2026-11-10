@@ -108,7 +108,7 @@ jobs:
           cmp src/RAMDISK.BIN z80/build/stable/src/RAMDISK.BIN
           python3 z80/tools/make_onefile_preview.py --ramdisk src/RAMDISK.BIN --text z80/build/KBLTXT.BIN --output z80/build/KBLRAMTX.BIN
           python3 z80/tools/make_full_z80_test.py --root . --output z80/build/onefile --one-file
-      - name: Build isolated one-BLOAD disk (UNPROVEN: mapper persistence)
+      - name: 'Build isolated one-BLOAD disk (UNPROVEN: mapper persistence)'
         run: |
           cp z80/build/stable/assets/kabelkrant-6.2b.dsk z80/build/KBLONEFILE.DSK
           mcopy -i z80/build/KBLONEFILE.DSK ::LOOP.SYS z80/build/onefile/LOOPBAS.SYS
