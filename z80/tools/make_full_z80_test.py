@@ -55,8 +55,20 @@ def transform(init: str, loop: str, one_file: bool = False) -> tuple[str, str, i
     if i is None or 'CLEAR 2000' not in lines[i]:
         raise ValueError('Unexpected KBLINIT.SYS memory setup')
     lines[i]=INITIALIZER
-    # Reserve memory before loading the machine code.
-    lines.insert(i+1, '195 DEFUSR3=&HC806: A=USR3(0)' if one_file else '195 BLOAD "KBLTXT.BIN",R')
+    # In the single-BLOAD experiment, the payload is staged *before*
+    # RAMdisk's warmstart. Probe its first opcode (LD HL,nn = 21h) at
+    # three checkpoints before ever invoking potentially lost machine
+    # code. This is a diagnostic, not a validated persistence design.
+    if one_file:
+        lines.insert(next(j for j, line in enumerate(lines) if line.startswith('115 ')),
+                     '112 IF PEEK(&HC806)<>33 THEN SCREEN 0:WIDTH 80:PRINT "ONEFILE ERROR E1: TEXT lost during RAMdisk warmstart":END')
+        i=next(j for j, line in enumerate(lines) if line.startswith('190 '))
+        lines.insert(i, '188 IF PEEK(&HC806)<>33 THEN SCREEN 0:WIDTH 80:PRINT "ONEFILE ERROR E2: TEXT overwritten during intro":END')
+        i=next(j for j, line in enumerate(lines) if line.startswith('190 '))
+        lines.insert(i+1, '193 IF PEEK(&HC806)<>33 THEN SCREEN 0:WIDTH 80:PRINT "ONEFILE ERROR E3: TEXT overwritten by CLEAR":END')
+        lines.insert(i+2, '195 DEFUSR3=&HC806: A=USR3(0)')
+    else:
+        lines.insert(i+1, '195 BLOAD "KBLTXT.BIN",R')
     init=split_long_data_lines('\n'.join(lines)+'\n')
 
     # The Z80 engine embeds the font coordinates: X(4,110) in BASIC
