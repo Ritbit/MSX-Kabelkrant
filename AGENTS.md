@@ -2,9 +2,9 @@
 
 **Scope:** `feature/z80-renderer` in `Ritbit/MSX-Kabelkrant`.
 
-This file and `CONTEXT.md`, `PLAN.md`, `TODO.md`, `BUILD-AND-TEST.md` are development
+This file and `CONTEXT.md`, `PLAN.md`, `TODO.md`, `BUILD-AND-TEST.md`, `HOWTO-TESTING.md` are development
 coordination files. **Do not merge, cherry-pick, copy, or include these
-five files in `main` or any release PR.** They are intentionally absent
+six files in `main` or any release PR.** They are intentionally absent
 from stable branches.
 
 ## Read first
@@ -12,8 +12,9 @@ from stable branches.
 1. `CONTEXT.md` for architecture and current verified state.
 2. `TODO.md` for the next runnable task.
 3. `PLAN.md` for milestones and acceptance criteria.
-4. `BUILD-AND-TEST.md` for reproducible build, openMSX and WebMSX steps.
-5. `z80/COMBINED-STATUS.md` for the unresolved RAMdisk/CALL integration.
+4. `HOWTO-TESTING.md` for ROM-independent NMS8250 setup, tested evidence and regression criteria.
+5. `BUILD-AND-TEST.md` for detailed assembly, openMSX and WebMSX commands.
+6. `z80/COMBINED-STATUS.md` for the unresolved RAMdisk/CALL integration.
 
 ## Working rules
 
@@ -47,7 +48,7 @@ Create a new branch **from `main`**, then copy/cherry-pick **only the
 specific production files and tests intended for release**. Review the
 PR's changed-file list before opening it. Never create a release PR by
 targeting `main` directly from `feature/z80-renderer`: that would carry
-experiments and these coordination files. If any of these five docs
+experiments and these coordination files. If any of these six docs
 appears in a release diff, stop and remove it from the PR before merge.
 
 The Git branch alone cannot technically enforce "never merge"; enforce
