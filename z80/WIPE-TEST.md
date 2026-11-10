@@ -1,6 +1,6 @@
 # Isolated V9938 wipe test — development only
 
-**Status:** Build + static geometry tests pass; **not yet runtime/visual validated**.
+**Status (2026-11-10):** The user confirmed isolated effect #1 appears to work in WebMSX. The current updated build adds frame pacing and isolated effect #2; neither paced version has yet been visually validated.
 This disk is separate from the user-confirmed working `KBLONEFILE.DSK`
 and does not change the newspaper's current BASIC wipes.
 
@@ -21,15 +21,27 @@ The original BASIC final band starts at y=212, beyond visible SCREEN 7.
 https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE.DSK
 
 The standalone disk `KBLWIPE.DSK` fills a rectangle, calls
-`BLOAD "WIPE1.BIN",R` and repeats. This first prototype deliberately
-does **not** pace the wipe to video frames, so it may appear nearly
-instantaneous and is not visually equivalent to the BASIC animation yet.
-It confirms only whether drawing and cleanup work on MSX2.
+`BLOAD "WIPE1.BIN",R` and repeats. The 2026-11-10 updated kernel
+waits for command completion and then one MSX BIOS JIFFY tick per
+2-scanline band (81 bands). At 50 Hz the wait component alone takes
+approximately 1.62 s; at 60 Hz approximately 1.35 s. This is deliberate
+frame pacing, but not yet calibrated to the historical BASIC duration.
+
+## Effect #2: bottom to top
+
+Uses the same V9938 fill kernel with the Y sequence reversed:
+210,208,...,50; the bottommost visible pair is y=210..211.
+This is compiled separately as `WIPE2.BIN` and placed on
+`KBLWIPE2.DSK`.
+
+https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-KabelKrant/feature/z80-renderer/assets/KBLWIPE2.DSK
+
+Neither demo is used by the working `KBLONEFILE.DSK` newspaper.
 
 ## Gates before using in full newspaper
 
 1. Check output and screen stability in WebMSX and optionally openMSX.
-2. Add deterministic frame pacing, keeping the perceived BASIC duration.
+2. Calibrate the JIFFY-based pacing against the perceived BASIC duration.
 3. Compare completed image and clock/interrupt behaviour against BASIC.
 4. Integrate behind an opt-in test switch and expand to effects 2–14.
 
