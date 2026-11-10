@@ -177,3 +177,34 @@ confirmation is still needed.
 
 - #9: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE9.DSK
 - #10: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE10.DSK
+
+## Effects #11–#14 (2026-11-10)
+
+The user confirmed that both #11 (vertical interlaced) and #12
+(horizontal interlaced) work in WebMSX. Consequently **wipes #1–#12
+are visually confirmed**, including the corrected #2.
+
+The final two wipes are isolated experimental binaries:
+
+- **#13** (original `LOOP.SYS` 3360): four moving vertical 1-pixel
+  lines per iteration at x=A, 512-A, 257+A, 257-A, A=0..256 STEP 2.
+  A 129-row lookup table preserves this order, using 0FFFFh for
+  off-screen coordinates; V9938 LMMV draws only visible columns
+  over y=50..211. One JIFFY tick per two iterations.
+- **#14** (original `LOOP.SYS` 3370): four different unfilled
+  rectangular outlines per iteration, 39 iterations Y=0..76 STEP 2.
+  Each original rectangle is converted into four one-pixel V9938
+  border strips. A table of 156 records specifies clipped coordinates,
+  including the source's inward/outward overlapping rectangle motion.
+  One JIFFY tick per four complete outlines.
+
+**Build gates:** CI validates all the precomputed geometry against
+independently computed BASIC expressions, loaded BLOAD entry addresses,
+the exact data tables in the assembled binaries and the exact FAT12
+payloads and AUTOEXEC labels. The CI build passed. Visual parity
+of #13/#14 must still be confirmed.
+
+- Wipe #13: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE13.DSK
+- Wipe #14: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE14.DSK
+
+Neither preview modifies the working one-BLOAD Kabelkrant or BASIC v6.2b.
