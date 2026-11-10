@@ -14,9 +14,8 @@ PATH = ASM[START:END]
 
 class ColourMaskTests(unittest.TestCase):
     def test_palette_bitwise_mask_matches_basic(self):
-        for colour in range(16):
-            for pixel in range(16):
-                self.assertEqual(pixel & colour, pixel & colour)
+        for pixel, expected in [(0, 0), (1, 1), (13, 13), (14, 12), (15, 13)]:
+            self.assertEqual(pixel & 13, expected)
         # Palette 1 is the dark outline, not transparent.
         self.assertEqual(1 & 13, 1)
         self.assertEqual(15 & 13, 13)
