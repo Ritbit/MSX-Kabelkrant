@@ -61,6 +61,27 @@ its disk menu. A GitHub Actions artifact link is not a raw DSK URL.
 The standalone renderer demo `KBLASM.DSK` remains a separate test
 and does not exercise the historical RAMdisk/page loop.
 
+## 2026-11-10: potential page-three crash cause
+
+Source review identified a deterministic memory-corruption bug in the Z80
+`CALL TEXT` argument copy: `LDIR` was reached when the string length
+was zero (`BC=0`). On the Z80, this copies 65,536 bytes, overwriting
+RAM instead of doing no work. Valid empty lines in page files can reach
+`CALL TEXT("")` (the original BASIC loop skips a single blank space,
+but not an empty string). The assembly now skips `LDIR` for zero-length
+strings and a regression test checks this guard. This is a **strong
+candidate**, not yet an emulator-confirmed explanation for the crash.
+
+Independently, generated test `LOOP.SYS` now enters the non-returning
+page cycle with `GOTO 2200` rather than `GOSUB 2200`, preventing a
+return-stack leak at each `GOTO 140` cycle restart.
+
+Development-only WebMSX preview (built on CI and published as a raw DSK):
+
+```text
+https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLZ80TEST.DSK
+```
+
 ## Next tests
 
 Identify the reset around 140–145 s with an openMSX trace (PC/stack/
