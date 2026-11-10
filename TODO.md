@@ -12,6 +12,7 @@ file or the other three coordination docs to `main`.
 - [x] Build separate one-file alpha while retaining working two-file fallback.
 - [x] User confirmed several complete newspaper page cycles with one-file alpha and no observed issues (2026-11-10).
 - [ ] Validate RAMdisk C: read/write and editor paths for one-file alpha before removing fallback.
+- [x] CI gates the built single-BLOAD disk by verifying embedded RAMdisk/TEXT byte ranges, exact BASIC files and all 6.2b baseline files.
 - [ ] Remove diagnostic mapper pokes from any production candidate.
 
 ## Full Kabelkrant Z80 alpha (WebMSX smoke passed; not release-stable)
@@ -40,7 +41,8 @@ file or the other three coordination docs to `main`.
 
 ## Later — acceleration roadmap
 
-- [ ] Implement and test `CALL WIPE(n)`, n=1..14; preserve frame pacing.
+- [x] Build isolated Z80/V9938 wipe #1 (top-down) drawing kernel; compile and geometry-check under CI, without changing the live newspaper.
+- [ ] Integrate an opt-in `CALL WIPE(1)` with visual emulator comparison and controlled frame pacing; then extend to all 14 wipes.
 - [ ] Port title-bar wipe if benchmarks warrant it.
 - [ ] Benchmark screen transitions, intro and hourglass before porting.
 - [ ] Full Kabelkrant multi-page integration tests and clean release PR.
