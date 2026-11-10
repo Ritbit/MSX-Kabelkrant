@@ -149,3 +149,31 @@ pair counts), full visible pixel coverage, and FAT12 image contents.
 - #8: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE8.DSK
 
 No change to the working one-file newspaper or BASIC 6.2b release.
+
+## Effects #9 and #10: rectangular outlines (2026-11-10)
+
+The user visually confirmed effects **#7 and #8** in WebMSX. All
+eight preceding wipes are now confirmed.
+
+The original BASIC lines 3320 and 3330 draw two nested box **outlines**
+per iteration (`LINE ...,B`, *not* `BF`). These experimental Z80
+approximations draw each two-pixel contour using four V9938 LMMV fills
+(two horizontal and two vertical border bands), preserving the interior
+until subsequent passes. To avoid out-of-range coordinates, the
+precomputed `wipe_rect_table.asm` stores 128 visible rectangles,
+x=0..254 in steps of two, y=floor(x*75/256).
+
+- **#9:** outside toward centre (ascending table order), 128 boxes.
+- **#10:** centre toward outside (descending table order), 128 boxes.
+
+Frame pacing: one JIFFY wait per two completed outlines (64 waits).
+Both binaries are standalone and do not alter the working newspaper.
+
+The CI checks original BASIC line semantics, every table row's bounds,
+four border drawing commands, the compiled first table pointer for each
+direction and the exact binary stored in each FAT12 disk. Build passed;
+**pixel-perfect BASIC parity is not claimed**, and visual WebMSX
+confirmation is still needed.
+
+- #9: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE9.DSK
+- #10: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE10.DSK
