@@ -7,7 +7,7 @@
     dw WipeFromCentre
 JIFFY EQU 0FC9Eh
 
-WipeTowardCentre:
+WipeFromCentre:
     push af
     push bc
     push de
