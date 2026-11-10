@@ -69,3 +69,11 @@ file or the other three coordination docs to `main`.
 
 Keep this list short and current: move resolved technical detail to
 `z80/COMBINED-STATUS.md`, not into an ever-growing TODO.
+
+## NMS8250 automated regression (2026-11-10)
+- [x] Prepare disposable 14-wipe+title disk C: test that writes an A: proof marker **only** after writing, reading, comparing, and deleting a temporary C: file.
+- [x] Add time-separated openMSX captures over 210 emulated seconds and a comparison script that rejects blank/stationary output.
+- [x] CI builds and tests the proof disk and accepted title-wipe image without modifying release or main.
+- [x] Support three private NMS8250 ROMs (32KiB BIOS+BASIC + 16KiB SUB + 16KiB disk); no ROMs committed or attached to artifacts.
+- [ ] Execute full ROM-backed emulator suite and inspect screenshot artifacts; **currently blocked by ROM accessibility**. User-provided Philips URL returned HTTP 405 from GitHub Actions; alternate user-provided ZIP source has been attempted once and its result needs checking. ROM binaries provided by the user did not mount in the conversation/container.
+- [ ] Verify editor/menu, clock rollover and longer cycle reliability after C: proof is successful.
