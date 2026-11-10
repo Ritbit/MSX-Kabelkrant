@@ -19,9 +19,11 @@ file or the other three coordination docs to `main`.
       include original LOOPBAS.SYS in the testdisk.
 - [x] Boot full application, draw a news page and verify Z80 CALL handler
       repeatedly invoked in openMSX NMS 8250.
-- [ ] Debug unexpected reboot around 140–145 emulated seconds.
-- [ ] Run complete multi-page / editor / clock / C: I/O regressions with
+- [x] Fix the deterministic `LDIR`/`BC=0` RAM corruption; WebMSX user confirmed broadcast continues past page 3 (2026-11-10).
+- [ ] Run automated multi-page / editor / clock / C: I/O regressions with
       this exact full disk image before claiming runtime stability.
+
+- [x] Add CI checks for the built FAT12 preview, text binary/load address, the BASIC page loop and unmodified baseline files.
 
 ## Next — functional and performance parity
 
