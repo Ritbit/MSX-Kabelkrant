@@ -124,10 +124,41 @@ class LastWipeTests(unittest.TestCase):
         self.assertIn("ld b,4",ASM13)
         self.assertIn("call WipeWaitFrame",ASM13)
         self.assertIn("ld bc,12\n    ldir",ASM14)
-        self.assertEqual(ASM14.count("call LmmmLaunch"),4)
+        self.assertEqual(ASM14.count("call LmmmLaunch"),5)
         self.assertIn("ld a,39",ASM14)
         self.assertIn("ld a,4",ASM14)
         self.assertIn("call WipeWaitFrame",ASM14)
+
+    def test_wipe14_full_black_final_state(self):
+        # Rectangular outlines alone leave untouched pixels. The kernel
+        # must finish with a full fill, not merely draw the last outline.
+        tail=ASM14.split("FinalFullClear:",1)
+        self.assertEqual(len(tail),2,"missing unconditional final clear")
+        before,after=tail
+        self.assertIn("jr nz,.next_step",before[-120:])
+        instructions=after.split("    pop hl",1)[0]
+        required=(
+            "ld hl,0\\n    ld (LmDX),hl",
+            "ld hl,50\\n    ld (LmDY),hl",
+            "ld hl,512\\n    ld (LmNX),hl",
+            "ld hl,162\\n    ld (LmNY),hl",
+            "xor a\\n    ld (LmCLR),a",
+            "ld (LmARG),a",
+            "ld a,080h",
+            "ld (LmCMD),a",
+            "call LmmmLaunch",
+            "call WipeWaitIdle",
+        )
+        positions=[instructions.index(token) for token in required]
+        self.assertEqual(positions,sorted(positions))
+        self.assertEqual(ASM14.count("call LmmmLaunch"),5)
+        # Both expected dimensions and coordinates must be encoded in
+        # the *assembled* machine-code body after the contour loop.
+        body=code(14)
+        final=body[body.index(b"\\x21\\x00\\x02"):]
+        self.assertIn(b"\\x21\\xa2\\x00",final)  # LD HL,162
+        self.assertIn(b"\\x21\\x32\\x00",final)  # LD HL,50
+        self.assertIn(b"\\x3e\\x80",final)          # LMMV command
 
     def test_actual_binaries_embed_tables_and_pointer(self):
         for num,rows in ((13,table13()),(14,table14())):
