@@ -99,6 +99,9 @@ jobs:
           mcopy -o -i z80/build/KBLZ80TEST.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
           mdir -i z80/build/KBLZ80TEST.DSK ::KBLTXT.BIN
           test "$(stat -c %s z80/build/KBLZ80TEST.DSK)" -eq 737280
+      - name: Validate completed full Z80 disk against released BASIC 6.2b
+        run: |
+          python3 -m unittest discover -s z80/tests -p 'test_full_disk_image.py' -v
       - name: Upload full Kabelkrant Z80 preview disk (runtime testing required)
         uses: actions/upload-artifact@v4
         with:
