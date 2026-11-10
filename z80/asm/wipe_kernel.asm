@@ -8,6 +8,7 @@
 ; Output: wipe1.raw (not a BLOAD/R file).
 ; Requires existing non-reentrant V9938 command queue.
     ORG 0C804h
+    dw WipeTopDown         ; MSX BLOAD/R entry is C806 (after two-byte vector)
 
 WipeTopDown:
     push af
