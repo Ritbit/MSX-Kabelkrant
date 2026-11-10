@@ -138,11 +138,11 @@ class LastWipeTests(unittest.TestCase):
         self.assertIn("jr nz,.next_step",before.split(".next_step:",1)[-1])
         instructions=after.split("    pop hl",1)[0]
         required=(
-            "ld hl,0\\n    ld (LmDX),hl",
-            "ld hl,50\\n    ld (LmDY),hl",
-            "ld hl,512\\n    ld (LmNX),hl",
-            "ld hl,162\\n    ld (LmNY),hl",
-            "xor a\\n    ld (LmCLR),a",
+            "ld hl,0\n    ld (LmDX),hl",
+            "ld hl,50\n    ld (LmDY),hl",
+            "ld hl,512\n    ld (LmNX),hl",
+            "ld hl,162\n    ld (LmNY),hl",
+            "xor a\n    ld (LmCLR),a",
             "ld (LmARG),a",
             "ld a,080h",
             "ld (LmCMD),a",
@@ -155,10 +155,10 @@ class LastWipeTests(unittest.TestCase):
         # Both expected dimensions and coordinates must be encoded in
         # the *assembled* machine-code body after the contour loop.
         body=code(14)
-        final=body[body.index(b"\\x21\\x00\\x02"):]
-        self.assertIn(b"\\x21\\xa2\\x00",final)  # LD HL,162
-        self.assertIn(b"\\x21\\x32\\x00",final)  # LD HL,50
-        self.assertIn(b"\\x3e\\x80",final)          # LMMV command
+        final=body[body.index(b"\x21\x00\x02"):]
+        self.assertIn(b"\x21\xa2\x00",final)  # LD HL,162
+        self.assertIn(b"\x21\x32\x00",final)  # LD HL,50
+        self.assertIn(b"\x3e\x80",final)          # LMMV command
 
     def test_actual_binaries_embed_tables_and_pointer(self):
         for num,rows in ((13,table13()),(14,table14())):
