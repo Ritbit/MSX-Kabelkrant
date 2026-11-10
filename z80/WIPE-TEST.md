@@ -113,8 +113,7 @@ clipped original BASIC boundary coordinates:
 Both drawing commands finish before the next pair is issued. The
 CI gates publishing on checks of the actual **compiled BLOAD binaries**,
 the precise coverage of the visible rectangle and the exact binary and
-AUTOEXEC embedded inside each FAT12 image. CI passed, but independent
-visual direction/pacing confirmation is still required.
+AUTOEXEC embedded inside each FAT12 image. CI passed; the user confirmed **both wipes #5 and #6** work correctly in WebMSX on 2026-11-10.
 
 **Isolated WebMSX tests:**
 
@@ -124,3 +123,29 @@ visual direction/pacing confirmation is still required.
   https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE6.DSK
 
 The full newspaper `KBLONEFILE.DSK` still uses original BASIC wipes.
+
+## Effects #7 and #8: centre outward (2026-11-10)
+
+New isolated binaries in `wipe_outward_kernel.asm`, driven by numeric
+`WIPE_FROM_SIDES` constants, reverse the geometry of wipes #5/#6.
+Both use black V9938 LMMV two-pixel bands and JIFFY pacing.
+
+- **Wipe #7:** centre toward top and bottom, source BASIC line 3300;
+  starts on Y=130 and extends to top Y=50 and bottom Y=210.
+  Covers Y=50..211; deliberately clips the historical Y=49 endpoint
+  to preserve the title area. 41 pairs, one tick per pair.
+- **Wipe #8:** centre toward left and right, source BASIC line 3310;
+  starts on X=254 and X=256, ends on X=0 and X=510.
+  Covers X=0..511; 128 pairs, one tick every two pairs.
+
+After detecting and correcting an assembly entry-symbol error and a
+false-positive binary assertion, the full CI build passed. The build
+checks actual BLOAD bytes (including distinct starting coordinates and
+pair counts), full visible pixel coverage, and FAT12 image contents.
+
+**WebMSX isolated tests (visual confirmation still needed):**
+
+- #7: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE7.DSK
+- #8: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE8.DSK
+
+No change to the working one-file newspaper or BASIC 6.2b release.
