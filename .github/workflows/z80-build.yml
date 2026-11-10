@@ -37,7 +37,7 @@ jobs:
       - name: Assemble isolated V9938 wipe #1 prototype (not connected to broadcast)
         run: |
           python3 -m unittest discover -s z80/tests -p 'test_wipe_kernel.py' -v
-          (cd z80/asm && sjasmplus --raw=../build/wipe1.raw --lst=../build/wipe1.lst wipe_kernel.asm)
+          (cd z80/asm && sjasmplus --raw=../build/wipe1.raw --lst=../build/wipe1.lst wipe_forward.asm)
           test -s z80/build/wipe1.raw
           python3 z80/tools/make_bload.py z80/build/wipe1.raw z80/build/WIPE1.BIN
           test -s z80/build/WIPE1.BIN
