@@ -1,7 +1,6 @@
 # Fixed two-title-bar wipe prototype
 
-**Status:** feature-branch-only experimental Z80 alpha; integrated WebMSX
-visual acceptance pending.
+**Status:** feature-branch-only experimental Z80 alpha; **corrected VRAM-copy title wipe visually approved by user in WebMSX on 2026-11-10**. Other C:/editor regressions remain open.
 
 ## Decision
 
@@ -73,3 +72,7 @@ proposal* for other screen areas. It is intentionally **not used**
 for title bars; do not add its parser/geometry overhead to the
 working 14-wipe resident build without demonstrating a useful case
 and proving the memory budget.
+
+## Visual acceptance — 2026-11-10
+
+The user confirmed that the corrected `KBLTITLECOPY.DSK` title wipe now works correctly in WebMSX. The earlier black-fill version was rejected and must not be used. The accepted implementation copies the clean left-hand VRAM template across X=0..434, Y=0..48, leaving the clock X=435..511 intact. All fourteen newspaper wipes remain unchanged. CI verified a 3,879-byte resident module, leaving 217 bytes inside the reserved 4 KiB. This manual confirmation covers title-wipe visuals, not the remaining C:/editor/long-run regression gates.
