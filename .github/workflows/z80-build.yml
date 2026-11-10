@@ -39,6 +39,8 @@ jobs:
           python3 -m unittest discover -s z80/tests -p 'test_wipe_kernel.py' -v
           (cd z80/asm && sjasmplus --raw=../build/wipe1.raw --lst=../build/wipe1.lst wipe_kernel.asm)
           test -s z80/build/wipe1.raw
+          python3 z80/tools/make_bload.py z80/build/wipe1.raw z80/build/WIPE1.BIN
+          test -s z80/build/WIPE1.BIN
       - name: Assemble standalone CALL TEXT demo
         run: |
           (cd z80/asm && sjasmplus --raw=../build/textdemo.raw --lst=../build/textdemo.lst --sym=../build/textdemo.sym basic_text_demo.asm)
@@ -84,6 +86,27 @@ jobs:
           mcopy -o -i z80/build/KBLASM.DSK z80/build/KBLTXT.BIN ::KBLTXT.BIN
           mdir -i z80/build/KBLASM.DSK ::
           test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
+      - name: Build isolated wipe-one demonstration disk
+        run: |
+          cp assets/kabelkrant-6.2.dsk z80/build/KBLWIPE.DSK
+          printf '%s\r\n' \
+            '10 CLEAR 1000,&HC7FF:SCREEN 7:COLOR 15,0,0' \
+            '20 CLS:LINE(0,50)-(511,211),14,BF' \
+            '30 LINE(0,50)-(511,211),1,B' \
+            '40 FOR T=1 TO 1000:NEXT T' \
+            '50 BLOAD "WIPE1.BIN",R' \
+            '60 FOR T=1 TO 1000:NEXT T' \
+            '70 GOTO 20' > z80/build/WIPEAUTO.BAS
+          mcopy -o -i z80/build/KBLWIPE.DSK z80/build/WIPEAUTO.BAS ::AUTOEXEC.BAS
+          mcopy -o -i z80/build/KBLWIPE.DSK z80/build/WIPE1.BIN ::WIPE1.BIN
+          test "$(stat -c %s z80/build/KBLWIPE.DSK)" -eq 737280
+          mdir -i z80/build/KBLWIPE.DSK ::WIPE1.BIN
+      - name: Upload isolated wipe demo (needs visual validation)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLWIPE-V9938-TOPDOWN-UNVERIFIED
+          path: z80/build/KBLWIPE.DSK
+          if-no-files-found: error
       - name: Generate full Kabelkrant Z80 test BASIC files
         run: |
           python3 z80/tools/make_full_z80_test.py --root . --output z80/build/full
@@ -150,9 +173,10 @@ jobs:
             mkdir -p assets
             cp z80/build/KBLZ80TEST.DSK assets/KBLZ80TEST.DSK
           cp z80/build/KBLONEFILE.DSK assets/KBLONEFILE.DSK
+          cp z80/build/KBLWIPE.DSK assets/KBLWIPE.DSK
           test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
