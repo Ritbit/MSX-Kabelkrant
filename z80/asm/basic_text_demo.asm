@@ -357,20 +357,19 @@ GlyphBlit:
     call LmmmLaunch
     ret
 
-; Convert one glyph from source colours {15=ink,1=background} to
-; {K=ink,0=transparent}. Two page-1 scratch rects are used:
-; A=(0,190)..(width-1,207), B=(0,212)..(width-1,229).
-; B is below the BASIC-accessible image but inside page-1 framebuffer;
-; neither scratch area touches palette/sprite data or the font atlas.
-; IMPORTANT: V9938 logical opcodes are AND=1, OR=2, NOT=4;
-; transparent NOT (TNOT) = 0xC. LMMM=0x90, LMMV=0x80.
+; Match the released BASIC renderer exactly:
+;   COPY glyph to page-1 scratch, LINE ... ,K,BF,AND, then TPSET.
+; Palette index 1 in the original atlas is the dark outline, NOT
+; transparency. The old two-buffer conversion (15->K, 1->0) destroyed
+; that outline whenever K<>15 (especially K=13 headings).
+; Scratch A is at page-1 Y=190..207, outside the font atlas.
 GlyphBlitColoured:
     ld hl,(LmDX)
     ld (ColourOutputX),hl
     ld hl,(LmDY)
     ld (ColourOutputY),hl
 
-    ; A := source glyph (15 or 1).
+    ; A := source glyph, preserving source palette indices.
     ld hl,0
     ld (LmDX),hl
     ld hl,256+190
@@ -379,47 +378,19 @@ GlyphBlitColoured:
     ld (LmCMD),a
     call LmmmLaunch
 
-    ; A := A AND 14: glyph=14, background=0.
-    ld a,14
-    ld (LmCLR),a
-    ld a,081h                ; LMMV AND
-    ld (LmCMD),a
-    call LmmmLaunch
-
-    ; B := 0.
-    ld hl,256+212
-    ld (LmDY),hl
-    xor a
-    ld (LmCLR),a
-    ld a,080h                ; LMMV IMP
-    ld (LmCMD),a
-    call LmmmLaunch
-
-    ; B := transparent NOT(A): glyph=1, background=0.
-    ld hl,0
-    ld (LmSX),hl
-    ld hl,256+190
-    ld (LmSY),hl
-    ld a,09Ch                ; LMMM TNOT, skips zero source
-    ld (LmCMD),a
-    call LmmmLaunch
-
-    ; B := B OR A: glyph=15, background=0.
-    ld a,09Ah                ; LMMM TOR
-    ld (LmCMD),a
-    call LmmmLaunch
-
-    ; B := B AND K: glyph=K, background=0.
+    ; A := A AND K, exactly as BASIC LINE(...),K,BF,AND.
+    ; 15 AND 13 = 13 (letter), 1 AND 13 = 1 (dark outline),
+    ; 0 AND 13 = 0 (transparent background).
     ld a,(text_colour)
     ld (LmCLR),a
     ld a,081h                ; LMMV AND
     ld (LmCMD),a
     call LmmmLaunch
 
-    ; Transfer B transparently onto visible page 0.
+    ; Transparent copy A to page 0; zero pixels leave destination intact.
     ld hl,0
     ld (LmSX),hl
-    ld hl,256+212
+    ld hl,256+190
     ld (LmSY),hl
     ld hl,(ColourOutputX)
     ld (LmDX),hl
@@ -427,7 +398,7 @@ GlyphBlitColoured:
     ld (LmDY),hl
     xor a
     ld (LmCLR),a
-    ld a,098h                ; LMMM TIMP
+    ld a,098h                ; LMMM TIMP (TPSET)
     ld (LmCMD),a
     call LmmmLaunch
     ret
