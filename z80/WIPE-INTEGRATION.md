@@ -1,6 +1,6 @@
 # Integrating 14 wipe effects into the single-BLOAD Z80 Kabelkrant
 
-**Status:** all fourteen effects compiled into a separate opt-in onefile alpha; integrated WebMSX runtime verification pending.
+**Status:** all fourteen effects compiled into one opt-in onefile alpha; **user confirms in WebMSX that the newspaper runs and all 14 integrated wipes work** (2026-11-10). C: I/O, editor/menu, repeat-cycle stress and clock stability remain unverified.
 **Branch:** `feature/z80-renderer`; never modify v6.2b on main.
 
 ## Validated baseline
@@ -74,7 +74,7 @@ same BLOAD and BASIC 6.2b baseline:
 |---|---|---:|---|
 | `KBLWIPEINT.DSK` | #1–#8 | 2630 | Build/FAT12 checks passed; manual runtime pending |
 | `KBLWIPEINT12.DSK` | #1–#12 | 3362 | Build/FAT12 checks passed; manual runtime pending |
-| `KBLWIPEINT14.DSK` | #1–#14 | 3775 | Build/FAT12 checks passed; manual runtime pending |
+| `KBLWIPEINT14.DSK` | #1–#14 | 3775 | Build/FAT12 checks passed; **user-confirmed WebMSX newspaper and all wipe functionality** |
 
 The full variant resides at **C804..D6C2**, under the current exclusive
 boundary D804, leaving **321 bytes** of headroom. Original RAMdisk
@@ -104,3 +104,16 @@ https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1
 Verify news cycle, Z80 text, wipe directions, C: RAMdisk read/write,
 editor/menu, and page/clock stability before promoting this disk.
 Wipe #14 is accepted with known visual diagonal traces, not pixel-perfect.
+
+## Manual integration acceptance (2026-11-10)
+
+User reports **Kabelkrant works and all 14 wipes work** with the integrated
+`KBLWIPEINT14.DSK` preview. This validates the integrated call path at
+functional smoke-test level and supersedes the earlier status of runtime
+*unverified*. It does **not** establish long-run or filesystem safety.
+
+Before promotion, independently check C: creation/read/delete, editor/menu,
+multiple unattended page cycles, clock/palette persistence and text edge
+cases on that same integrated disk. Keep `KBLONEFILE.DSK` unchanged as the
+rollback baseline. Wipe #14 retains the previously accepted residual
+visual diagonal traces; do not claim pixel-perfect equivalence.
