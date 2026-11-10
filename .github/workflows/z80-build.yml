@@ -484,6 +484,19 @@ jobs:
           mcopy -o -i z80/build/KBLWIPEINT14.DSK z80/build/wipe_integration14/LOOP.SYS ::LOOP.SYS
           mcopy -o -i z80/build/KBLWIPEINT14.DSK z80/build/KBLRAMWIPE14.BIN ::RAMDISK.BIN
           python3 -m unittest discover -s z80/tests -p 'test_all_wipe_integration.py' -v
+      - name: Build read/write/delete RAMdisk C: diagnostic disk
+        run: |
+          set -euo pipefail
+          python3 z80/tools/msx_basic_ascii.py z80/tests/CTEST.BAS z80/build/CTEST.BAS
+          cp z80/build/KBLWIPEINT14.DSK z80/build/KBLCTEST.DSK
+          mcopy -o -i z80/build/KBLCTEST.DSK z80/build/CTEST.BAS ::CTEST.BAS
+          python3 -m unittest discover -s z80/tests -p 'test_ramdisk_diagnostic_disk.py' -v
+      - name: Upload RAMdisk C: diagnostic disk (manual MSX execution required)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLCTEST-14-WIPE-RAMDISK-C-REGRESSION
+          path: z80/build/KBLCTEST.DSK
+          if-no-files-found: error
       - name: Upload complete 14-effect integrated alpha (WebMSX unverified)
         uses: actions/upload-artifact@v4
         with:
@@ -522,6 +535,7 @@ jobs:
           cp z80/build/KBLWIPEINT.DSK assets/KBLWIPEINT.DSK
           cp z80/build/KBLWIPEINT12.DSK assets/KBLWIPEINT12.DSK
           cp z80/build/KBLWIPEINT14.DSK assets/KBLWIPEINT14.DSK
+          cp z80/build/KBLCTEST.DSK assets/KBLCTEST.DSK
           cp z80/build/KBLWIPE.DSK assets/KBLWIPE.DSK
           cp z80/build/KBLWIPE2.DSK assets/KBLWIPE2.DSK
           cp z80/build/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK
@@ -541,7 +555,7 @@ jobs:
           cp z80/build/KBLWIPE14FIX2.DSK assets/KBLWIPE14FIX2.DSK
           test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK assets/KBLWIPE14FIX.DSK assets/KBLWIPE14FIX2.DSK assets/KBLWIPEINT.DSK assets/KBLWIPEINT12.DSK assets/KBLWIPEINT14.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK assets/KBLWIPE14FIX.DSK assets/KBLWIPE14FIX2.DSK assets/KBLWIPEINT.DSK assets/KBLWIPEINT12.DSK assets/KBLWIPEINT14.DSK assets/KBLCTEST.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
