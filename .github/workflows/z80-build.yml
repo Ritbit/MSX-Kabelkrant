@@ -484,14 +484,14 @@ jobs:
           mcopy -o -i z80/build/KBLWIPEINT14.DSK z80/build/wipe_integration14/LOOP.SYS ::LOOP.SYS
           mcopy -o -i z80/build/KBLWIPEINT14.DSK z80/build/KBLRAMWIPE14.BIN ::RAMDISK.BIN
           python3 -m unittest discover -s z80/tests -p 'test_all_wipe_integration.py' -v
-      - name: Build read/write/delete RAMdisk C: diagnostic disk
+      - name: 'Build read/write/delete RAMdisk C: diagnostic disk'
         run: |
           set -euo pipefail
           python3 z80/tools/msx_basic_ascii.py z80/tests/CTEST.BAS z80/build/CTEST.BAS
           cp z80/build/KBLWIPEINT14.DSK z80/build/KBLCTEST.DSK
           mcopy -o -i z80/build/KBLCTEST.DSK z80/build/CTEST.BAS ::CTEST.BAS
           python3 -m unittest discover -s z80/tests -p 'test_ramdisk_diagnostic_disk.py' -v
-      - name: Upload RAMdisk C: diagnostic disk (manual MSX execution required)
+      - name: 'Upload RAMdisk C: diagnostic disk (manual MSX execution required)'
         uses: actions/upload-artifact@v4
         with:
           name: KBLCTEST-14-WIPE-RAMDISK-C-REGRESSION
