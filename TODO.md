@@ -3,16 +3,17 @@
 **Branch:** `feature/z80-renderer`. Development-only; never merge this
 file or the other three coordination docs to `main`.
 
-## Now — confirmed RAMdisk memory collision
+## Now — one-file loader boots in WebMSX (2026-11-10)
 
 - [x] Trace BASIC CALL into slot 3-2/segment 2; it reaches 46F5h.
 - [x] Find destructive zero-fill at 41B3h (PC 41BFh writes 00h).
-- [ ] Safely stage TEXT in protected page-3 RAM after RAMdisk restart.
+- [x] Stage one-file TEXT at C804 and reserve HIMEM before intro; user confirms the newspaper works with no E1/E1B/E2/E3 errors in WebMSX.
 - [ ] Validate CALL dispatch, drive C: read/write and BASIC memory limits.
-- [ ] Decide on one-file two-stage loader or a proven two-file fallback.
+- [x] Build separate one-file alpha while retaining working two-file fallback.
+- [ ] Validate repeated page cycles, RAMdisk C: read/write and editor paths for one-file alpha before removing fallback.
 - [ ] Remove diagnostic mapper pokes from any production candidate.
 
-## Full Kabelkrant Z80 alpha (verified; not stable)
+## Full Kabelkrant Z80 alpha (WebMSX smoke passed; not release-stable)
 
 - [x] Load original RAMdisk first and Z80 TEXT at C804h after warmstart.
 - [x] Remove unused BASIC font array and renderer from *test* LOOP.SYS;
@@ -49,8 +50,7 @@ file or the other three coordination docs to `main`.
 - [x] Standalone assembly `CALL TEXT`: four fonts, white/13 and
       positive/negative-X tested in openMSX.
 - [x] Build first combined `KBLALL.BIN`; stays within one 16-KiB bank.
-- [x] Confirm combined `CALL KBLVER` still fails at BASIC line 80:
-      do not promote the binary as production-ready.
+- [x] Diagnose old `KBLALL.BIN` collision with RAMdisk storage; do not promote that unsafe binary. New *distinct* one-file `KBLRAMTX.BIN` stages TEXT above C800 and boots in WebMSX.
 
 Keep this list short and current: move resolved technical detail to
 `z80/COMBINED-STATUS.md`, not into an ever-growing TODO.
