@@ -89,6 +89,34 @@ Development-only WebMSX preview (built on CI and published as a raw DSK):
 https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLZ80TEST.DSK
 ```
 
+## Experimental single-BLOAD alternative (2026-11-10)
+
+A **separate** `KBLONEFILE.DSK` has been generated on the feature branch
+without replacing the known-working `KBLZ80TEST.DSK`. It is NOT runtime
+validated and must not be promoted to a release:
+
+- `z80/tools/make_onefile_preview.py` copies the exact historical
+  `RAMDISK.BIN` C000–C7EF payload unchanged, pads to C804 and appends
+  the separately assembled TEXT payload, while keeping BLOAD's original
+  C000 entry.
+- The boot `AUTOEXEC.BAS` remains unchanged and runs the composite
+  as `RAMDISK.BIN`. Generated `KBLINIT.SYS` substitutes
+  `195 DEFUSR3=&HC806: A=USR3(0)` for the second BLOAD.
+- Unit tests check binary layout/preservation. GitHub Actions builds
+  and publishes the experimental disk separately.
+- **Unknown:** whether the C804 payload survives RAMdisk's warmstart,
+  slot/mapper switching and C: initialization. A successful build is
+  *not* evidence that `USR3` can reach the staged module.
+
+Manual WebMSX experiment (do not confuse with the working alpha):
+
+```text
+https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLONEFILE.DSK
+```
+
+If it fails, first trace C806 and C004 after warmstart under openMSX
+before changing any historical RAMdisk bytes.
+
 ## Next tests
 
 Run a multi-cycle unattended openMSX trace and explicit drive C:
