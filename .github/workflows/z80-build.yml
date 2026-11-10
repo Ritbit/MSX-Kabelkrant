@@ -90,6 +90,21 @@ jobs:
           assert end < 0xD804, f"Integrated code exceeds safe 4KiB region: {end:04X}"
           print(f'Experimental WIPE TEXT footprint: {len(data)-7} bytes; final {end:04X}')
           PY
+      - name: Generate and assemble compact 12-wipe integration extension
+        run: |
+          set -euo pipefail
+          python3 z80/tools/make_wipe_integration.py --extra --asm z80/asm/.generated_wipe12_text.asm --loop z80/build/wipe_integration12/LOOP.SYS
+          (cd z80/asm && sjasmplus --raw=../build/textwipe12.raw --lst=../build/textwipe12.lst --sym=../build/textwipe12.sym .generated_wipe12_text.asm)
+          python3 z80/tools/make_bload.py z80/build/textwipe12.raw z80/build/KBLTXTWIPE12.BIN
+          python3 - <<'PY'
+          import struct
+          from pathlib import Path
+          b=Path('z80/build/KBLTXTWIPE12.BIN').read_bytes()
+          start,end,entry=struct.unpack_from('<HHH',b,1)
+          assert (start,entry)==(0xC804,0xC806)
+          assert end < 0xD804, f"12-wipe engine spills beyond D803: {end:04X}"
+          print(f'Shared 12-wipe resident payload {len(b)-7} bytes; end {end:04X}')
+          PY
       - name: Audit current 4KiB TEXT plus wipe memory budget
         run: python3 z80/tools/audit_wipe_memory.py
       - name: Verify original RAMdisk storage bounds
@@ -429,6 +444,23 @@ jobs:
             z80/build/KBLRAMWIPE.BIN
             z80/build/textwipe.lst
           if-no-files-found: error
+      - name: Build and verify separate 12-effect integration alpha
+        run: |
+          set -euo pipefail
+          python3 z80/tools/make_onefile_preview.py --ramdisk src/RAMDISK.BIN --text z80/build/KBLTXTWIPE12.BIN --output z80/build/KBLRAMWIPE12.BIN
+          cp z80/build/KBLONEFILE.DSK z80/build/KBLWIPEINT12.DSK
+          mcopy -o -i z80/build/KBLWIPEINT12.DSK z80/build/wipe_integration12/LOOP.SYS ::LOOP.SYS
+          mcopy -o -i z80/build/KBLWIPEINT12.DSK z80/build/KBLRAMWIPE12.BIN ::RAMDISK.BIN
+          python3 -m unittest discover -s z80/tests -p 'test_extended_wipe_integration.py' -v
+      - name: Upload shared 12-wipe integration alpha (WebMSX runtime unverified)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLWIPEINT12-SHARED-ALPHA
+          path: |
+            z80/build/KBLWIPEINT12.DSK
+            z80/build/KBLRAMWIPE12.BIN
+            z80/build/textwipe12.lst
+          if-no-files-found: error
       - name: Verify published one-BLOAD disk structure and unchanged files
         run: python3 -m unittest discover -s z80/tests -p 'test_onefile_disk_image.py' -v
       - name: Upload single-BLOAD experimental disk (NOT RUNTIME VERIFIED)
@@ -456,6 +488,7 @@ jobs:
             cp z80/build/KBLZ80TEST.DSK assets/KBLZ80TEST.DSK
           cp z80/build/KBLONEFILE.DSK assets/KBLONEFILE.DSK
           cp z80/build/KBLWIPEINT.DSK assets/KBLWIPEINT.DSK
+          cp z80/build/KBLWIPEINT12.DSK assets/KBLWIPEINT12.DSK
           cp z80/build/KBLWIPE.DSK assets/KBLWIPE.DSK
           cp z80/build/KBLWIPE2.DSK assets/KBLWIPE2.DSK
           cp z80/build/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK
@@ -475,7 +508,7 @@ jobs:
           cp z80/build/KBLWIPE14FIX2.DSK assets/KBLWIPE14FIX2.DSK
           test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK assets/KBLWIPE14FIX.DSK assets/KBLWIPE14FIX2.DSK assets/KBLWIPEINT.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK assets/KBLWIPE14FIX.DSK assets/KBLWIPE14FIX2.DSK assets/KBLWIPEINT.DSK assets/KBLWIPEINT12.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
