@@ -22,6 +22,8 @@ ORIGINAL_EFFECT_LINES = tuple(range(3240, 3380, 10))
 def split_program(program: str) -> dict[int, str]:
     result: dict[int, str] = {}
     for line in program.splitlines():
+        if not line.strip():
+            continue
         match = re.fullmatch(r"(\d+) (.*)", line)
         if not match:
             raise ValueError(f"Unnumbered BASIC line: {line!r}")
