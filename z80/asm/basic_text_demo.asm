@@ -115,7 +115,12 @@ TextCommand:
     ld a,(text_length)
     ld c,a
     ld b,0
+    ; LDIR with BC=0 copies 65536 bytes and corrupts BASIC/driver RAM!
+    ; Empty page text lines are valid: skip the block copy entirely.
+    or a
+    jr z,.text_copied
     ldir
+.text_copied:
     ld ix,FRESTR
     call CALBAS
     pop hl
