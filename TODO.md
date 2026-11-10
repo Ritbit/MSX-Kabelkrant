@@ -50,7 +50,9 @@ file or the other three coordination docs to `main`.
 - [x] Implement shared `CALL WIPE(n)` engine for all 14 in a **separate** opt-in onefile image (`KBLWIPEINT14.DSK`): 3775 bytes within 4096-byte reserved area; retain 1..8 and 1..12 fallback alphas.
 - [x] User confirmed **KBLWIPEINT14.DSK runs the Kabelkrant and all fourteen integrated Z80 wipes in WebMSX** (2026-11-10). This is a manual functional smoke test; not yet C: or editor regression approval.
 - [ ] Validate drive C: read/write, editor/menu paths, repeated unattended cycles and clock stability on **the exact integrated 14-wipe disk**. Preserve rollback preview.
-- [ ] Port title-bar wipe if benchmarks warrant it.
+- [x] Build fixed two-title-bar Z80 wipe (`CALL WIPE(15)`) in isolated `KBLTITLE.DSK`: only X0..434 at Y9..22 and Y30..43; preserve clock X435..511. CI passes at **3885/4096 bytes**, leaving **211 bytes**.
+- [ ] Visually validate `KBLTITLE.DSK` in WebMSX, including clock and title borders; do not replace accepted `KBLWIPELEAN.DSK` before confirmation.
+- [ ] Treat the five-argument rectangular wipe proposal as independent experimental development; **do not** use for title bars.
 - [x] Generate lean 14-Z80-wipe test disk removing obsolete BASIC wipes; ASCII LOOP.SYS shrank 2,261 bytes (12,555 to 10,294), **not yet measured in tokenized BASIC RAM**.
 - [x] Generate paired BASIC-versus-Z80 timing benchmark disk (`KBLWIBENCH.DSK`) with all 14 exact original BASIC loops and 14 shared native modes; CI verified disk/source parity.
 - [ ] Run `BENCHW.BAS` on WebMSX/openMSX with ROMs; collect 14 measured BASIC/Z80 JIFFY pairs and compare actual RAM using `FRE(0)`. CI cannot execute MSX BASIC without ROMs.
