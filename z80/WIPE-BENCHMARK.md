@@ -97,3 +97,22 @@ may be a better maintenance decision. If smoother/faster, keep the lean
 Z80 version and avoid further native ports until memory layout changes.
 
 No changes to the BASIC-only v6.2b release or main branch.
+
+## Auto-start timing disk (preferred)
+
+An additional distinct disk `KBLWIAUTO.DSK` has been built and verified.
+It is byte-identical to `KBLWIBENCH.DSK`, except its KBLINIT.SYS
+adds line 198: `RUN "A:BENCHW.BAS"` after line 195 installs the
+shared Z80 TEXT/WIPE extension. Thus the benchmark runs automatically
+on boot, requiring no Ctrl+Stop or BASIC prompt.
+
+WebMSX auto-benchmark:
+
+https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIAUTO.DSK
+
+Wait for the final fourteen-row table. Save a screenshot of BASIC ticks,
+Z80 ticks and the Z80/BASIC ratios for interpretation. The test includes
+deliberate Z80 frame pacing; the original BASIC wipe #14 still uses
+its historical misaligned rectangle coordinates. GitHub Actions
+verifies code and disk image, but cannot run MSX BASIC without the
+optional licensed ROM secrets, so no timing results are claimed yet.
