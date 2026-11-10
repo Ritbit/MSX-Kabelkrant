@@ -4,6 +4,9 @@ This changelog records the public archive history, not every original 1990s deve
 
 ## 6.2b — 2026 maintenance release
 
+- 2026-11-10 maintenance re-spin: replace `GOSUB 2200` with `GOTO 2200` at line 190 in `LOOP.SYS`. The page loop restarts using `GOTO 140` without returning, so the original entry could accumulate BASIC return frames. All historical and other 6.2b files remain unchanged.
+
+
 - Rebuilt the bootable MSX2 disk image and readable ZIP from the corrected BASIC sources.
 - Load `KRANT3.SC7` instead of `KRANT4.SC7`, enabling all four proportional fonts.
 - Correct font-1/font-3 atlas Y coordinates and the typo at `X(2,20)` (18 → 158), without modifying `X.DAT`.

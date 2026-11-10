@@ -1,7 +1,7 @@
 name: Build Kabelkrant 6.2b release images
 on:
   push:
-    branches: [release/6.2b-disk-images]
+    branches: [release/6.2b-disk-images, hotfix/6.2b-page-loop-stack, main]
     paths:
       - '.github/workflows/release-62b.yml'
       - 'tools/build_release_62b.py'
@@ -28,7 +28,31 @@ jobs:
           test "$(stat -c %s assets/kabelkrant-6.2b.dsk)" -eq 737280
           python3 tools/build_release_62b.py
           sha256sum assets/kabelkrant-6.2b.dsk assets/kabelkrant-6.2b.zip
+      - name: Check page-loop stack fix in rebuilt disk and ZIP
+        run: |
+          python3 - <<'PY'
+          import sys
+          from pathlib import Path
+          sys.path.insert(0, 'tools')
+          from build_release_62b import Disk
+          import zipfile
+          root = Path('assets')
+          original = Disk((root/'kabelkrant-6.2.dsk').read_bytes())
+          fixed = Disk((root/'kabelkrant-6.2b.dsk').read_bytes())
+          source = Path('src/LOOP.SYS').read_bytes().replace(b'\n', b'\r\n')
+          text = fixed.read('LOOP.SYS')
+          assert text == source, 'LOOP.SYS on disk differs from source'
+          assert b'190 GOTO 2200' in text, 'missing stack fix'
+          assert b'190 GOSUB 2200' not in text, 'old stack leak remains'
+          for name, _ in fixed.entries():
+              if name not in ('AUTOEXEC.BAS','KBLINIT.SYS','LOOP.SYS'):
+                  assert fixed.read(name) == original.read(name), name
+          with zipfile.ZipFile(root/'kabelkrant-6.2b.zip') as z:
+              assert z.read('LOOP.SYS') == text
+          print('PASS: 6.2b disk and ZIP include line-190 stack fix; 27 original files preserved')
+          PY
       - name: Commit generated binaries on release branch
+        if: github.ref != 'refs/heads/main'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -37,7 +61,22 @@ jobs:
             echo "Release binaries already up to date."
           else
             git commit -m "Build 6.2b bootable disk and source ZIP"
-            git push origin HEAD:release/6.2b-disk-images
+            git push origin "HEAD:${GITHUB_REF_NAME}"
+          fi
+      - name: Verify main release binaries match regenerated output
+        if: github.ref == 'refs/heads/main'
+        run: git diff --exit-code -- assets/kabelkrant-6.2b.dsk assets/kabelkrant-6.2b.zip
+      - name: Replace 6.2b GitHub release download assets after main validation
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release upload v6.2b assets/kabelkrant-6.2b.dsk assets/kabelkrant-6.2b.zip --clobber
+          gh release view v6.2b --json body --jq '.body' > "${RUNNER_TEMP}/release-notes.txt"
+          if ! grep -q '2026-11-10 maintenance re-spin' "${RUNNER_TEMP}/release-notes.txt"; then
+            printf '\n\n2026-11-10 maintenance re-spin: LOOP.SYS line 190 uses GOTO 2200 rather than GOSUB 2200 to prevent accumulating BASIC return frames across page cycles. Disk and ZIP download assets rebuilt; stable version remains 6.2b.\n' >> "${RUNNER_TEMP}/release-notes.txt"
+            gh release edit v6.2b --notes-file "${RUNNER_TEMP}/release-notes.txt"
           fi
       - name: Upload verified release assets
         uses: actions/upload-artifact@v4
