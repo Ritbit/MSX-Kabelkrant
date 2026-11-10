@@ -54,6 +54,25 @@ class AllWipesShared(unittest.TestCase):
         self.assertNotEqual(full,prior)
         self.assertGreater(len(full),len(prior))
 
+    def test_only_opted_in_files_differ_from_legacy_onefile(self):
+        preview=BUILD/"KBLWIPEINT14.DSK"
+        baseline=BUILD/"KBLONEFILE.DSK"
+        def names(disk):
+            raw=subprocess.check_output(["mdir","-b","-i",str(disk),"::"],text=True)
+            return {line.strip().rsplit("/",1)[-1].upper()
+                    for line in raw.splitlines() if line.strip()}
+        def read(disk,name):
+            return subprocess.check_output(["mcopy","-i",str(disk),f"::{name}","-"],
+                                           stderr=subprocess.PIPE)
+        old,new=names(baseline),names(preview)
+        self.assertEqual(old,new)
+        changed={"RAMDISK.BIN","LOOP.SYS"}
+        for name in sorted(old-changed):
+            with self.subTest(file=name):
+                self.assertEqual(read(preview,name),read(baseline,name))
+        for name in changed:
+            self.assertNotEqual(read(preview,name),read(baseline,name))
+
     def test_disk_embeds_correct_combined_code(self):
         disk=BUILD/"KBLWIPEINT14.DSK"
         self.assertEqual(disk.stat().st_size,737280)
