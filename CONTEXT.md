@@ -1,7 +1,8 @@
 # Development context — Z80 Kabelkrant
 
 > **Private-to-development documentation in a public branch.** This file and
-> `AGENTS.md`, `PLAN.md`, `TODO.md`, `BUILD-AND-TEST.md` belong to
+> `AGENTS.md`, `PLAN.md`, `TODO.md`, `BUILD-AND-TEST.md`,
+> `HOWTO-TESTING.md` belong to
 > `feature/z80-renderer` **only**. Never include them in a PR to `main`.
 > Updated 2026-11-09; verify current GitHub Actions results before trusting
 > historical status claims.
@@ -39,7 +40,8 @@ BASIC calls them or drive C: uses the RAMdisk.
 - `z80/tools/make_combined_rom.py`: experimental RAMdisk+TEXT image builder.
 - `z80/COMBINED-STATUS.md`: latest confirmed integration blocker.
 - `z80/PERFORMANCE-ROADMAP.md`: detailed optimization candidates.
-- `BUILD-AND-TEST.md`: complete assembly, disk-image, openMSX and WebMSX test guide.
+- `BUILD-AND-TEST.md`: detailed assembly, disk-image, openMSX and WebMSX test guide.
+- `HOWTO-TESTING.md`: canonical ROM identification rules, test evidence levels and regression checklist.
 
 ## Graphics and fonts
 
