@@ -133,7 +133,7 @@ jobs:
             sleep 2
           done
           echo "### WebMSX preview (experimental, reset regression known)" >> "$GITHUB_STEP_SUMMARY"
-          echo "https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLZ80TEST.DSK" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLZ80TEST.DSK" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Create combined RAMdisk + Z80 TEXT experimental test disk
         run: |
