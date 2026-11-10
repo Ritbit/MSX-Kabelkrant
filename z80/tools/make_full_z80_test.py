@@ -77,6 +77,12 @@ def transform(init: str, loop: str) -> tuple[str, str, int]:
             line='1050 DIM XK(60),YK(60)'
         elif n == 1130:
             line='1130 COPY "XK.dat" TO XK: COPY "YK.DAT" TO YK'
+        elif n == 190:
+            # The 2200 page loop never RETURNs: 3800 jumps to 140.
+            # GOSUB 2200 leaks a BASIC return frame on every full cycle.
+            if 'GOSUB 2200' not in line:
+                raise ValueError('Unexpected page-loop entry')
+            line=line.replace('GOSUB 2200','GOTO 2200')
         new=line.replace('GOSUB 2500',TEXT_CALL)
         changed+=new!=line
         result.append(new)
