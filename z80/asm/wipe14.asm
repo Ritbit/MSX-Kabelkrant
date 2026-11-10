@@ -3,6 +3,7 @@
 ; Their clipped geometry is in wipe14_boxes.asm (39 x 4 records).
 ; Each rectangle is drawn using four 1-pixel V9938 LMMV/IMP strips.
 ; We retain BASIC's sequence; clipping excludes x=512, y=212 and title.
+; The contour pass ends with a full visible-area black LMMV fill.
 ; ISOLATED preview binary, no changes to live newspaper.
     ORG 0C804h
     dw WipeFourBoxes
@@ -76,6 +77,27 @@ WipeFourBoxes:
     dec a
     ld (RemainingSteps),a
     jr nz,.next_step
+
+    ; The four moving contour families do NOT cover every pixel.
+    ; A wipe must leave the entire newspaper area black. Perform a
+    ; final full-area fill, with no frame wait or title-bar writes.
+    ; The VDP command completes before BASIC resumes.
+FinalFullClear:
+    ld hl,0
+    ld (LmDX),hl
+    ld hl,50
+    ld (LmDY),hl
+    ld hl,512
+    ld (LmNX),hl
+    ld hl,162
+    ld (LmNY),hl
+    xor a
+    ld (LmCLR),a
+    ld (LmARG),a
+    ld a,080h             ; LMMV/IMP, fill all pixels with colour 0
+    ld (LmCMD),a
+    call LmmmLaunch
+    call WipeWaitIdle
 
     pop hl
     pop de
