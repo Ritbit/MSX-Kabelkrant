@@ -3,9 +3,9 @@
 ; Replaces BASIC lines 3240: FOR A=50 TO 212 STEP 2:
 ;   LINE(0,A)-(512,A+1),0,BF : NEXT
 ; In SCREEN 7 the visible area ends at Y=211, so omit A=212.
-; No frame pacing yet: this prototype benchmarks *raw drawing work* only.
+; Uses one BIOS JIFFY frame between two-scanline bands when IRQs enabled.
 ;
-; Output: wipe1.raw (not a BLOAD/R file).
+; Output: wipe1.raw, or wipe2.raw if WIPE_REVERSE is defined.
 ; Requires existing non-reentrant V9938 command queue.
     ORG 0C804h
     dw WipeTopDown         ; MSX BLOAD/R entry is C806 (after two-byte vector)
@@ -17,7 +17,11 @@ WipeTopDown:
     push hl
     ld hl,0
     ld (LmDX),hl
-    ld hl,50
+    IFDEF WIPE_REVERSE
+    ld hl,210                ; reverse: y=210,208,...,50
+    ELSE
+    ld hl,50                 ; forward: y=50,52,...,210
+    ENDIF
     ld (LmDY),hl
     ld hl,512
     ld (LmNX),hl
@@ -30,7 +34,18 @@ WipeTopDown:
     ld (LmCMD),a
 .next_band:
     call LmmmLaunch      ; wait CE idle then issue one 512x2 fill
+    call WipeWaitIdle     ; ensure completed *before* pacing / next band
+    call WipeWaitFrame    ; use one 50/60-Hz video tick per band, when IRQs enabled
     ld hl,(LmDY)
+    IFDEF WIPE_REVERSE
+    ld a,l
+    cp 50
+    jr z,.done
+    dec hl
+    dec hl
+    ld (LmDY),hl
+    jr .next_band
+    ELSE
     inc hl
     inc hl
     ld (LmDY),hl
@@ -40,6 +55,7 @@ WipeTopDown:
     ld a,l
     cp 212               ; visible rows: 50..211 inclusive (81 bands)
     jr c,.next_band
+    ENDIF
 .done:
     ; Do not return with an outstanding VDP command, since BASIC may
     ; immediately issue a new LINE/COPY.
@@ -89,6 +105,24 @@ WipeWaitIdle:
     ei
 .return:
     pop de
+    pop af
+    ret
+
+ ; A frame tick is optional: if interrupts are disabled, do not hang.
+ ; JIFFY is incremented by the MSX BIOS VBlank interrupt.
+JIFFY EQU 0FC9Eh
+WipeWaitFrame:
+    push af
+    push hl
+    ld a,i
+    jp po,.exit
+    ld hl,JIFFY
+    ld a,(hl)
+.wait:
+    cp (hl)
+    jr z,.wait
+.exit:
+    pop hl
     pop af
     ret
 
