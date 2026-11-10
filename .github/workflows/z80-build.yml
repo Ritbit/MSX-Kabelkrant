@@ -788,6 +788,12 @@ jobs:
             echo "ROM_READY=true" >> "$GITHUB_ENV"
             echo "ROM_LAYOUT=4" >> "$GITHUB_ENV"
             echo "ROM layout: legacy four 16KiB files."
+          elif [[ "${{ github.event.head_commit.message }}" == *"[nms8250-rom-test]"* ]]; then
+            # One-off explicit opt-in. Do NOT download system ROMs on
+            # every push: respect the archive's download policy.
+            echo "ROM_READY=true" >> "$GITHUB_ENV"
+            echo "ROM_LAYOUT=remote" >> "$GITHUB_ENV"
+            echo "NMS8250: one-shot test with user-supplied public ROM URLs."
           else
             echo "ROM_READY=false" >> "$GITHUB_ENV"
             echo "ROM_LAYOUT=none" >> "$GITHUB_ENV"
@@ -811,7 +817,19 @@ jobs:
           umask 077
           rom_dir="$RUNNER_TEMP/openmsx-roms"
           mkdir -p "$rom_dir"
-          if [[ "$ROM_LAYOUT" == "3" ]]; then
+          if [[ "$ROM_LAYOUT" == "remote" ]]; then
+            rombase="https://download.file-hunter.com/System%20ROMs/machines/philips"
+            # Explicit user-supplied URLs, download a single time only.
+            curl -fLsS --retry 0 --connect-timeout 10 --max-time 60 \
+              "$rombase/nms8250_basic-bios2.rom" \
+              -o "$rom_dir/nms8250_basic-bios2.rom"
+            curl -fLsS --retry 0 --connect-timeout 10 --max-time 60 \
+              "$rombase/nms8250_msx2sub.rom" \
+              -o "$rom_dir/nms8250_msx2sub.rom"
+            curl -fLsS --retry 0 --connect-timeout 10 --max-time 60 \
+              "$rombase/nms8250_disk.rom" \
+              -o "$rom_dir/nms8250_disk.rom"
+          elif [[ "$ROM_LAYOUT" == "3" ]]; then
             printf '%s' "$MSX_NMS8250_MAIN32_B64" | base64 --decode > "$rom_dir/nms8250_basic-bios2.rom"
             printf '%s' "$MSX_NMS8250_SUB16_B64" | base64 --decode > "$rom_dir/nms8250_msx2sub.rom"
             printf '%s' "$MSX_NMS8250_DISK16_B64" | base64 --decode > "$rom_dir/nms8250_disk.rom"
