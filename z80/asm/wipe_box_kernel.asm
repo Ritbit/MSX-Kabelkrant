@@ -166,10 +166,7 @@ WipeWaitFrame:
     pop af
     ret
 
-WipeNear:        dw 0
-WipeFar:         dw 0
-WipeRemaining:   db 0
-WipePaceCounter: db 0
 WipeSavedIFF:    db 0
-    INCLUDE 'v9938_lmmm.asm'\n    INCLUDE 'wipe_rect_table.asm'
+    INCLUDE 'v9938_lmmm.asm'
+    INCLUDE 'wipe_rect_table.asm'
 
