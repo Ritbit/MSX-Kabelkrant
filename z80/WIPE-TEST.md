@@ -234,3 +234,26 @@ new cache-safe name (same bytes as the newly built KBLWIPE14.DSK):
 https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE14FIX.DSK
 
 **Visual confirmation of this corrected version is still pending.**
+
+## Wipe #14 incomplete clear fix (2026-11-10)
+
+A WebMSX screenshot from the user showed that the alignment-corrected
+wipe #14 left un-erased white rectangular outlines. The contour-only
+strategy does not mathematically cover every pixel: although the visual
+transition is correct, the display was not guaranteed black at return.
+
+The experimental Z80 `wipe14.asm` now adds an **unconditional final
+V9938 LMMV colour-0 fill** covering exactly X=0..511 and Y=50..211,
+after all 156 outline records have been drawn. It waits for the VDP CE
+bit to clear before returning control to BASIC. No title-bar pixels
+are modified. The test verifies drawing order, full-rectangle
+coordinates in source and compiled opcodes, and embedded FAT12 payload.
+
+The CI build succeeded and a separate browser-cache-safe disk is
+published. Runtime appearance of the **new** build still needs visual
+confirmation:
+
+https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE14FIX2.DSK
+
+This change is **only** to the isolated wipe #14 demo; the working
+Kabelkrant onefile and BASIC-only 6.2b have not been modified.
