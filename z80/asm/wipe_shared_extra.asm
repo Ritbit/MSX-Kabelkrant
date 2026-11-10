@@ -2,6 +2,12 @@
 ; and memory-only VDP parameters with the resident TEXT renderer.
 ; Not included by the 1..8 integration alpha.
 WipeExtraRun:
+    IF WIPE_FULL
+    cp 13
+    jp z,WipeIntegrated13
+    cp 14
+    jp z,WipeIntegrated14
+    ENDIF
     cp 11
     jp nc,WipeExtraInterlace
     jp WipeExtraBoxes
@@ -25,6 +31,8 @@ WipeExtraBoxes:
     ld (ExtraRemain),a
     ld a,2
     ld (ExtraPace),a
+    ld a,2
+    ld (ExtraStroke),a
     call ExtraInitBlack
 
 .next:
@@ -109,7 +117,9 @@ ExtraDrawBox:
     ld (LmDY),hl
     ld hl,(ExtraWidth)
     ld (LmNX),hl
-    ld hl,2
+    ld a,(ExtraStroke)
+    ld l,a
+    ld h,0
     ld (LmNY),hl
     call LmmmLaunch
     ld hl,(ExtraBottom)
@@ -119,7 +129,9 @@ ExtraDrawBox:
     ld (LmDY),hl
     ld hl,(ExtraHeight)
     ld (LmNY),hl
-    ld hl,2
+    ld a,(ExtraStroke)
+    ld l,a
+    ld h,0
     ld (LmNX),hl
     call LmmmLaunch
     ld hl,(ExtraRight)
@@ -238,6 +250,7 @@ ExtraInitBlack:
     ld (LmCMD),a
     ret
 
+ExtraStroke: db 2
 ExtraMode: db 0
 ExtraPtr: dw 0
 ExtraX: db 0
@@ -251,3 +264,7 @@ ExtraBottom: dw 0
 ExtraWidth: dw 0
 ExtraHeight: dw 0
     INCLUDE 'wipe_compact_table.asm'
+
+    IF WIPE_FULL
+    INCLUDE 'wipe_shared_final.asm'
+    ENDIF
