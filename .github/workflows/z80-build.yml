@@ -102,6 +102,31 @@ jobs:
       - name: Validate completed full Z80 disk against released BASIC 6.2b
         run: |
           python3 -m unittest discover -s z80/tests -p 'test_full_disk_image.py' -v
+      - name: Test composite loader and construct single-BLOAD prototype
+        run: |
+          python3 -m unittest discover -s z80/tests -p 'test_onefile_preview.py' -v
+          cmp src/RAMDISK.BIN z80/build/stable/src/RAMDISK.BIN
+          python3 z80/tools/make_onefile_preview.py --ramdisk src/RAMDISK.BIN --text z80/build/KBLTXT.BIN --output z80/build/KBLRAMTX.BIN
+          python3 z80/tools/make_full_z80_test.py --root . --output z80/build/onefile --one-file
+      - name: Build isolated one-BLOAD disk (UNPROVEN: mapper persistence)
+        run: |
+          cp z80/build/stable/assets/kabelkrant-6.2b.dsk z80/build/KBLONEFILE.DSK
+          mcopy -i z80/build/KBLONEFILE.DSK ::LOOP.SYS z80/build/onefile/LOOPBAS.SYS
+          mcopy -o -i z80/build/KBLONEFILE.DSK z80/build/onefile/LOOPBAS.SYS ::LOOPBAS.SYS
+          mcopy -o -i z80/build/KBLONEFILE.DSK z80/build/onefile/KBLINIT.SYS ::KBLINIT.SYS
+          mcopy -o -i z80/build/KBLONEFILE.DSK z80/build/onefile/LOOP.SYS ::LOOP.SYS
+          mcopy -o -i z80/build/KBLONEFILE.DSK z80/build/KBLRAMTX.BIN ::RAMDISK.BIN
+          test "$(stat -c %s z80/build/KBLONEFILE.DSK)" -eq 737280
+          test "$(mcopy -i z80/build/KBLONEFILE.DSK ::RAMDISK.BIN - | wc -c)" -eq "$(stat -c %s z80/build/KBLRAMTX.BIN)"
+          mdir -i z80/build/KBLONEFILE.DSK ::RAMDISK.BIN
+      - name: Upload single-BLOAD experimental disk (NOT RUNTIME VERIFIED)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLONEFILE-UNVERIFIED-RAMDISK-TEXT-STAGING
+          path: |
+            z80/build/KBLONEFILE.DSK
+            z80/build/KBLRAMTX.BIN
+          if-no-files-found: error
       - name: Upload full Kabelkrant Z80 preview disk (runtime testing required)
         uses: actions/upload-artifact@v4
         with:
@@ -117,8 +142,10 @@ jobs:
             git switch -C preview-publish FETCH_HEAD
             mkdir -p assets
             cp z80/build/KBLZ80TEST.DSK assets/KBLZ80TEST.DSK
+          cp z80/build/KBLONEFILE.DSK assets/KBLONEFILE.DSK
+          test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
@@ -135,8 +162,9 @@ jobs:
             fi
             sleep 2
           done
-          echo "### WebMSX preview (experimental, reset regression known)" >> "$GITHUB_STEP_SUMMARY"
+          echo "### WebMSX previews: full working alpha and unverified single-BLOAD prototype" >> "$GITHUB_STEP_SUMMARY"
           echo "https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLZ80TEST.DSK" >> "$GITHUB_STEP_SUMMARY"
+          echo "UNVERIFIED ONEFILE: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLONEFILE.DSK" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Create combined RAMdisk + Z80 TEXT experimental test disk
         run: |
