@@ -17,7 +17,7 @@
 160 IF WE<>WK THEN GOSUB 1400: WE=WK: ' Week (WK) krant laden.
 170 IF DW<>VW THEN GOSUB 3900: VW=DW
 180 GOSUB 2000: ' Complete wipe scherm, schrijf titelbalken en zet klokje aan.
-190 GOSUB 2200: ' Ga naar pagina loop
+190 GOTO 2200: ' Ga naar pagina loop (no RETURN path)
 200 END
 1000 '******************** SUBROUTINES ********************
 1010 '
