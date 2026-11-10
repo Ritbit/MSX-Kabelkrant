@@ -46,9 +46,14 @@ class OnefilePreviewTests(unittest.TestCase):
         single_init, single_loop, single_count = transform(init, loop, one_file=True)
         self.assertEqual(normal_loop, single_loop)
         self.assertEqual(normal_count, single_count)
-        self.assertEqual(single_init, normal_init.replace(
-            '195 BLOAD "KBLTXT.BIN",R',
-            '195 DEFUSR3=&HC806: A=USR3(0)'))
+        self.assertEqual(
+            [line for line in single_init.splitlines() if not line.startswith(('112 ', '188 ', '193 '))],
+            normal_init.replace('195 BLOAD "KBLTXT.BIN",R',
+                                '195 DEFUSR3=&HC806: A=USR3(0)').splitlines())
+        for checkpoint, code in [(112, "E1"), (188, "E2"), (193, "E3")]:
+            line = next(line for line in single_init.splitlines() if line.startswith(f"{checkpoint} "))
+            self.assertIn("PEEK(&HC806)<>33", line)
+            self.assertIn(f"ONEFILE ERROR {code}", line)
         self.assertNotIn('BLOAD "KBLTXT.BIN"', single_init)
 
 
