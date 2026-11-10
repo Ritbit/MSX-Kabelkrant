@@ -31,9 +31,6 @@ def make_asm(source: str, extra: bool = False) -> str:
         ".wipe:\n    pop hl\n    call WipeCommand\n    or a\n    ret\n"
         ".ver:\n    pop hl\n    call VersionCommand",
     )
-    if extra:
-        source = once(source, "    cp 9\n    jp nc,IllegalFunction",
-                      "    cp 13\n    jp nc,IllegalFunction")
     source = once(source, "VerName:  db 'KBLVER',0",
                   "VerName:  db 'KBLVER',0\nWipeName: db 'WIPE',0")
     source = once(
@@ -65,6 +62,9 @@ WipeRequested: db 0
 GetChar:
 """,
     )
+    if extra:
+        source = once(source, "    cp 9\n    jp nc,IllegalFunction",
+                      "    cp 13\n    jp nc,IllegalFunction")
     source = once(source, "EmbeddedFonts:\n",
                   "    INCLUDE 'wipe_shared.asm'\nEmbeddedFonts:\n")
     return source
@@ -77,7 +77,8 @@ def make_loop(loop: str, extra: bool = False) -> str:
     if any(l.startswith("3141 ") for l in loop.splitlines()):
         raise ValueError("3141 already exists")
     return once(loop, line + "\n",
-                ("3140 IF A>=1 AND A<=12 THEN CALL WIPE(A):GOTO 3380\n" if extra\n                 else "3140 IF A>=1 AND A<=8 THEN CALL WIPE(A):GOTO 3380\n")
+                ("3140 IF A>=1 AND A<=12 THEN CALL WIPE(A):GOTO 3380\n" if extra
+                 else "3140 IF A>=1 AND A<=8 THEN CALL WIPE(A):GOTO 3380\n")
                 "3141 " + line[5:] + "\n")
 
 
