@@ -155,9 +155,11 @@ class LastWipeTests(unittest.TestCase):
         # Both expected dimensions and coordinates must be encoded in
         # the *assembled* machine-code body after the contour loop.
         body=code(14)
-        final=body[body.index(b"\x21\x00\x02"):]
+        full_width=body.index(b"\x21\x00\x02")
+        # Y=50 is set immediately *before* NX=512, not after it.
+        self.assertIn(b"\x21\x32\x00",body[max(0,full_width-16):full_width])
+        final=body[full_width:]
         self.assertIn(b"\x21\xa2\x00",final)  # LD HL,162
-        self.assertIn(b"\x21\x32\x00",final)  # LD HL,50
         self.assertIn(b"\x3e\x80",final)          # LMMV command
 
     def test_actual_binaries_embed_tables_and_pointer(self):
