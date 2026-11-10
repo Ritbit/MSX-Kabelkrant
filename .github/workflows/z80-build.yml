@@ -286,6 +286,10 @@ jobs:
             test "$(stat -c %s "z80/build/KBLWIPE${num}.DSK")" -eq 737280
           done
           python3 -m unittest discover -s z80/tests -p 'test_last_wipes.py' -v
+          # Cache-safe fixed preview, byte-identical to the CI-verified wipe14 image.
+          cp z80/build/KBLWIPE14.DSK z80/build/KBLWIPE14FIX.DSK
+          cmp z80/build/KBLWIPE14.DSK z80/build/KBLWIPE14FIX.DSK
+          cmp <(mcopy -i z80/build/KBLWIPE14FIX.DSK ::WIPE14.BIN -) z80/build/WIPE14.BIN
       - name: Upload final individual wipe demos (experimental)
         uses: actions/upload-artifact@v4
         with:
@@ -293,6 +297,7 @@ jobs:
           path: |
             z80/build/KBLWIPE13.DSK
             z80/build/KBLWIPE14.DSK
+            z80/build/KBLWIPE14FIX.DSK
           if-no-files-found: error
       - name: Upload interlaced wipe demos (experimental)
         uses: actions/upload-artifact@v4
@@ -427,9 +432,10 @@ jobs:
           cp z80/build/KBLWIPE12.DSK assets/KBLWIPE12.DSK
           cp z80/build/KBLWIPE13.DSK assets/KBLWIPE13.DSK
           cp z80/build/KBLWIPE14.DSK assets/KBLWIPE14.DSK
+          cp z80/build/KBLWIPE14FIX.DSK assets/KBLWIPE14FIX.DSK
           test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK assets/KBLWIPE14FIX.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
