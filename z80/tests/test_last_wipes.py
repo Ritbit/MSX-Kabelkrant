@@ -47,8 +47,8 @@ def table14():
         x=2*y
         rects=((x,512-x,y+50,212-y),
                (x+1,511-x,y+50,212-y),
-               (182-x,330+x,120-y,119+y),
-               (183-x,329+x,120-y,119+y))
+               (182-x,330+x,131-y,131+y),
+               (183-x,329+x,131-y,131+y))
         for x0,x1,y0,y1 in rects:
             left=max(0,min(x0,x1))
             right=min(511,max(x0,x1))
@@ -96,6 +96,26 @@ class LastWipeTests(unittest.TestCase):
         self.assertEqual(len(lines),156)
         for line,expected in zip(lines,rows):
             self.assertEqual(tuple(int(x) for x in line.split(";")[0].strip()[3:].split(",")),expected)
+
+    def test_wipe14_all_four_rectangles_share_exact_centre(self):
+        # The old BASIC inner pair was 11.5 pixels above the outer pair.
+        # Check all 39 iterations, not only the first or last contours.
+        rows=table14()
+        for i in range(0,len(rows),4):
+            group=rows[i:i+4]
+            self.assertEqual(len(group),4)
+            for left,right,top,bottom,width,height in group:
+                self.assertIn(left+right,(511,512), "horizontal centre must be at X=255.5 or 256")
+                # The outermost first pass clips x=512 -> 511; that first
+                # record is unavoidably off by one after screen clipping.
+                # Outer Y=212 clips to 211 in the first pass only.
+                self.assertIn(top+bottom,(261,262), "vertical centre must be near Y=131")
+                if i>0 or (left,right)!=(0,511):
+                    self.assertEqual(top+bottom,262, "both moving squares must be centred on Y=131")
+            self.assertEqual(group[2][2],group[3][2])
+            self.assertEqual(group[2][3],group[3][3])
+        self.assertEqual((rows[2][2],rows[2][3]),(131,131))
+        self.assertEqual((rows[-2][2],rows[-2][3]),(55,207))
 
     def test_command_shapes(self):
         self.assertIn("ld hl,1\n    ld (LmNX),hl",ASM13)
