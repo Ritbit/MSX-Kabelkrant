@@ -42,8 +42,9 @@ file or the other three coordination docs to `main`.
 ## Later — acceleration roadmap
 
 - [x] Build isolated Z80/V9938 wipe #1 (top-down) drawing kernel; compile and geometry-check under CI, without changing the live newspaper.
-- [x] User confirmed isolated wipes #1–#6 work in WebMSX, including corrected wipe #2.
-- [ ] Integrate opt-in `CALL WIPE(n)` with visual comparison; isolated wipes #7/#8 are under CI verification, then extend to all 14.
+- [x] User confirmed isolated wipes #1–#8 work in WebMSX, including corrected wipe #2.
+- [ ] Visually verify isolated rectangular-outline wipes #9/#10 (built and CI-checked); continue with #11–#14.
+- [ ] Integrate opt-in `CALL WIPE(n)` into single-file kernel only after all individual wipes pass.
 - [ ] Port title-bar wipe if benchmarks warrant it.
 - [ ] Benchmark screen transitions, intro and hourglass before porting.
 - [ ] Full Kabelkrant multi-page integration tests and clean release PR.
