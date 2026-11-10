@@ -535,6 +535,23 @@ jobs:
           name: KBLCTEST-14-WIPE-RAMDISK-C-REGRESSION
           path: z80/build/KBLCTEST.DSK
           if-no-files-found: error
+      - name: Build auto-running C RAMdisk proof disk from accepted title alpha
+        run: |
+          set -euo pipefail
+          python3 z80/tools/make_auto_ramdisk_test.py \
+            z80/build/onefile/KBLINIT.SYS z80/build/ramdisk_auto/KBLINIT.SYS
+          python3 z80/tools/make_ramdisk_proof.py \
+            z80/tests/CTEST.BAS z80/build/ramdisk_auto/CTEST.BAS
+          cp z80/build/KBLTITLECOPY.DSK z80/build/KBLCTESTAUTO.DSK
+          mcopy -o -i z80/build/KBLCTESTAUTO.DSK z80/build/ramdisk_auto/KBLINIT.SYS ::KBLINIT.SYS
+          mcopy -o -i z80/build/KBLCTESTAUTO.DSK z80/build/ramdisk_auto/CTEST.BAS ::CTEST.BAS
+          python3 -m unittest discover -s z80/tests -p 'test_auto_ramdisk_proof.py' -v
+      - name: Upload automated RAMdisk diagnostic image
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLCTESTAUTO-private-ROM-runtime
+          path: z80/build/KBLCTESTAUTO.DSK
+          if-no-files-found: error
       - name: Upload complete 14-effect integrated alpha (WebMSX unverified)
         uses: actions/upload-artifact@v4
         with:
@@ -739,6 +756,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Download latest accepted title wipe alpha and C test disk
+        uses: actions/download-artifact@v4
+        with:
+          name: KBLTITLE-ONLY-TWO-BARS-ALPHA
+          path: z80/build
+      - name: Download auto C regression image
+        uses: actions/download-artifact@v4
+        with:
+          name: KBLCTESTAUTO-private-ROM-runtime
+          path: z80/build
+
       - name: Download standalone Z80 disk from this run
         uses: actions/download-artifact@v4
         with:
@@ -811,6 +839,51 @@ jobs:
         with:
           name: openmsx-NMS8250-standalone-smoke
           path: z80/build/openmsx-smoke.png
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Run multi-page full Kabelkrant regression in NMS8250
+        if: env.ROM_READY == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p z80/build/openmsx-regression
+          test "$(stat -c %s z80/build/KBLTITLECOPY.DSK)" -eq 737280
+          cp z80/build/KBLTITLECOPY.DSK "$RUNNER_TEMP/KBLTITLE-RUNTIME.DSK"
+          KBL_CASE=loop timeout 180s xvfb-run -a openmsx \
+            -machine Philips_NMS_8250 \
+            -diska "$RUNNER_TEMP/KBLTITLE-RUNTIME.DSK" \
+            -script z80/tools/openmsx_regression.tcl \
+            > "$RUNNER_TEMP/kbl-loop.log" 2>&1
+          grep -q 'KBL_LOOP_TRACE_DONE' "$RUNNER_TEMP/kbl-loop.log"
+          python3 z80/tools/check_openmsx_regression.py \
+            --case loop --output z80/build/openmsx-regression/loop-summary.json
+          echo "### NMS8250: 210-second newspaper captures verified" >> "$GITHUB_STEP_SUMMARY"
+      - name: Run C read/write/delete proof on disposable test floppy
+        if: env.ROM_READY == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cp z80/build/KBLCTESTAUTO.DSK "$RUNNER_TEMP/KBLCTEST-RUNTIME.DSK"
+          KBL_CASE=ctest timeout 120s xvfb-run -a openmsx \
+            -machine Philips_NMS_8250 \
+            -diska "$RUNNER_TEMP/KBLCTEST-RUNTIME.DSK" \
+            -script z80/tools/openmsx_regression.tcl \
+            > "$RUNNER_TEMP/kbl-ctest.log" 2>&1
+          grep -q 'KBL_CTEST_TRACE_DONE' "$RUNNER_TEMP/kbl-ctest.log"
+          python3 z80/tools/check_openmsx_regression.py \
+            --case ctest --output z80/build/openmsx-regression/ctest-summary.json
+          mcopy -i "$RUNNER_TEMP/KBLCTEST-RUNTIME.DSK" ::KBLPASS.OK - \
+            | grep -q '^PASS C: RW DELETE'
+          echo "### NMS8250: C: write/read/compare/delete PASS (MSX proof marker)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload NMS8250 integration captures, summaries, no ROMs
+        if: env.ROM_READY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmsx-NMS8250-integration-regression
+          path: |
+            z80/build/openmsx-regression/*.png
+            z80/build/openmsx-regression/*.json
           if-no-files-found: error
           retention-days: 14
 
