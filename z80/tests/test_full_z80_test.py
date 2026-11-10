@@ -40,6 +40,8 @@ class FullZ80DiskTests(unittest.TestCase):
                 line = '1050 DIM XK(60),YK(60)'
             elif n == 1130:
                 line = '1130 COPY "XK.dat" TO XK: COPY "YK.DAT" TO YK'
+            elif n == 190:
+                line = line.replace('GOSUB 2200', 'GOTO 2200')
             elif n == 105:
                 line = line.replace("CLEAR 1000:", "CLEAR 1000,&HC7FF:")
             line = line.replace("GOSUB 2500", "CALL TEXT(A$,X,Y,LT,K)")
@@ -48,6 +50,12 @@ class FullZ80DiskTests(unittest.TestCase):
         self.assertNotIn("X(4,110)", self.loop)
         self.assertNotIn("2530 ", self.loop)
         self.assertIn("RUN \"LOOP.SYS\"", self.init)
+
+    def test_page_cycle_does_not_leak_gosub_stack(self):
+        # Page-loop exit is GOTO 140, not RETURN. It must enter via GOTO.
+        self.assertIn('190 GOTO 2200', self.loop)
+        self.assertNotIn('190 GOSUB 2200', self.loop)
+        self.assertIn('3880 GOTO 140', self.loop)
 
     def test_exported_msx_ascii(self):
         self.assertTrue(encode_msx_basic(self.loop.encode("ascii")).endswith(b"\r\n\x1a"))
