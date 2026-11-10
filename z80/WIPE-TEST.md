@@ -92,3 +92,35 @@ images, and verifies their embedded WIPE3/4 binaries and AUTOEXEC content.
 The CI binary/disk verification has passed; **visual direction and
 animation pacing still require WebMSX confirmation**. Do not yet replace
 the original BASIC transitions.
+
+## Effects #5 and #6: two edges toward centre (2026-11-10)
+
+The user confirmed both isolated wipes #3 and #4 work correctly in WebMSX.
+
+The new `wipe_centre_kernel.asm` builds two different **standalone**
+BLOAD/R binaries. Geometry is based on visible SCREEN 7 pixels, with
+clipped original BASIC boundary coordinates:
+
+- **Wipe #5 (BASIC line 3280):** top and bottom simultaneously toward
+  centre; 41 pairs of 2-scanline black fills. Near Y starts at 50,
+  far Y starts at 210, and both converge at 130. Covers Y=50..211.
+  One JIFFY wait per pair (about 0.82 s at 50 Hz, plus VDP overhead).
+- **Wipe #6 (BASIC line 3290):** left and right simultaneously toward
+  centre; 128 pairs of 2-pixel columns. Near X starts at 0, far X starts
+  at 510, converging at 254 and 256 respectively. Covers X=0..511.
+  One JIFFY wait per two pairs (about 1.28 s at 50 Hz plus overhead).
+
+Both drawing commands finish before the next pair is issued. The
+CI gates publishing on checks of the actual **compiled BLOAD binaries**,
+the precise coverage of the visible rectangle and the exact binary and
+AUTOEXEC embedded inside each FAT12 image. CI passed, but independent
+visual direction/pacing confirmation is still required.
+
+**Isolated WebMSX tests:**
+
+- Wipe #5, top/bottom to centre:
+  https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE5.DSK
+- Wipe #6, left/right to centre:
+  https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE6.DSK
+
+The full newspaper `KBLONEFILE.DSK` still uses original BASIC wipes.
