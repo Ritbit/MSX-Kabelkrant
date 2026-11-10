@@ -79,7 +79,7 @@ def make_loop(loop: str, extra: bool = False) -> str:
     return once(loop, line + "\n",
                 ("3140 IF A>=1 AND A<=12 THEN CALL WIPE(A):GOTO 3380\n" if extra
                  else "3140 IF A>=1 AND A<=8 THEN CALL WIPE(A):GOTO 3380\n")
-                "3141 " + line[5:] + "\n")
+                + "3141 " + line[5:] + "\n")
 
 
 def main():
