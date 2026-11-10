@@ -10,7 +10,8 @@ file or the other three coordination docs to `main`.
 - [x] Stage one-file TEXT at C804 and reserve HIMEM before intro; user confirms the newspaper works with no E1/E1B/E2/E3 errors in WebMSX.
 - [ ] Validate CALL dispatch, drive C: read/write and BASIC memory limits.
 - [x] Build separate one-file alpha while retaining working two-file fallback.
-- [ ] Validate repeated page cycles, RAMdisk C: read/write and editor paths for one-file alpha before removing fallback.
+- [x] User confirmed several complete newspaper page cycles with one-file alpha and no observed issues (2026-11-10).
+- [ ] Validate RAMdisk C: read/write and editor paths for one-file alpha before removing fallback.
 - [ ] Remove diagnostic mapper pokes from any production candidate.
 
 ## Full Kabelkrant Z80 alpha (WebMSX smoke passed; not release-stable)
