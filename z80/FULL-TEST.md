@@ -114,6 +114,25 @@ Manual WebMSX experiment (do not confuse with the working alpha):
 https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLONEFILE.DSK
 ```
 
+### Onefile symptom and diagnostic checkpoints
+
+The user reports the single-BLOAD build appears to hang after the opening
+logo, whereas `KBLZ80TEST.DSK` proceeds through the news pages. The
+current onefile experiment installs these explicit C806 opcode probes:
+
+- `E1`: the TEXT payload is absent by early KBLINIT, after RAMdisk warmstart.
+- `E2`: the payload was present at E1 but disappeared during intro drawing.
+- `E3`: the payload survived the intro but not the BASIC `CLEAR`.
+
+The probes look for the assembly install entry's expected first opcode
+`21h` (`LD HL,CallHandler`). A pass only rules out this simple overwrite;
+it does **not** prove that the full module, mapper state, stack and
+`USR3` ABI are correct. An apparent freeze without E1/E2/E3 needs
+an openMSX CPU trace at C806 and the BASIC error/handler path.
+
+Only the **experimental onefile** version gets these checks; the working
+two-file preview remains untouched.
+
 If it fails, first trace C806 and C004 after warmstart under openMSX
 before changing any historical RAMdisk bytes.
 
