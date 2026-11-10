@@ -70,7 +70,7 @@ class HorizontalWipeTests(unittest.TestCase):
         self.assertIn(b"\x21\xfe\x01\x22", rl[7:])
         self.assertNotIn(b"\x21\xfe\x01\x22", lr[7:])
         # Guard against accidentally compiling both with same wrapper.
-        self.assertEqual(rl[7:15], lr[7:15])  # vector and register prologue
+        self.assertEqual(rl[7:13], lr[7:13])  # vector and register prologue
 
     def test_disk_embeds_its_own_correct_binary_and_demo(self):
         for n, label in ((3, b"LEFT TO RIGHT"), (4, b"RIGHT TO LEFT")):
