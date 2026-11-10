@@ -208,3 +208,29 @@ of #13/#14 must still be confirmed.
 - Wipe #14: https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE14.DSK
 
 Neither preview modifies the working one-BLOAD Kabelkrant or BASIC v6.2b.
+
+## Wipe #14 alignment correction (2026-11-10)
+
+The user visually accepted **wipe #13** but identified that the two
+nested rectangle systems in #14 were misaligned, just as in BASIC
+v6.2b. A geometric audit confirmed the reason:
+
+- Outer rectangles: top=50+Y, bottom=212-Y, centre Y=131.
+- Original BASIC inner rectangles: top=120-Y, bottom=119+Y,
+  centre Y=119.5. They were shifted **11.5 pixels upward**.
+- Experimental Z80 fix: inner top=131-Y, bottom=131+Y,
+  centre Y=131, for all 39 steps. Horizontal centre stays X=256.
+
+At the SCREEN 7 bottom boundary the first outer rectangle's bottom
+Y=212 is clipped to 211; this one-pixel boundary difference is
+intentional. The original BASIC source on main is **not** changed.
+The CI tests now assert both geometries share vertical centre Y=131
+after clipping allowances, inspect every one of 156 table records,
+verify the compiled data table and the embedded FAT12 WIPE14.BIN.
+
+Full CI build succeeded. The corrected preview is provided under a
+new cache-safe name (same bytes as the newly built KBLWIPE14.DSK):
+
+https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE14FIX.DSK
+
+**Visual confirmation of this corrected version is still pending.**
