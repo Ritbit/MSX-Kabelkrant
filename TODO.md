@@ -50,8 +50,8 @@ file or the other three coordination docs to `main`.
 - [x] Implement shared `CALL WIPE(n)` engine for all 14 in a **separate** opt-in onefile image (`KBLWIPEINT14.DSK`): 3775 bytes within 4096-byte reserved area; retain 1..8 and 1..12 fallback alphas.
 - [x] User confirmed **KBLWIPEINT14.DSK runs the Kabelkrant and all fourteen integrated Z80 wipes in WebMSX** (2026-11-10). This is a manual functional smoke test; not yet C: or editor regression approval.
 - [ ] Validate drive C: read/write, editor/menu paths, repeated unattended cycles and clock stability on **the exact integrated 14-wipe disk**. Preserve rollback preview.
-- [x] Build fixed two-title-bar Z80 wipe (`CALL WIPE(15)`) in isolated `KBLTITLE.DSK`: only X0..434 at Y9..22 and Y30..43; preserve clock X435..511. CI passes at **3885/4096 bytes**, leaving **211 bytes**.
-- [ ] Visually validate `KBLTITLE.DSK` in WebMSX, including clock and title borders; do not replace accepted `KBLWIPELEAN.DSK` before confirmation.
+- [x] Build special title Z80 wipe (`CALL WIPE(15)`) in isolated `KBLTITLE.DSK`; initial black-fill version rejected by user screenshot (destroyed title background and left old text). Fixed using opaque VRAM LMMM template copy X0..9/Y0..48 -> X0..434/Y0..48 while preserving clock X435..511. CI passes at **3879/4096 bytes**, leaving **217 bytes**.
+- [ ] Visually validate new cache-safe `KBLTITLECOPY.DSK` in WebMSX, checking restored colours, green/grey horizontal lines, no residual title text, and unchanged clock. Keep `KBLWIPELEAN.DSK` as rollback.
 - [ ] Treat the five-argument rectangular wipe proposal as independent experimental development; **do not** use for title bars.
 - [x] Generate lean 14-Z80-wipe test disk removing obsolete BASIC wipes; ASCII LOOP.SYS shrank 2,261 bytes (12,555 to 10,294), **not yet measured in tokenized BASIC RAM**.
 - [x] Generate paired BASIC-versus-Z80 timing benchmark disk (`KBLWIBENCH.DSK`) with all 14 exact original BASIC loops and 14 shared native modes; CI verified disk/source parity.
