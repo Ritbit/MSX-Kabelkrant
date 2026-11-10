@@ -3,7 +3,10 @@
 **Status: alpha / development-only. This is not a 6.2b replacement.**
 
 The workflow `.github/workflows/z80-build.yml` publishes
-`KBLZ80TEST-full-Kabelkrant-EXPERIMENTAL`, containing `KBLZ80TEST.DSK`.
+`KBLZ80TEST-full-Kabelkrant-EXPERIMENTAL`, containing `KBLZ80TEST.DSK`,
+and commits the raw test disk to `assets/KBLZ80TEST.DSK` on this
+feature branch for direct WebMSX loading. The CI build tests the actual
+FAT12 image against the current 6.2b baseline before publishing.
 
 ## Contents
 
@@ -35,19 +38,22 @@ Using the exact CI disk image, emulator breakpoints confirmed:
 - Real Cablekrant broadcast page with clock, right-aligned coloured
   title and multiple body lines displayed around 130 emulated seconds.
 
-**Known regression:** Around 140–145 emulated seconds, the test machine
-returns to the MSX boot/autoexec sequence. This does not happen during
-the same interval with the unmodified 6.2b disk. It requires further
-runtime trace and is **not considered stable or fully integrated**.
+**Prior regression (now resolved in manual WebMSX testing):** The alpha
+previously restarted after approximately three pages. Source review found
+that `LDIR` was executed for empty strings (`BC=0` copies 64 KiB),
+corrupting memory. The guard and the page-loop `GOTO` fix are now included.
+On 2026-11-10 the user confirmed that the crash no longer occurs and
+that the coloured heading outlines are correct. Longer unattended runs,
+operator functions and drive C: regressions still need independent testing.
 
 Do not promote the disk to GitHub Releases, change `main`, or claim
 long-run stability until the unexpected reset is understood.
 
 ## Run it
 
-Download the `KBLZ80TEST-full-Kabelkrant-EXPERIMENTAL` artifact from
-the latest successful development-branch GitHub Actions workflow.
-Unzip it; the file is named `KBLZ80TEST.DSK`.
+Use the directly published raw `assets/KBLZ80TEST.DSK` from
+`feature/z80-renderer`, or download and unpack the
+`KBLZ80TEST-full-Kabelkrant-EXPERIMENTAL` Actions artifact.
 
 Use openMSX:
 
@@ -55,8 +61,8 @@ Use openMSX:
 openmsx -machine Philips_NMS_8250 -diska KBLZ80TEST.DSK
 ```
 
-Or use WebMSX, choose `MSX2E`, and insert the **local diskimage** via
-its disk menu. A GitHub Actions artifact link is not a raw DSK URL.
+Or use the WebMSX URL below to load the public raw DSK automatically.
+A GitHub Actions artifact ZIP URL itself is not a raw disk URL.
 
 The standalone renderer demo `KBLASM.DSK` remains a separate test
 and does not exercise the historical RAMdisk/page loop.
@@ -69,8 +75,9 @@ was zero (`BC=0`). On the Z80, this copies 65,536 bytes, overwriting
 RAM instead of doing no work. Valid empty lines in page files can reach
 `CALL TEXT("")` (the original BASIC loop skips a single blank space,
 but not an empty string). The assembly now skips `LDIR` for zero-length
-strings and a regression test checks this guard. This is a **strong
-candidate**, not yet an emulator-confirmed explanation for the crash.
+strings and a regression test checks this guard. This is a **confirmed memory-corruption bug** fixed at the assembly level;
+the user confirmed that WebMSX no longer crashes after page three, but
+no independent memory trace has established it as the sole original cause.
 
 Independently, generated test `LOOP.SYS` now enters the non-returning
 page cycle with `GOTO 2200` rather than `GOSUB 2200`, preventing a
@@ -84,6 +91,6 @@ https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1
 
 ## Next tests
 
-Identify the reset around 140–145 s with an openMSX trace (PC/stack/
-reset vector and current BASIC line), exercise the full cycle,
-and benchmark with equal page content against 6.2b.
+Run a multi-cycle unattended openMSX trace and explicit drive C:
+read/write and operator/editor tests; compare pixels and benchmark
+identical page text against the refreshed 6.2b BASIC release.
