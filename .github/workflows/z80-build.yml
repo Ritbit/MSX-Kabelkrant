@@ -53,6 +53,10 @@ jobs:
           python3 z80/tools/make_bload.py z80/build/wipe5.raw z80/build/WIPE5.BIN
           (cd z80/asm && sjasmplus --raw=../build/wipe6.raw --lst=../build/wipe6.lst wipe_lr_centre.asm)
           python3 z80/tools/make_bload.py z80/build/wipe6.raw z80/build/WIPE6.BIN
+          (cd z80/asm && sjasmplus --raw=../build/wipe7.raw --lst=../build/wipe7.lst wipe_tb_outward.asm)
+          python3 z80/tools/make_bload.py z80/build/wipe7.raw z80/build/WIPE7.BIN
+          (cd z80/asm && sjasmplus --raw=../build/wipe8.raw --lst=../build/wipe8.lst wipe_lr_outward.asm)
+          python3 z80/tools/make_bload.py z80/build/wipe8.raw z80/build/WIPE8.BIN
       - name: Assemble standalone CALL TEXT demo
         run: |
           (cd z80/asm && sjasmplus --raw=../build/textdemo.raw --lst=../build/textdemo.lst --sym=../build/textdemo.sym basic_text_demo.asm)
@@ -178,6 +182,37 @@ jobs:
             test "$(stat -c %s "z80/build/KBLWIPE${num}.DSK")" -eq 737280
           done
           python3 -m unittest discover -s z80/tests -p 'test_centre_wipes.py' -v
+      - name: Build and verify centre-outward wipe #7/#8 disks
+        run: |
+          set -euo pipefail
+          for num in 7 8; do
+            cp assets/kabelkrant-6.2.dsk "z80/build/KBLWIPE${num}.DSK"
+            if [[ "$num" -eq 7 ]]; then
+              description="CENTRE TO TOP BOTTOM"
+            else
+              description="CENTRE TO LEFT RIGHT"
+            fi
+            printf '%s\r\n' \
+              '10 CLEAR 1000,&HC7FF:SCREEN 7:COLOR 15,0,0' \
+              "20 CLS:LINE(0,50)-(511,211),14,BF:LOCATE 0,0:PRINT \"WIPE ${num}: ${description}\"" \
+              '30 LINE(0,50)-(511,211),1,B' \
+              '40 FOR T=1 TO 1000:NEXT T' \
+              "50 BLOAD \"WIPE${num}.BIN\",R" \
+              '60 FOR T=1 TO 1000:NEXT T' \
+              '70 GOTO 20' > "z80/build/WIPEAUTO${num}.BAS"
+            mcopy -o -i "z80/build/KBLWIPE${num}.DSK" "z80/build/WIPEAUTO${num}.BAS" ::AUTOEXEC.BAS
+            mcopy -o -i "z80/build/KBLWIPE${num}.DSK" "z80/build/WIPE${num}.BIN" "::WIPE${num}.BIN"
+            test "$(stat -c %s "z80/build/KBLWIPE${num}.DSK")" -eq 737280
+          done
+          python3 -m unittest discover -s z80/tests -p 'test_outward_wipes.py' -v
+      - name: Upload isolated centre-outward wipe disks (experimental)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLWIPE7-8-OUTWARD-EXPERIMENTAL
+          path: |
+            z80/build/KBLWIPE7.DSK
+            z80/build/KBLWIPE8.DSK
+          if-no-files-found: error
       - name: Upload isolated inward wipe disks (experimental)
         uses: actions/upload-artifact@v4
         with:
@@ -279,9 +314,11 @@ jobs:
           cp z80/build/KBLWIPE4.DSK assets/KBLWIPE4.DSK
           cp z80/build/KBLWIPE5.DSK assets/KBLWIPE5.DSK
           cp z80/build/KBLWIPE6.DSK assets/KBLWIPE6.DSK
+          cp z80/build/KBLWIPE7.DSK assets/KBLWIPE7.DSK
+          cp z80/build/KBLWIPE8.DSK assets/KBLWIPE8.DSK
           test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
