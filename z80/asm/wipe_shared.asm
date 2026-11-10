@@ -11,6 +11,10 @@
 ; had prior WebMSX visual acceptance; do not promote without new test.
 
 WipeSharedRun:
+    IF WIPE_TITLE
+    cp 15
+    jp z,WipeTitleBars
+    ENDIF
     IF WIPE_EXTRA
     cp 9
     jp nc,WipeExtraRun
@@ -263,4 +267,8 @@ WipeIFF:       db 0
 
     IF WIPE_EXTRA
     INCLUDE 'wipe_shared_extra.asm'
+    ENDIF
+
+    IF WIPE_TITLE
+    INCLUDE 'wipe_title_bars.asm'
     ENDIF
