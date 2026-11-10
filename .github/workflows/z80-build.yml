@@ -484,6 +484,28 @@ jobs:
           mcopy -o -i z80/build/KBLWIPEINT14.DSK z80/build/wipe_integration14/LOOP.SYS ::LOOP.SYS
           mcopy -o -i z80/build/KBLWIPEINT14.DSK z80/build/KBLRAMWIPE14.BIN ::RAMDISK.BIN
           python3 -m unittest discover -s z80/tests -p 'test_all_wipe_integration.py' -v
+      - name: Build lean 14-Z80-wipe disk and paired BASIC/Z80 benchmark
+        run: |
+          set -euo pipefail
+          python3 z80/tools/make_wipe_benchmark.py \
+            --full-loop z80/build/wipe_integration14/LOOP.SYS \
+            --clean-loop z80/build/wipe_lean/LOOP.SYS \
+            --benchmark z80/build/wipe_benchmark/BENCHW.BAS
+          cp z80/build/KBLWIPEINT14.DSK z80/build/KBLWIPELEAN.DSK
+          mcopy -o -i z80/build/KBLWIPELEAN.DSK z80/build/wipe_lean/LOOP.SYS ::LOOP.SYS
+          cp z80/build/KBLWIPELEAN.DSK z80/build/KBLWIBENCH.DSK
+          mcopy -o -i z80/build/KBLWIBENCH.DSK z80/build/wipe_benchmark/BENCHW.BAS ::BENCHW.BAS
+          python3 -m unittest discover -s z80/tests -p 'test_wipe_benchmark.py' -v
+      - name: Upload lean Kabelkrant and original-BASIC-vs-Z80 wipe benchmarks
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLWIPELEAN-AND-AB-BENCH-ALPHA
+          path: |
+            z80/build/KBLWIPELEAN.DSK
+            z80/build/KBLWIBENCH.DSK
+            z80/build/wipe_lean/LOOP.SYS
+            z80/build/wipe_benchmark/BENCHW.BAS
+          if-no-files-found: error
       - name: 'Build read/write/delete RAMdisk C: diagnostic disk'
         run: |
           set -euo pipefail
@@ -535,6 +557,8 @@ jobs:
           cp z80/build/KBLWIPEINT.DSK assets/KBLWIPEINT.DSK
           cp z80/build/KBLWIPEINT12.DSK assets/KBLWIPEINT12.DSK
           cp z80/build/KBLWIPEINT14.DSK assets/KBLWIPEINT14.DSK
+          cp z80/build/KBLWIPELEAN.DSK assets/KBLWIPELEAN.DSK
+          cp z80/build/KBLWIBENCH.DSK assets/KBLWIBENCH.DSK
           cp z80/build/KBLCTEST.DSK assets/KBLCTEST.DSK
           cp z80/build/KBLWIPE.DSK assets/KBLWIPE.DSK
           cp z80/build/KBLWIPE2.DSK assets/KBLWIPE2.DSK
@@ -555,7 +579,7 @@ jobs:
           cp z80/build/KBLWIPE14FIX2.DSK assets/KBLWIPE14FIX2.DSK
           test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK assets/KBLWIPE14FIX.DSK assets/KBLWIPE14FIX2.DSK assets/KBLWIPEINT.DSK assets/KBLWIPEINT12.DSK assets/KBLWIPEINT14.DSK assets/KBLCTEST.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK assets/KBLWIPE3.DSK assets/KBLWIPE4.DSK assets/KBLWIPE5.DSK assets/KBLWIPE6.DSK assets/KBLWIPE7.DSK assets/KBLWIPE8.DSK assets/KBLWIPE9.DSK assets/KBLWIPE10.DSK assets/KBLWIPE11.DSK assets/KBLWIPE12.DSK assets/KBLWIPE13.DSK assets/KBLWIPE14.DSK assets/KBLWIPE14FIX.DSK assets/KBLWIPE14FIX2.DSK assets/KBLWIPEINT.DSK assets/KBLWIPEINT12.DSK assets/KBLWIPEINT14.DSK assets/KBLCTEST.DSK assets/KBLWIPELEAN.DSK assets/KBLWIBENCH.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
