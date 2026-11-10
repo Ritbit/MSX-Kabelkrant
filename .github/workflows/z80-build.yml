@@ -535,23 +535,6 @@ jobs:
           name: KBLCTEST-14-WIPE-RAMDISK-C-REGRESSION
           path: z80/build/KBLCTEST.DSK
           if-no-files-found: error
-      - name: Build auto-running C RAMdisk proof disk from accepted title alpha
-        run: |
-          set -euo pipefail
-          python3 z80/tools/make_auto_ramdisk_test.py \
-            z80/build/onefile/KBLINIT.SYS z80/build/ramdisk_auto/KBLINIT.SYS
-          python3 z80/tools/make_ramdisk_proof.py \
-            z80/tests/CTEST.BAS z80/build/ramdisk_auto/CTEST.BAS
-          cp z80/build/KBLTITLECOPY.DSK z80/build/KBLCTESTAUTO.DSK
-          mcopy -o -i z80/build/KBLCTESTAUTO.DSK z80/build/ramdisk_auto/KBLINIT.SYS ::KBLINIT.SYS
-          mcopy -o -i z80/build/KBLCTESTAUTO.DSK z80/build/ramdisk_auto/CTEST.BAS ::CTEST.BAS
-          python3 -m unittest discover -s z80/tests -p 'test_auto_ramdisk_proof.py' -v
-      - name: Upload automated RAMdisk diagnostic image
-        uses: actions/upload-artifact@v4
-        with:
-          name: KBLCTESTAUTO-private-ROM-runtime
-          path: z80/build/KBLCTESTAUTO.DSK
-          if-no-files-found: error
       - name: Upload complete 14-effect integrated alpha (WebMSX unverified)
         uses: actions/upload-artifact@v4
         with:
@@ -595,6 +578,23 @@ jobs:
             z80/build/KBLTITLECOPY.DSK
             z80/build/KBLRAMTITLE.BIN
             z80/build/title_wipe.lst
+          if-no-files-found: error
+      - name: Build auto-running C RAMdisk proof disk from accepted title alpha
+        run: |
+          set -euo pipefail
+          python3 z80/tools/make_auto_ramdisk_test.py \
+            z80/build/onefile/KBLINIT.SYS z80/build/ramdisk_auto/KBLINIT.SYS
+          python3 z80/tools/make_ramdisk_proof.py \
+            z80/tests/CTEST.BAS z80/build/ramdisk_auto/CTEST.BAS
+          cp z80/build/KBLTITLECOPY.DSK z80/build/KBLCTESTAUTO.DSK
+          mcopy -o -i z80/build/KBLCTESTAUTO.DSK z80/build/ramdisk_auto/KBLINIT.SYS ::KBLINIT.SYS
+          mcopy -o -i z80/build/KBLCTESTAUTO.DSK z80/build/ramdisk_auto/CTEST.BAS ::CTEST.BAS
+          python3 -m unittest discover -s z80/tests -p 'test_auto_ramdisk_proof.py' -v
+      - name: Upload automated RAMdisk diagnostic image
+        uses: actions/upload-artifact@v4
+        with:
+          name: KBLCTESTAUTO-private-ROM-runtime
+          path: z80/build/KBLCTESTAUTO.DSK
           if-no-files-found: error
       - name: Verify published one-BLOAD disk structure and unchanged files
         run: python3 -m unittest discover -s z80/tests -p 'test_onefile_disk_image.py' -v
