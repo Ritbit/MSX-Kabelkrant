@@ -33,7 +33,7 @@ class SharedWipeIntegrationTests(unittest.TestCase):
         start,end,entry,payload=parse_bload(raw)
         self.assertEqual((start,entry),(0xC804,0xC806))
         self.assertLess(end,0xD804)
-        self.assertEqual(payload[0:1],b"\x21") # initial install pointer
+        # First word is the BASIC extension entry vector; opcode of\n        # Install (LD HL,handler) begins at C806, not C804.\n        import struct\n        vector=struct.unpack_from("<H",payload,0)[0]\n        self.assertGreaterEqual(vector,0xC806)\n        self.assertLessEqual(vector,end)\n        self.assertEqual(payload[2:3],b"\x21")
         self.assertIn(b"WIPE\x00",payload)
         self.assertIn(b"TEXT\x00",payload)
         self.assertIn(b"KBLVER\x00",payload)
