@@ -34,6 +34,11 @@ jobs:
         run: |
           (cd z80/asm && sjasmplus --raw=../build/kernel.raw --lst=../build/kernel.lst --sym=../build/kernel.sym kernel.asm)
           test -s z80/build/kernel.raw
+      - name: Assemble isolated V9938 wipe #1 prototype (not connected to broadcast)
+        run: |
+          python3 -m unittest discover -s z80/tests -p 'test_wipe_kernel.py' -v
+          (cd z80/asm && sjasmplus --raw=../build/wipe1.raw --lst=../build/wipe1.lst wipe_kernel.asm)
+          test -s z80/build/wipe1.raw
       - name: Assemble standalone CALL TEXT demo
         run: |
           (cd z80/asm && sjasmplus --raw=../build/textdemo.raw --lst=../build/textdemo.lst --sym=../build/textdemo.sym basic_text_demo.asm)
