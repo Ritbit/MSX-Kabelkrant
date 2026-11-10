@@ -75,5 +75,11 @@ Keep this list short and current: move resolved technical detail to
 - [x] Add time-separated openMSX captures over 210 emulated seconds and a comparison script that rejects blank/stationary output.
 - [x] CI builds and tests the proof disk and accepted title-wipe image without modifying release or main.
 - [x] Support three private NMS8250 ROMs (32KiB BIOS+BASIC + 16KiB SUB + 16KiB disk); no ROMs committed or attached to artifacts.
-- [ ] Execute full ROM-backed emulator suite and inspect screenshot artifacts; **currently blocked by ROM accessibility**. User-provided Philips URL returned HTTP 405 from GitHub Actions; alternate user-provided ZIP source has been attempted once and its result needs checking. ROM binaries provided by the user did not mount in the conversation/container.
+- [ ] Execute full ROM-backed emulator suite and inspect screenshot artifacts; **blocked by ROM availability in CI**. GitHub Actions run 42889296897 (2026-11-10) confirms both the direct Philips URL and user-provided full ZIP URL return HTTP 405 from the runner. Build passed; openMSX did not launch. Do not retry those endpoints without new evidence. Prefer private 32+16+16 KiB ROM secrets or a verified local ROM pool. ROM binaries provided by the user did not mount in the conversation/container.
 - [ ] Verify editor/menu, clock rollover and longer cycle reliability after C: proof is successful.
+
+
+## Latest CI inspection (2026-11-10)
+- [x] Inspected [run 42889296897](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42889296897): **build success**, **openMSX failed before launch** (HTTP 405). No new C:, loop, screenshot or editor runtime result.
+- [x] Linked `HOWTO-TESTING.md` from `AGENTS.md` and `CONTEXT.md` for cross-session continuity.
+- [ ] Once private ROMs are available, run NMS8250 integration smoke tests and inspect C: proof marker, image-difference summaries, actual screenshots and logs.
