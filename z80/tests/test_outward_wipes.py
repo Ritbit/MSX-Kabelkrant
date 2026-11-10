@@ -66,7 +66,7 @@ class OutwardTests(unittest.TestCase):
         self.assertIn(b"\x21\x00\x01\x22",b8[7:])
         self.assertIn(b"\x3e\x29\x32",b7[7:]) # 41 pairs
         self.assertIn(b"\x3e\x80\x32",b8[7:]) # 128 pairs
-        self.assertNotIn(b"\x3e\x80\x32",b7[7:])
+        # Do not globally exclude LD A,80h: BOTH variants use 80h for LMMV.
 
     def test_exact_disk_contents(self):
         for n,label in ((7,b"CENTRE TO TOP BOTTOM"),(8,b"CENTRE TO LEFT RIGHT")):
