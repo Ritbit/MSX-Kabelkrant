@@ -19,7 +19,7 @@ def once(source: str, old: str, new: str) -> str:
 
 def make_asm(source: str, extra: bool = False, full: bool = False) -> str:
     extra = extra or full
-    source = ('WIPE_EXTRA EQU 1\n' if extra else 'WIPE_EXTRA EQU 0\n') + ('WIPE_FULL EQU 1\n' if full else 'WIPE_FULL EQU 0\n') + source
+    source = ('WIPE_EXTRA EQU 1\n' if extra else 'WIPE_EXTRA EQU 0\n') + ('WIPE_FULL EQU 1\n' if full else 'WIPE_FULL EQU 0\n') + 'WIPE_TITLE EQU 0\n' + source
     source = once(
         source,
         "    ld de,VerName\n    call CompareName\n    jr z,.ver",
