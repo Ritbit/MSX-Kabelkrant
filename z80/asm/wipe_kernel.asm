@@ -5,7 +5,8 @@
 ; In SCREEN 7 the visible area ends at Y=211, so omit A=212.
 ; Uses one BIOS JIFFY frame between two-scanline bands when IRQs enabled.
 ;
-; Output: wipe1.raw, or wipe2.raw if WIPE_REVERSE is defined.
+; WIPE_REVERSE must be defined as numeric 0 (forward) or 1 (reverse)
+; by the wrapper before including this file; test actual assembled bytes.
 ; Requires existing non-reentrant V9938 command queue.
     ORG 0C804h
     dw WipeTopDown         ; MSX BLOAD/R entry is C806 (after two-byte vector)
@@ -17,7 +18,7 @@ WipeTopDown:
     push hl
     ld hl,0
     ld (LmDX),hl
-    IFDEF WIPE_REVERSE
+    IF WIPE_REVERSE
     ld hl,210                ; reverse: y=210,208,...,50
     ELSE
     ld hl,50                 ; forward: y=50,52,...,210
@@ -37,7 +38,7 @@ WipeTopDown:
     call WipeWaitIdle     ; ensure completed *before* pacing / next band
     call WipeWaitFrame    ; use one 50/60-Hz video tick per band, when IRQs enabled
     ld hl,(LmDY)
-    IFDEF WIPE_REVERSE
+    IF WIPE_REVERSE
     ld a,l
     cp 50
     jr z,.done
