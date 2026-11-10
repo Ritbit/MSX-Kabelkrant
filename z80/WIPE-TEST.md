@@ -46,3 +46,20 @@ Neither demo is used by the working `KBLONEFILE.DSK` newspaper.
 4. Integrate behind an opt-in test switch and expand to effects 2–14.
 
 Never merge this prototype as a finished wipe implementation to `main`.
+
+### 2026-11-10: wipe #2 assembled as wipe #1 (regression corrected)
+
+Manual WebMSX test showed wipe #2 actually went **top-to-bottom**.
+The first machine-code regression test demonstrated that `WIPE1.BIN`
+and `WIPE2.BIN` were byte-for-byte identical: the old `IFDEF`
+assembly test did not select the `WIPE_REVERSE EQU 1` branch.
+The assembly now uses numeric `IF WIPE_REVERSE`, with explicit
+forward/reverse wrapper files. GitHub CI validates the **compiled**
+start-Y immediate (50 vs 210), rejects identical binaries and checks
+that `KBLWIPE2.DSK` contains the actual reverse binary.
+
+A separate cache-safe preview is published as `KBLWIPE2FIX.DSK`:
+
+https://webmsx.org/?MACHINE=MSX2E&RAMMAPPER_SIZE=256&AUTO_START=true&FAST_BOOT=1&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/feature/z80-renderer/assets/KBLWIPE2FIX.DSK
+
+Runtime direction still requires visual confirmation of this corrected build.
