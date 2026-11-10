@@ -11,6 +11,10 @@
 ; had prior WebMSX visual acceptance; do not promote without new test.
 
 WipeSharedRun:
+    IF WIPE_EXTRA
+    cp 9
+    jp nc,WipeExtraRun
+    ENDIF
     push af
     push bc
     push de
@@ -256,3 +260,7 @@ WipeFar:       dw 0
 WipePace:      db 0
 WipePaceLeft:  db 0
 WipeIFF:       db 0
+
+    IF WIPE_EXTRA
+    INCLUDE 'wipe_shared_extra.asm'
+    ENDIF
