@@ -19,29 +19,36 @@ def names(disk):
     return {x.strip().rsplit("/",1)[-1].upper() for x in data.splitlines() if x.strip()}
 
 class TitleOnlyWipeTest(unittest.TestCase):
-    def test_only_two_bars_are_targeted(self):
+    def test_source_template_copy_restores_background_and_protects_clock(self):
         src=(ROOT/"z80"/"asm"/"wipe_title_bars.asm").read_text()
-        for token in ["ld hl,9\n    ld (LmDY),hl",
-                      "ld hl,30\n    ld (LmDY),hl",
-                      "ld hl,14\n    ld (LmNY),hl",
-                      "ld hl,8\n    ld (LmNX),hl",
-                      "ld hl,3              ; last slice x432..434",
-                      "ld b,55",
-                      "call WipeSharedFrame",
-                      "call WipeSharedIdle"]:
+        # The template comes from a clean left-hand column; it carries
+        # the original borders and both differently coloured title bands.
+        for token in [
+            "ld (LmSX),hl", "ld (LmSY),hl",
+            "ld (LmDX),hl", "ld (LmDY),hl",
+            "ld hl,10\n    ld (LmNX),hl",
+            "ld hl,49\n    ld (LmNY),hl",
+            "ld a,090h", "ld (LmCMD),a",
+            "ld b,44", "ld hl,5",
+            "call LmmmLaunch", "call WipeSharedIdle",
+            "call WipeSharedFrame"]:
             self.assertIn(token,src)
-        x=0
-        widths=[]
-        for i in range(55):
-            n=3 if i==54 else 8
-            widths.append((x,x+n-1))
-            x+=8
-        self.assertEqual(widths[0],(0,7))
-        self.assertEqual(widths[-1],(432,434))
-        self.assertEqual(sum(b-a+1 for a,b in widths),435)
-        self.assertTrue(all(0<=a<=b<435 for a,b in widths))
-        self.assertEqual(set(range(9,23))|set(range(30,44)),
-                         set(range(9,23))|set(range(30,44)))
+        self.assertNotIn("ld a,080h",src)
+        self.assertNotIn("ld (LmCLR),a",src)
+        strips=[]
+        for i in range(44):
+            x=i*10
+            width=5 if i==43 else 10
+            strips.append((x,x+width-1))
+        self.assertEqual(strips[0],(0,9))
+        self.assertEqual(strips[-1],(430,434))
+        self.assertEqual(sum(b-a+1 for a,b in strips),435)
+        self.assertEqual(
+            [x for a,b in strips for x in range(a,b+1)],
+            list(range(435)),
+        )
+        self.assertTrue(all(0<=a<=b<435 for a,b in strips))
+        self.assertEqual(set(range(49)),set(range(0,49)))
 
     def test_legacy_paging_and_page_wipes_untouched(self):
         source=(ROOT/"z80"/"asm"/"basic_text_demo.asm").read_text()
