@@ -36,7 +36,14 @@ Follow actual openMSX error diagnostics for missing or mismatched ROMs. Do not s
 
 ### GitHub Actions ROM-backed test
 
-The existing workflow has a legacy interface with four **16 KiB** base64 secrets: `MSX_NMS8250_BIOS_B64`, `MSX_NMS8250_BASIC_B64`, `MSX_NMS8250_SUB_B64`, and `MSX_NMS8250_DISK_B64`. If the supplied and *verified* BIOS+BASIC is already 32 KiB, split it into two 16 KiB halves **for this interface**, or explicitly update the workflow to accept a combined file. Treat these as CI interface requirements, not requirements on the original filenames. Recheck the workflow implementation before use. Missing secrets mean the ROM-backed job is skipped, even when other jobs are green.
+The current workflow accepts **two private-secret layouts** (the names below are CI input interfaces, not source-file naming requirements):
+
+- Preferred three-file set: `MSX_NMS8250_MAIN32_B64` (32 KiB BIOS+BASIC), `MSX_NMS8250_SUB16_B64` (16 KiB), `MSX_NMS8250_DISK16_B64` (16 KiB).
+- Legacy four-file set: `MSX_NMS8250_BIOS_B64`, `MSX_NMS8250_BASIC_B64`, `MSX_NMS8250_SUB_B64`, `MSX_NMS8250_DISK_B64` (each 16 KiB). The workflow joins BIOS and BASIC in this case.
+
+Do **not** split an already verified 32 KiB image merely because a previous guide asked for four files. Keep ROM contents private. No secrets means the emulator tests are skipped (other build steps may still pass).
+
+**Actual result, 2026-11-10:** [GitHub Actions run 42889296897](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42889296897) completed all 72 build-job steps successfully. The separate NMS8250 job failed during ROM acquisition: both explicit user-provided direct and ZIP endpoints returned HTTP 405 from the runner. No NMS8250 emulator test executed in that run; its failure is infrastructure/ROM availability, **not a Kabelkrant runtime regression**. Avoid repeating these URLs without new evidence they work. The runtime job already defines loop captures and a C: read/write/delete proof, so resume those tests once private, verified ROMs are accessible.
 
 ## Build with SjASMPlus 1.24.0
 
