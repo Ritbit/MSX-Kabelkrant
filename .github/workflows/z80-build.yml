@@ -44,6 +44,7 @@ jobs:
           (cd z80/asm && sjasmplus --raw=../build/wipe2.raw --lst=../build/wipe2.lst wipe_reverse.asm)
           python3 z80/tools/make_bload.py z80/build/wipe2.raw z80/build/WIPE2.BIN
           test -s z80/build/WIPE2.BIN
+          python3 -m unittest discover -s z80/tests -p 'test_wipe_binary.py' -v
       - name: Assemble standalone CALL TEXT demo
         run: |
           (cd z80/asm && sjasmplus --raw=../build/textdemo.raw --lst=../build/textdemo.lst --sym=../build/textdemo.sym basic_text_demo.asm)
@@ -109,7 +110,7 @@ jobs:
           cp assets/kabelkrant-6.2.dsk z80/build/KBLWIPE2.DSK
           printf '%s\r\n' \
             '10 CLEAR 1000,&HC7FF:SCREEN 7:COLOR 15,0,0' \
-            '20 CLS:LINE(0,50)-(511,211),14,BF' \
+            '20 CLS:LINE(0,50)-(511,211),14,BF:LOCATE 0,0:PRINT "WIPE 2: BOTTOM TO TOP"' \
             '30 LINE(0,50)-(511,211),1,B' \
             '40 FOR T=1 TO 1000:NEXT T' \
             '50 BLOAD "WIPE2.BIN",R' \
@@ -118,6 +119,11 @@ jobs:
           mcopy -o -i z80/build/KBLWIPE2.DSK z80/build/WIPEAUTO2.BAS ::AUTOEXEC.BAS
           mcopy -o -i z80/build/KBLWIPE2.DSK z80/build/WIPE2.BIN ::WIPE2.BIN
           test "$(stat -c %s z80/build/KBLWIPE2.DSK)" -eq 737280
+          cmp <(mcopy -i z80/build/KBLWIPE2.DSK ::WIPE2.BIN -) z80/build/WIPE2.BIN
+          if mdir -b -i z80/build/KBLWIPE2.DSK ::WIPE1.BIN >/dev/null 2>&1; then
+            echo "::error::Wipe2 demo unexpectedly contains wipe1 binary"
+            exit 1
+          fi
       - name: Upload isolated bottom-up wipe demonstration disk
         uses: actions/upload-artifact@v4
         with:
@@ -198,9 +204,10 @@ jobs:
           cp z80/build/KBLONEFILE.DSK assets/KBLONEFILE.DSK
           cp z80/build/KBLWIPE.DSK assets/KBLWIPE.DSK
           cp z80/build/KBLWIPE2.DSK assets/KBLWIPE2.DSK
+          cp z80/build/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK
           test "$(stat -c %s assets/KBLONEFILE.DSK)" -eq 737280
             test "$(stat -c %s assets/KBLZ80TEST.DSK)" -eq 737280
-            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK
+            git add -f assets/KBLZ80TEST.DSK assets/KBLONEFILE.DSK assets/KBLWIPE.DSK assets/KBLWIPE2.DSK assets/KBLWIPE2FIX.DSK
             if git diff --cached --quiet; then
               echo "Preview disk unchanged; no commit required."
               break
