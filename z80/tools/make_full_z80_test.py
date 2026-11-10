@@ -60,8 +60,16 @@ def transform(init: str, loop: str, one_file: bool = False) -> tuple[str, str, i
     # three checkpoints before ever invoking potentially lost machine
     # code. This is a diagnostic, not a validated persistence design.
     if one_file:
-        lines.insert(next(j for j, line in enumerate(lines) if line.startswith('115 ')),
-                     '112 IF PEEK(&HC806)<>33 THEN SCREEN 0:WIDTH 80:PRINT "ONEFILE ERROR E1: TEXT lost during RAMdisk warmstart":END')
+        # Probe before changing HIMEM, then reserve the entire C800+ region
+        # *before* SCREEN 7 and the first source image are initialized.
+        # This is the key experiment: the earlier E2 indicates that C806
+        # survives warmstart but does not survive the intro sequence.
+        checkpoint = next(j for j, line in enumerate(lines) if line.startswith('115 '))
+        lines[checkpoint:checkpoint] = [
+            '111 IF PEEK(&HC806)<>33 THEN SCREEN 0:WIDTH 80:PRINT "ONEFILE ERROR E1: TEXT lost during RAMdisk warmstart":END',
+            '112 CLEAR 2000,&HC7FF',
+            '113 IF PEEK(&HC806)<>33 THEN SCREEN 0:WIDTH 80:PRINT "ONEFILE ERROR E1B: TEXT overwritten by early CLEAR":END',
+        ]
         i=next(j for j, line in enumerate(lines) if line.startswith('190 '))
         lines.insert(i, '188 IF PEEK(&HC806)<>33 THEN SCREEN 0:WIDTH 80:PRINT "ONEFILE ERROR E2: TEXT overwritten during intro":END')
         i=next(j for j, line in enumerate(lines) if line.startswith('190 '))
