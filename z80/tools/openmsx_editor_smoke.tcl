@@ -18,7 +18,7 @@ proc press_esc {} {
     after time 0.20 {keymatrixup 7 0x04}
 }
 proc send {string} {
-    type -release -freq 12 $string
+    type -release -freq 3 $string
 }
 # Generous simulated-time spacing prevents keypresses crossing menu transitions.
 # NMS8250 takes >120 emulated seconds for its graphical cold start.
