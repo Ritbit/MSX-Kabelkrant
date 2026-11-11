@@ -103,6 +103,8 @@ foreach t {120 300 480 660 840 1020 1200 1380} {
 }
 ```
 
+**Make the test's final `exit` occur after its last scheduled screenshot**. When an extra +12-second capture was added to the 1380-second sample, the original 1385-second exit silently prevented the 1392-second PNG from being written; CI correctly reported it as missing. Schedule termination at a later point (e.g. 1395 seconds).
+
 Beware false positives: a moving clock, cursor, screen border or incidental animation alone does not prove the news pages change. Use a body-region crop, difference statistics, and where feasible page IDs or actual VRAM/state checks. A long test is not stable merely because the scheduled checkpoint exists.
 
 Project reference: `z80/tools/openmsx_regression.tcl` and `z80/tools/check_openmsx_regression.py`.
