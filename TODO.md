@@ -125,3 +125,13 @@ Earlier failed runs identified **test harness errors**, not established producti
 - [x] GitHub Actions [run 43044753370](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43044753370), initial attempt: assembly/font/unit tests passed through step 18, but build step `Create isolated MSX2 demo disk` failed installing `mtools`; `apt-get` could not resolve `azure.archive.ubuntu.com` (including Ubuntu mirror fallbacks), timeout 124. The dependent openMSX job was **skipped**. **Not an MSX or editor runtime failure.**
 - [x] Bound package installation and changed to attempt installing from preexisting APT indexes before `apt-get update`. Retried failed jobs (same run ID, next attempt) on a fresh runner; inspect its eventual result.
 - [ ] Resume editor test using confirmed present `MENU01.TXT` once package downloads succeed; require `Z8REG26.TXT` proof plus resumed broadcasts. No user action needed to diagnose code.
+
+
+## Fedora CI migration / editor status (2026-11-11)
+
+- [x] Avoided broken Ubuntu APT mirror by using GitHub Actions **Fedora 43 containers**; the actual hosted VM remains Ubuntu. Isolated package/tool probe [43062958577](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43062958577) green.
+- [x] Migrated both SjASMPlus/full-disk build and openMSX NMS8250 runtime jobs to Fedora/DNF. Added `diffutils` for `cmp`, installed git before checkout to preserve `.git`, registered the exact workspace as Git safe.directory, repaired a malformed `mdir | grep` shell quote and removed duplicate artifact/cleanup steps.
+- [x] [Full Fedora regression 43065977217](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43065977217): build PASS; standalone Z80 PASS; integrated multi-page PASS; C: RW/delete proof PASS; 24 frames over 1395s emulation PASS.
+- [x] In same run, editor loads actual `MENU01.TXT`, modifies text and produces a verified **A: `Z8REG26.TXT` containing `Z80EDITORTEST`**. This establishes the A: save portion, not a complete editor success.
+- [ ] **Unresolved:** after editor save, captures at later checkpoints still show the `OPSLAAN` screen; no proven return to `LOOP.SYS`. Determine whether this is a C: save failure, menu input sequencing, or another integration issue. Do not silently make UI assertions optional. Screenshots and sanitized editor log are in artifact `openmsx-NMS8250-editor-smoke` on run 43065977217.
+- [ ] Optional: test the same A:/C: editor save + return manually in WebMSX on the accepted preview; do not touch stable 6.2b to work around an unconfirmed issue.
