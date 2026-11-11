@@ -4,6 +4,7 @@ name: Z80 build and emulator smoke tests
 # Editor integration test is opt-in on a disposable disk and preserves A: proof.
 # Keyboard event timings allow for slow BASIC menu transitions.
 # Follow-up sampling: 0/2/12 seconds; long editor text uses BIOS key buffer.
+# Long-run checker decodes valid highly-compressible wipe PNGs before assessing content.
 on:
   push:
     branches: [feature/z80-renderer]
