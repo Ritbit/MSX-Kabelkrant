@@ -42,7 +42,8 @@ if {$case eq "loop"} {
         after time [expr {$stamp + 2}] [list kbl_capture [format "%04d" [expr {$stamp + 2}]]]
         after time [expr {$stamp + 12}] [list kbl_capture [format "%04d" [expr {$stamp + 12}]]]
     }
-    after time 1385 {kbl_done "KBL_LONG_TRACE_DONE"; exit}
+    # Last 1380s sample also schedules a +12s frame at 1392s.
+    after time 1395 {kbl_done "KBL_LONG_TRACE_DONE"; exit}
 } elseif {$case eq "ctest"} {
     # The auto BASIC diagnostic starts after the initializer copied A:->C:.
     # The separate KBLPASS.OK marker in the *emulator's disposable disk*
