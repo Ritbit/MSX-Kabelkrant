@@ -162,3 +162,7 @@ References: [openMSX manual](https://openmsx.org/manual/), [WebMSX source/docs](
 2. Boot the emulator and verify execution with state checkpoints, file proofs or validated graphics.
 3. Capture **paired** screenshots at transitions plus separated later samples, retain logs on failures.
 4. Record PASS/FAIL/SKIPPED with *what was actually measured*. Store outputs, never system ROM bytes.
+
+## CI dependency resolver incident (2026-11-11)
+
+In [GitHub Actions run 43044753370](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43044753370), the hosted Ubuntu runner could not resolve `azure.archive.ubuntu.com` or fallback mirrors. Installing `mtools` failed with apt network/DNS errors, **before any MSX emulator ran**. This is an infrastructure outage, not evidence of a failing MSX program. Set bounded APT operations, retain the failing log, distinguish FAIL/SKIP categories, and retry on another runner when network access recovers. Never 'fix' a working disk image in response to these errors.
