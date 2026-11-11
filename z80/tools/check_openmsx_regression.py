@@ -11,8 +11,8 @@ import json
 
 
 def inspect(folder: Path, variant: str):
-    patterns=([f"loop-{n:03d}.png" for n in (30,75,120,165,210)]
-              if variant=="loop" else ["ctest-025.png","ctest-060.png"])
+    patterns=([f"loop-{n:03d}.png" for n in (120,165,210,255)]
+              if variant=="loop" else ["ctest-120.png","ctest-210.png"])
     frames=[]
     for name in patterns:
         p=folder/name
