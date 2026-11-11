@@ -822,13 +822,13 @@ jobs:
             # split ROMs into the ephemeral runner directory, never into the repo.
             # On errors, fail rather than retrying previously rejected endpoints.
             rombase="https://download.file-hunter.com/System%20ROMs/machines/philips"
-            curl -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
+            curl -A "Mozilla/5.0" -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
               "$rombase/nms8250-bios.rom" -o "$rom_dir/bios.rom"
-            curl -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
+            curl -A "Mozilla/5.0" -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
               "$rombase/nms8250-basic.rom" -o "$rom_dir/basic.rom"
-            curl -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
+            curl -A "Mozilla/5.0" -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
               "$rombase/nms8250_msx2sub.rom" -o "$rom_dir/nms8250_msx2sub.rom"
-            curl -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
+            curl -A "Mozilla/5.0" -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
               "$rombase/nms8250_disk.rom" -o "$rom_dir/nms8250_disk.rom"
             test "$(stat -c %s "$rom_dir/bios.rom")" -eq 16384
             test "$(stat -c %s "$rom_dir/basic.rom")" -eq 16384
