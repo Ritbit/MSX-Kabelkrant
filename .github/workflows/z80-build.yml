@@ -876,12 +876,14 @@ jobs:
           echo "Four fonts/colour image captured; visual/pixel-equivalence not yet asserted." >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload emulator screenshot and smoke log (no ROMs)
-        if: env.ROM_READY == 'true'
+        if: always() && env.ROM_READY == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: openmsx-NMS8250-standalone-smoke
-          path: z80/build/openmsx-smoke.png
-          if-no-files-found: error
+          path: |
+            z80/build/openmsx-smoke.png
+            z80/build/openmsx-smoke.done
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Run multi-page full Kabelkrant regression in NMS8250
