@@ -136,6 +136,7 @@ Do not accidentally open BASIC file handle `#2` when `MAXFILES` only supports `#
 - Upload PNGs, JSON results, Tcl checkpoint files and sanitized logs **even on failure**. Use `if: always()` and `if-no-files-found: warn` for diagnostic artifact steps.
 - Avoid auto-publishing disk images on every debugging commit unless intentional; record the precise artifact and checksum tested.
 - Avoid using a commit-message substring as the only ROM-test activation mechanism for a reusable pipeline. Prefer an explicit `workflow_dispatch` input or a clearly defined job configuration; this project's existing workflow still has a historical `[nms8250-rom-test]` opt-in path.
+- A valid blank/near-uniform PNG can be **smaller than 1 KiB**. Decode PNG with Pillow (or equivalent) and check actual width/height, rather than rejecting small compressed files as 'missing'. Assess content separately; in this project, valid 320×240 wipe screenshots were ~857 bytes.
 - Don't loosen a validator only to make CI green. Inspect screenshot artifacts first; fix unsound timing/assumptions while preserving meaningful functional assertions.
 - Distinguish infrastructure error, harness error, application regression and incomplete evidence in the job summary.
 
