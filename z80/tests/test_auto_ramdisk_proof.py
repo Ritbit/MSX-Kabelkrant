@@ -48,9 +48,9 @@ class AutoRAMdiskProofTests(unittest.TestCase):
         self.assertEqual(lines[180],'IF C$<>A$ THEN 8000')
         self.assertEqual(lines[190],'IF D$<>B$ THEN 8000')
         self.assertEqual(lines[210],"KILL F$")
-        self.assertEqual(lines[212],'OPEN "A:KBLPASS.OK" FOR OUTPUT AS #2')
-        self.assertEqual(lines[214],'PRINT #2,"PASS C: RW DELETE"')
-        self.assertEqual(lines[216],"CLOSE #2")
+        self.assertEqual(lines[212],'OPEN "A:KBLPASS.OK" FOR OUTPUT AS #1')
+        self.assertEqual(lines[214],'PRINT #1,"PASS C: RW DELETE"')
+        self.assertEqual(lines[216],"CLOSE #1")
         self.assertEqual(lines[220],'PRINT "PASS: WRITE/READ/DELETE ON C:"')
 
     def test_testimage_modifies_only_initialization_and_diagnostic(self):
