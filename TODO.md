@@ -83,3 +83,7 @@ Keep this list short and current: move resolved technical detail to
 - [x] Inspected [run 42889296897](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42889296897): **build success**, **openMSX failed before launch** (HTTP 405). No new C:, loop, screenshot or editor runtime result.
 - [x] Linked `HOWTO-TESTING.md` from `AGENTS.md` and `CONTEXT.md` for cross-session continuity.
 - [ ] Once private ROMs are available, run NMS8250 integration smoke tests and inspect C: proof marker, image-difference summaries, actual screenshots and logs.
+
+## ROM URL regression follow-up (2026-11-11)
+- [x] [Run 42983952510](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42983952510): all build steps passed. First of four new split Philips ROM URLs (`nms8250-bios.rom`) returned HTTP 405 from GitHub Actions; remaining three were not attempted because the step stopped at the first error. No emulator run or C: runtime test occurred.
+- [ ] Resume automated NMS8250 C:/loop tests with verified ROM files in a private runner pool or private Actions secrets, not ROM bytes committed to Git. Do not retry these blocked public URLs without changed circumstances.
