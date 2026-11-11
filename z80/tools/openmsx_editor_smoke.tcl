@@ -50,7 +50,7 @@ after time 650 {capture returnmenu}
 after time 655 {send "3"}
 after time 700 {capture save}
 after time 705 {send_text "Z8REG26"}
-after time 750 {send "\r"}
+after time 750 {send_text "\r"}
 after time 800 {capture saved}
 after time 805 {send " "}
 after time 850 {capture aftersave}
