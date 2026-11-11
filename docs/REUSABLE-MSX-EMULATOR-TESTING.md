@@ -70,6 +70,7 @@ proc capture {stamp} {
 
 after time 120 {capture 120}
 after time 122 {capture 122}
+after time 132 {capture 132}
 after time 300 {
     capture 300
     set f [open [file join $out "test.done"] w]
@@ -91,12 +92,14 @@ Determine the real cold-boot time empirically. A first screenshot at 25 or 30 em
 
 ## 5. Capture screenshot **pairs** around transitions
 
-A wipe/clear animation can produce a temporarily all-black or uniform frame. **Take two screenshots 1–2 emulated seconds apart** at each observation point and treat the pair together. Check for meaningful content in at least one member of each pair, and compare pages **across** distant intervals to establish ongoing progression. This is stronger than rejecting every low-colour screenshot.
+A wipe/clear animation can produce a temporarily all-black or uniform frame. **Take two screenshots 1–2 emulated seconds apart** at each observation point and treat the pair together. **A two-second pair is not a definitive freeze detector**: on the KabelKrant NMS8250 23-minute capture, both images at 660/662 seconds were uniform during an apparent display transition, while later captures again showed newspaper pages. Preserve these as diagnostic evidence rather than automatically classifying the program as frozen. For a suspicious pair, add a third capture 10–15 emulated seconds after the first (or a suitable delay for that application's longest expected transition). Compare pages **across** distant intervals to establish ongoing progression. The evidence across the full run is more important than declaring every individual low-colour frame a failure. A static image pair may also mean the page is intentionally displayed for several seconds.
 
 ```tcl
 foreach t {120 300 480 660 840 1020 1200 1380} {
     after time $t [list capture [format "%04d" $t]]
     after time [expr {$t+2}] [list capture [format "%04d" [expr {$t+2}]]]
+    # Optional follow-up to distinguish a slower wipe from a hang:
+    after time [expr {$t+12}] [list capture [format "%04d" [expr {$t+12}]]]
 }
 ```
 
@@ -115,7 +118,7 @@ after time 200 {capture menu}
 after time 205 {send "2"}
 ```
 
-This `type` technique and `keymatrixdown`/`keymatrixup` are available in openMSX scripting; use the precise version's console documentation. **The example is not a complete editor test**: menu/input readiness must be verified. Short inter-event delays can drop or misroute keypresses; `INPUT$(1)` in MSX BASIC is not a host-side event queue. Prefer state/screen checkpoints or deterministic waits and send text and ENTER as separate actions. Confirm the expected menu before entering the next key, and fail with diagnostics rather than claiming success.
+This `type` technique and `keymatrixdown`/`keymatrixup` are available in openMSX scripting; use the precise version's console documentation. **The example is not a complete editor test**: menu/input readiness must be verified. Short inter-event delays can drop or misroute keypresses; `INPUT$(1)` in MSX BASIC is not a host-side event queue. Prefer state/screen checkpoints or deterministic waits and send text and ENTER as separate actions. **Known open issue (2026-11-11):** the keyboard-driven KabelKrant editor scenario reaches menu, editor and save-name prompt, but does not yet produce the expected disk proof. The screenshots show the prompt stuck; the script must not be advertised as an accepted end-to-end test until the actual file has been verified. Confirm the expected menu before entering the next key, and fail with diagnostics rather than claiming success.
 
 For a save/read/delete test, use a unique disposable filename (8.3), verify it with `mcopy` *from the emulator-mutated disk*, and check contents. A proof file created after successful operations is stronger than a text screenshot:
 
