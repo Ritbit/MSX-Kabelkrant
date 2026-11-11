@@ -808,7 +808,7 @@ jobs:
         if: env.ROM_READY == 'true'
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil
+          sudo apt-get install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil mtools
           test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
 
       - name: Decode NMS 8250 ROMs into ephemeral private directory
