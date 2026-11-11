@@ -36,7 +36,7 @@ after time 405 {send "3"}
 after time 450 {capture returnmenu}
 after time 455 {send "3"}
 after time 500 {capture save}
-after time 505 {send "Z8REG26\\r"}
+after time 505 {send "Z8REG26\r"}
 after time 560 {capture saved}
 after time 565 {send " "}
 after time 610 {capture aftersave}
