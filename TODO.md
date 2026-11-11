@@ -49,7 +49,7 @@ file or the other three coordination docs to `main`.
 - [x] Add compiled wipe+TEXT memory-budget audit and dedicated integration design (`z80/WIPE-INTEGRATION.md`).
 - [x] Implement shared `CALL WIPE(n)` engine for all 14 in a **separate** opt-in onefile image (`KBLWIPEINT14.DSK`): 3775 bytes within 4096-byte reserved area; retain 1..8 and 1..12 fallback alphas.
 - [x] User confirmed **KBLWIPEINT14.DSK runs the Kabelkrant and all fourteen integrated Z80 wipes in WebMSX** (2026-11-10). This is a manual functional smoke test; not yet C: or editor regression approval.
-- [ ] Validate drive C: read/write, editor/menu paths, repeated unattended cycles and clock stability on **the exact integrated 14-wipe disk**. Preserve rollback preview.
+- [ ] Validate editor/menu paths, longer unattended cycles and clock rollover on **the exact integrated 14-wipe disk**; C: read/write/delete and 255s multi-page loop already passed on the accepted title-integrated test variant (run 43001359714). Preserve rollback preview.
 - [x] Build special title Z80 wipe (`CALL WIPE(15)`) in isolated `KBLTITLE.DSK`; initial black-fill version rejected by user screenshot (destroyed title background and left old text). Fixed using opaque VRAM LMMM template copy X0..9/Y0..48 -> X0..434/Y0..48 while preserving clock X435..511. CI passes at **3879/4096 bytes**, leaving **217 bytes**.
 - [x] User visually approved `KBLTITLECOPY.DSK` in WebMSX (2026-11-10): title backgrounds and lines restore correctly, old title clears and clock is preserved. Keep `KBLWIPELEAN.DSK` as rollback.
 - [ ] Treat the five-argument rectangular wipe proposal as independent experimental development; **do not** use for title bars.
@@ -75,14 +75,14 @@ Keep this list short and current: move resolved technical detail to
 - [x] Add time-separated openMSX captures over 210 emulated seconds and a comparison script that rejects blank/stationary output.
 - [x] CI builds and tests the proof disk and accepted title-wipe image without modifying release or main.
 - [x] Support three private NMS8250 ROMs (32KiB BIOS+BASIC + 16KiB SUB + 16KiB disk); no ROMs committed or attached to artifacts.
-- [ ] Execute full ROM-backed emulator suite and inspect screenshot artifacts; **blocked by ROM availability in CI**. GitHub Actions run 42889296897 (2026-11-10) confirms both the direct Philips URL and user-provided full ZIP URL return HTTP 405 from the runner. Build passed; openMSX did not launch. Do not retry those endpoints without new evidence. Prefer private 32+16+16 KiB ROM secrets or a verified local ROM pool. ROM binaries provided by the user did not mount in the conversation/container.
+- [x] Execute core ROM-backed NMS8250 emulator suite and inspect screenshot artifacts; **resolved 2026-11-11** using `curl -A "Mozilla/5.0"` on the four split ROM URLs; build, standalone, loop and C: proof all passed in run 43001359714. Prior HTTP 405 was source User-Agent filtering. ROM binaries provided by the user did not mount in the conversation/container.
 - [ ] Verify editor/menu, clock rollover and longer cycle reliability after C: proof is successful.
 
 
 ## Latest CI inspection (2026-11-10)
 - [x] Inspected [run 42889296897](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42889296897): **build success**, **openMSX failed before launch** (HTTP 405). No new C:, loop, screenshot or editor runtime result.
 - [x] Linked `HOWTO-TESTING.md` from `AGENTS.md` and `CONTEXT.md` for cross-session continuity.
-- [ ] Once private ROMs are available, run NMS8250 integration smoke tests and inspect C: proof marker, image-difference summaries, actual screenshots and logs.
+- [x] Run NMS8250 integration smoke with ephemeral ROM URLs, C: proof marker and image-difference summaries (run 43001359714).
 
 ## ROM URL regression follow-up (2026-11-11)
 - [x] [Run 42983952510](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42983952510): all build steps passed. First of four new split Philips ROM URLs (`nms8250-bios.rom`) returned HTTP 405 from GitHub Actions; remaining three were not attempted because the step stopped at the first error. No emulator run or C: runtime test occurred.
