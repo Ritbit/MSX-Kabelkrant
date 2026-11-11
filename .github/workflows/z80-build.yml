@@ -887,7 +887,7 @@ jobs:
           retention-days: 14
 
       - name: Run multi-page full Kabelkrant regression in NMS8250
-        if: env.ROM_READY == 'true'
+        if: always() && env.ROM_READY == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -904,7 +904,7 @@ jobs:
             --case loop --output z80/build/openmsx-regression/loop-summary.json
           echo "### NMS8250: 210-second newspaper captures verified" >> "$GITHUB_STEP_SUMMARY"
       - name: Run C read/write/delete proof on disposable test floppy
-        if: env.ROM_READY == 'true'
+        if: always() && env.ROM_READY == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -921,14 +921,15 @@ jobs:
             | grep -q '^PASS C: RW DELETE'
           echo "### NMS8250: C: write/read/compare/delete PASS (MSX proof marker)" >> "$GITHUB_STEP_SUMMARY"
       - name: Upload NMS8250 integration captures, summaries, no ROMs
-        if: env.ROM_READY == 'true'
+        if: always() && env.ROM_READY == 'true'
         uses: actions/upload-artifact@v4
         with:
           name: openmsx-NMS8250-integration-regression
           path: |
             z80/build/openmsx-regression/*.png
             z80/build/openmsx-regression/*.json
-          if-no-files-found: error
+            z80/build/openmsx-regression/*.done
+          if-no-files-found: warn
           retention-days: 14
 
       - name: Remove private ROM files
