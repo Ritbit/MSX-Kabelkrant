@@ -818,44 +818,21 @@ jobs:
           rom_dir="$RUNNER_TEMP/openmsx-roms"
           mkdir -p "$rom_dir"
           if [[ "$ROM_LAYOUT" == "remote" ]]; then
-            # Two explicit user-supplied sources. One short attempt each;
-            # no retry loops or mass scanning of this archive.
+            # Explicit opt-in regression only. Download the four maintainer-provided
+            # split ROMs into the ephemeral runner directory, never into the repo.
+            # On errors, fail rather than retrying previously rejected endpoints.
             rombase="https://download.file-hunter.com/System%20ROMs/machines/philips"
-            if curl -fLsS --retry 0 --connect-timeout 10 --max-time 60 \
-              "$rombase/nms8250_basic-bios2.rom" \
-              -o "$rom_dir/nms8250_basic-bios2.rom"; then
-              curl -fLsS --retry 0 --connect-timeout 10 --max-time 60 \
-                "$rombase/nms8250_msx2sub.rom" \
-                -o "$rom_dir/nms8250_msx2sub.rom"
-              curl -fLsS --retry 0 --connect-timeout 10 --max-time 60 \
-                "$rombase/nms8250_disk.rom" \
-                -o "$rom_dir/nms8250_disk.rom"
-            else
-              echo "Direct Philips ROM URL refused; trying the user-supplied ZIP once."
-              zip_url="https://download.file-hunter.com/System%20ROMs/Full%20Set%20System%20ROMs%20for%20OpenMSX%20-%2010-11-2026.zip"
-              curl -fLsS --retry 0 --connect-timeout 10 --max-time 180 \
-                "$zip_url" -o "$rom_dir/nms8250-full-set.zip"
-              python3 - "$rom_dir" <<'PY'
-          import pathlib,sys,zipfile
-          root=pathlib.Path(sys.argv[1])
-          expected={
-              "nms8250_basic-bios2.rom":32768,
-              "nms8250_msx2sub.rom":16384,
-              "nms8250_disk.rom":16384,
-          }
-          with zipfile.ZipFile(root/"nms8250-full-set.zip") as z:
-              for name,sz in expected.items():
-                  candidates=[n for n in z.namelist()
-                      if n.lower().replace("\\\\","/").endswith("/machines/philips/"+name)
-                      or n.lower().replace("\\\\","/")==("machines/philips/"+name)]
-                  if len(candidates)!=1: raise RuntimeError("ROM not uniquely located: "+name)
-                  info=z.getinfo(candidates[0])
-                  if info.file_size!=sz: raise RuntimeError("Unexpected size for "+name)
-                  (root/name).write_bytes(z.read(candidates[0]))
-          (root/"nms8250-full-set.zip").unlink()
-          print("Extracted exactly three NMS8250 ROMs from user ZIP.")
-          PY
-            fi
+            curl -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
+              "$rombase/nms8250-bios.rom" -o "$rom_dir/bios.rom"
+            curl -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
+              "$rombase/nms8250-basic.rom" -o "$rom_dir/basic.rom"
+            curl -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
+              "$rombase/nms8250_msx2sub.rom" -o "$rom_dir/nms8250_msx2sub.rom"
+            curl -fLsS --retry 0 --connect-timeout 10 --max-time 45 \
+              "$rombase/nms8250_disk.rom" -o "$rom_dir/nms8250_disk.rom"
+            test "$(stat -c %s "$rom_dir/bios.rom")" -eq 16384
+            test "$(stat -c %s "$rom_dir/basic.rom")" -eq 16384
+            cat "$rom_dir/bios.rom" "$rom_dir/basic.rom" > "$rom_dir/nms8250_basic-bios2.rom"
           elif [[ "$ROM_LAYOUT" == "3" ]]; then
             printf '%s' "$MSX_NMS8250_MAIN32_B64" | base64 --decode > "$rom_dir/nms8250_basic-bios2.rom"
             printf '%s' "$MSX_NMS8250_SUB16_B64" | base64 --decode > "$rom_dir/nms8250_msx2sub.rom"
