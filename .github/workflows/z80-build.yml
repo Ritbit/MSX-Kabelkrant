@@ -27,7 +27,8 @@ jobs:
     container:
       image: fedora:43
     steps:
-      - uses: actions/checkout@v4
+      # Install git before checkout; otherwise the checkout action falls back
+      # to REST archive download and creates no .git directory for preview push.
       - name: Install Fedora build prerequisites
         timeout-minutes: 8
         shell: bash
@@ -36,6 +37,11 @@ jobs:
           dnf -y --setopt=timeout=15 --setopt=retries=1 install \
             git cmake gcc-c++ make zlib-devel python3 mtools curl tar gzip unzip diffutils
           rpm -q mtools git cmake gcc-c++
+      - uses: actions/checkout@v4
+      - name: Verify true Git checkout
+        run: |
+          git rev-parse --is-inside-work-tree
+          test -d .git
       - name: Build SjASMPlus 1.24.0
         run: |
           git clone --recursive --depth 1 --branch v1.24.0 https://github.com/z00m128/sjasmplus.git /tmp/sjasmplus
