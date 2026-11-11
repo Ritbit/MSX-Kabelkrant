@@ -922,6 +922,34 @@ jobs:
           mcopy -i "$RUNNER_TEMP/KBLCTEST-RUNTIME.DSK" ::KBLPASS.OK - \
             | grep -q '^PASS C: RW DELETE'
           echo "### NMS8250: C: write/read/compare/delete PASS (MSX proof marker)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Exercise menu editor save and return on disposable NMS8250 disk
+        if: always() && env.ROM_READY == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p z80/build/openmsx-editor
+          cp z80/build/KBLTITLECOPY.DSK "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK"
+          KBL_CASE=editor timeout 180s xvfb-run -a openmsx \
+            -machine Philips_NMS_8250 \
+            -diska "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK" \
+            -script z80/tools/openmsx_editor_smoke.tcl \
+            > "$RUNNER_TEMP/kbl-editor.log" 2>&1
+          grep -q 'KBL_EDITOR_TRACE_DONE' z80/build/openmsx-editor/editor.done
+          mcopy -i "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK" ::Z8REG26.TXT - \
+            | grep -q 'Z80EDITORTEST'
+          python3 z80/tools/check_editor_smoke.py
+          echo "### NMS8250: operator menu/editor write to A:, return to live pages PASS" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload menu/editor evidence, even on failed scenario (no ROMs)
+        if: always() && env.ROM_READY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmsx-NMS8250-editor-smoke
+          path: |
+            z80/build/openmsx-editor/*.png
+            z80/build/openmsx-editor/*.done
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Upload NMS8250 integration captures, summaries, no ROMs
         if: always() && env.ROM_READY == 'true'
         uses: actions/upload-artifact@v4
