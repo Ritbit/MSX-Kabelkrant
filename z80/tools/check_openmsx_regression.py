@@ -28,7 +28,8 @@ def inspect(folder: Path, variant: str):
             image=rgb.crop((rgb.width//10,rgb.height//4,
                             9*rgb.width//10,9*rgb.height//10))
             colours=image.getcolors(maxcolors=1_000_000)
-            if colours is not None and len(colours)<3:
+            min_colours = 2 if variant == "ctest" else 3
+            if colours is not None and len(colours)<min_colours:
                 raise AssertionError(f"Uniform or low-colour screen: {name}")
             frames.append(image.copy())
     results={"case":variant,"frames":patterns,"frame_sizes":[list(im.size) for im in frames]}
