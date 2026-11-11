@@ -12,8 +12,11 @@ import json
 
 def inspect(folder: Path, variant: str):
     patterns=([f"loop-{n:03d}.png" for n in (120,165,210,255)]
-              if variant=="loop" else ["ctest-120.png","ctest-210.png"])
+              if variant=="loop" else
+              [f"long-{n:04d}.png" for n in (120,300,480,660,840,1020,1200,1380)]
+              if variant=="long" else ["ctest-120.png","ctest-210.png"])
     frames=[]
+    meaningful=[]
     for name in patterns:
         p=folder/name
         if not p.is_file() or p.stat().st_size<1024:
@@ -29,11 +32,20 @@ def inspect(folder: Path, variant: str):
                             9*rgb.width//10,9*rgb.height//10))
             colours=image.getcolors(maxcolors=1_000_000)
             min_colours = 2 if variant == "ctest" else 3
-            if colours is not None and len(colours)<min_colours:
+            populated = colours is None or len(colours)>=min_colours
+            if variant=="ctest" and not populated:
                 raise AssertionError(f"Uniform or low-colour screen: {name}")
+            meaningful.append(populated)
             frames.append(image.copy())
     results={"case":variant,"frames":patterns,"frame_sizes":[list(im.size) for im in frames]}
-    if variant=="loop":
+    if variant in ("loop","long"):
+        # Allow a short instantaneous full-screen wipe, but not a screen that
+        # stays blank or repeats for most of the unattended run.
+        required=2 if variant=="loop" else 5
+        if sum(meaningful)<required:
+            raise AssertionError(f"Too few populated newspaper frames: {meaningful}")
+        if variant=="long" and any(not any(meaningful[i:i+3]) for i in range(len(meaningful)-2)):
+            raise AssertionError("Three consecutive low-colour frames during long run")
         # Compare only a cropped part of the image (avoid the animated clock).
         # A live newspaper must change substantially over many MSX seconds;
         # a blinking cursor/error screen should not be accepted as progress.
@@ -43,8 +55,10 @@ def inspect(folder: Path, variant: str):
             diff=ImageChops.difference(a,b)
             rms=ImageStat.Stat(diff).mean
             diffs.append(round(sum(rms)/3,3))
+        results["populated_frames"]=meaningful
         results["consecutive_mean_rgb_diff"]=diffs
-        if sum(d>5.0 for d in diffs)<2:
+        minimum_diffs=2 if variant=="loop" else 4
+        if sum(d>5.0 for d in diffs)<minimum_diffs:
             raise AssertionError(f"No substantial newspaper changes: RGB differences {diffs}")
     return results
 
@@ -52,7 +66,7 @@ def inspect(folder: Path, variant: str):
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--folder",type=Path,default=Path("z80/build/openmsx-regression"))
-    p.add_argument("--case",choices=("loop","ctest"),required=True)
+    p.add_argument("--case",choices=("loop","long","ctest"),required=True)
     p.add_argument("--output",type=Path)
     a=p.parse_args()
     result=inspect(a.folder,a.case)
