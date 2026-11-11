@@ -1,5 +1,7 @@
 # BUILD-AND-TEST — Kabelkrant Z80 development
 
+> Reusable openMSX/WebMSX scripting and CI procedures: [docs/REUSABLE-MSX-EMULATOR-TESTING.md](docs/REUSABLE-MSX-EMULATOR-TESTING.md). See [HOWTO-TESTING.md](HOWTO-TESTING.md) for verified, up-to-date runtime results. Some historical examples below describe the original 25-second smoke capture / four-secret-only setup; those were superseded by the current workflow.
+
 > **Development branch only:** `feature/z80-renderer`. Never merge this
 > file, `CONTEXT.md`, `AGENTS.md`, `PLAN.md` or `TODO.md` into `main`.
 > Use clean release branches created from `main` for production changes.
