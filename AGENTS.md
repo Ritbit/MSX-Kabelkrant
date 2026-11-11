@@ -4,7 +4,7 @@
 
 This file and `CONTEXT.md`, `PLAN.md`, `TODO.md`, `BUILD-AND-TEST.md`, `HOWTO-TESTING.md` are development
 coordination files. **Do not merge, cherry-pick, copy, or include these
-six files in `main` or any release PR.** They are intentionally absent
+six coordination files in `main` or any release PR.** They are intentionally absent
 from stable branches.
 
 ## Read first
@@ -14,9 +14,12 @@ from stable branches.
 3. `PLAN.md` for milestones and acceptance criteria.
 4. `HOWTO-TESTING.md` for ROM-independent NMS8250 setup, tested evidence and regression criteria.
 5. `BUILD-AND-TEST.md` for detailed assembly, openMSX and WebMSX commands.
-6. `z80/COMBINED-STATUS.md` for the unresolved RAMdisk/CALL integration.
+6. `docs/REUSABLE-MSX-EMULATOR-TESTING.md` for portable openMSX/WebMSX automation patterns (development only).
+7. `z80/COMBINED-STATUS.md` for the unresolved RAMdisk/CALL integration.
 
 ## Working rules
+
+- For reusable emulator techniques, maintain `docs/REUSABLE-MSX-EMULATOR-TESTING.md`; for project-specific ROM URLs and test results, maintain `HOWTO-TESTING.md` and `TODO.md`. Do not assert WebMSX automation based on openMSX Tcl runs.
 
 - Work on the feature branch only. Preserve existing `main` and the
   published v6.2b binaries. Never merge this branch wholesale.
