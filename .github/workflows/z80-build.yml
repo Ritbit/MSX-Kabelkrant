@@ -924,6 +924,23 @@ jobs:
           mcopy -i "$RUNNER_TEMP/KBLCTEST-RUNTIME.DSK" ::KBLPASS.OK - \
             | grep -q '^PASS C: RW DELETE'
           echo "### NMS8250: C: write/read/compare/delete PASS (MSX proof marker)" >> "$GITHUB_STEP_SUMMARY"
+      - name: Run unattended paired-screenshot NMS8250 regression
+        if: always() && env.ROM_READY == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p z80/build/openmsx-regression
+          cp z80/build/KBLTITLECOPY.DSK "$RUNNER_TEMP/KBL-LONG-RUNTIME.DSK"
+          KBL_CASE=long timeout 240s xvfb-run -a openmsx \
+            -machine Philips_NMS_8250 \
+            -diska "$RUNNER_TEMP/KBL-LONG-RUNTIME.DSK" \
+            -script z80/tools/openmsx_regression.tcl \
+            > "$RUNNER_TEMP/kbl-long.log" 2>&1
+          cp "$RUNNER_TEMP/kbl-long.log" z80/build/openmsx-regression/long.log
+          grep -q 'KBL_LONG_TRACE_DONE' z80/build/openmsx-regression/long.done
+          python3 z80/tools/check_openmsx_regression.py \
+            --case long --output z80/build/openmsx-regression/long-summary.json
+          echo "### NMS8250: paired captures over 1385 MSX seconds: PASS" >> "$GITHUB_STEP_SUMMARY"
       - name: Exercise menu editor save and return on disposable NMS8250 disk
         if: always() && env.ROM_READY == 'true'
         shell: bash
@@ -961,6 +978,7 @@ jobs:
             z80/build/openmsx-regression/*.png
             z80/build/openmsx-regression/*.json
             z80/build/openmsx-regression/*.done
+            z80/build/openmsx-regression/*.log
           if-no-files-found: warn
           retention-days: 14
 
