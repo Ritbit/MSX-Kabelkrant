@@ -27,17 +27,18 @@ proc kbl_done {message} {
 if {$case eq "loop"} {
     # Sample several pages at many emulator seconds to see both wipes
     # and full screen changes. No screenshot is claimed as a pass alone.
-    after time 30  {kbl_capture 030}
-    after time 75  {kbl_capture 075}
+    # The 30s/75s frames captured boot/intro rather than newspaper pages.
     after time 120 {kbl_capture 120}
     after time 165 {kbl_capture 165}
-    after time 210 {kbl_capture 210; kbl_done "KBL_LOOP_TRACE_DONE"; exit}
+    after time 210 {kbl_capture 210}
+    after time 255 {kbl_capture 255; kbl_done "KBL_LOOP_TRACE_DONE"; exit}
 } elseif {$case eq "ctest"} {
     # The auto BASIC diagnostic starts after the initializer copied A:->C:.
     # The separate KBLPASS.OK marker in the *emulator's disposable disk*
     # is the machine-checkable proof of the C: round trip.
-    after time 25 {kbl_capture 025}
-    after time 60 {kbl_capture 060; kbl_done "KBL_CTEST_TRACE_DONE"; exit}
+    # Boot still blank at 25s and displaying the intro at 60s.
+    after time 120 {kbl_capture 120}
+    after time 210 {kbl_capture 210; kbl_done "KBL_CTEST_TRACE_DONE"; exit}
 } else {
     error "Unsupported KBL_CASE: $case"
 }
