@@ -812,9 +812,13 @@ jobs:
 
       - name: Install headless emulator
         if: env.ROM_READY == 'true'
+        timeout-minutes: 5
+        shell: bash
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil mtools
+          set -euo pipefail
+          # Keep installer failures bounded and distinguish them from MSX regressions.
+          sudo timeout 150s apt-get -o Acquire::Retries=2 update -qq
+          sudo timeout 150s apt-get -o Acquire::Retries=2 install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil mtools
           test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
 
       - name: Decode NMS 8250 ROMs into ephemeral private directory
@@ -952,6 +956,49 @@ jobs:
           set -euo pipefail
           mkdir -p z80/build/openmsx-editor
           cp z80/build/KBLTITLECOPY.DSK "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK"
+          mdir -b -i "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK" :: | grep -qi '/MENU01.TXT
+          KBL_CASE=editor timeout 180s xvfb-run -a openmsx \
+            -machine Philips_NMS_8250 \
+            -diska "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK" \
+            -script z80/tools/openmsx_editor_smoke.tcl \
+            > "$RUNNER_TEMP/kbl-editor.log" 2>&1
+          cp "$RUNNER_TEMP/kbl-editor.log" z80/build/openmsx-editor/editor.log
+          grep -q 'KBL_EDITOR_TRACE_DONE' z80/build/openmsx-editor/editor.done
+          mcopy -i "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK" ::Z8REG26.TXT - \
+            | grep -q 'Z80EDITORTEST'
+          python3 z80/tools/check_editor_smoke.py
+          echo "### NMS8250: operator menu/editor write to A:, return to live pages PASS" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload menu/editor evidence, even on failed scenario (no ROMs)
+        if: always() && env.ROM_READY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmsx-NMS8250-editor-smoke
+          path: |
+            z80/build/openmsx-editor/*.png
+            z80/build/openmsx-editor/*.done
+            z80/build/openmsx-editor/*.log
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload NMS8250 integration captures, summaries, no ROMs
+        if: always() && env.ROM_READY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmsx-NMS8250-integration-regression
+          path: |
+            z80/build/openmsx-regression/*.png
+            z80/build/openmsx-regression/*.json
+            z80/build/openmsx-regression/*.done
+            z80/build/openmsx-regression/*.log
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Remove private ROM files
+        if: always()
+        shell: bash
+        run: |
+          rm -rf "$RUNNER_TEMP/openmsx-roms" "$HOME/.openMSX/share/systemroms"
+
           KBL_CASE=editor timeout 180s xvfb-run -a openmsx \
             -machine Philips_NMS_8250 \
             -diska "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK" \
