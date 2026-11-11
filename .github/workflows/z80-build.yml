@@ -6,6 +6,7 @@ name: Z80 build and emulator smoke tests
 # Follow-up sampling: 0/2/12 seconds; long editor text uses BIOS key buffer.
 # Long-run checker decodes valid highly-compressible wipe PNGs before assessing content.
 # Last 0/2/12-second sample completes before Tcl exits.
+# Operator smoke loads existing page RECEPT1 before writing a new page.
 on:
   push:
     branches: [feature/z80-renderer]
