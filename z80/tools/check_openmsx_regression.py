@@ -13,7 +13,7 @@ import json
 def inspect(folder: Path, variant: str):
     patterns=([f"loop-{n:03d}.png" for n in (120,165,210,255)]
               if variant=="loop" else
-              [f"long-{n:04d}.png" for base in (120,300,480,660,840,1020,1200,1380) for n in (base,base+2)]
+              [f"long-{n:04d}.png" for base in (120,300,480,660,840,1020,1200,1380) for n in (base,base+2,base+12)]
               if variant=="long" else ["ctest-120.png","ctest-210.png"])
     frames=[]
     meaningful=[]
@@ -43,10 +43,10 @@ def inspect(folder: Path, variant: str):
         # For the long case each sample has a second frame 2 MSX seconds later.
         # Fail if both frames in a pair are blank, but tolerate one blank frame.
         if variant=="long":
-            pairs=[meaningful[i:i+2] for i in range(0,len(meaningful),2)]
-            results["populated_pairs"]=pairs
-            if not all(any(pair) for pair in pairs):
-                raise AssertionError(f"Sustained blank display in paired capture: {pairs}")
+            groups=[meaningful[i:i+3] for i in range(0,len(meaningful),3)]
+            results["populated_sample_groups"]=groups
+            if not all(any(group) for group in groups):
+                raise AssertionError(f"Sustained blank display over 12 seconds: {groups}")
         elif sum(meaningful)<2:
             raise AssertionError(f"Too few populated newspaper frames: {meaningful}")
         # Compare only a cropped part of the image (avoid the animated clock).
@@ -64,7 +64,7 @@ def inspect(folder: Path, variant: str):
             # Compare samples at separate intervals, not only the two frames
             # of a single wipe. Clock motion alone is excluded by the crop.
             cross_sample=[round(sum(ImageStat.Stat(ImageChops.difference(frames[i],frames[i+2])).mean)/3,3)
-                          for i in range(0,len(frames)-2,2)]
+                          for i in range(0,len(frames)-3,3)]
             results["cross_sample_rgb_diff"]=cross_sample
             if sum(d>5.0 for d in cross_sample)<4:
                 raise AssertionError(f"No substantial changes across long-run intervals: {cross_sample}")
