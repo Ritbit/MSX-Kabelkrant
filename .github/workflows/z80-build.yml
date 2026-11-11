@@ -1,4 +1,5 @@
 name: Z80 build and emulator smoke tests
+# ROM-backed regression opt-in uses [nms8250-rom-test] in the triggering commit.
 on:
   push:
     branches: [feature/z80-renderer]
