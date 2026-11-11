@@ -166,3 +166,39 @@ References: [openMSX manual](https://openmsx.org/manual/), [WebMSX source/docs](
 ## CI dependency resolver incident (2026-11-11)
 
 In [GitHub Actions run 43044753370](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43044753370), the hosted Ubuntu runner could not resolve `azure.archive.ubuntu.com` or fallback mirrors. Installing `mtools` failed with apt network/DNS errors, **before any MSX emulator ran**. This is an infrastructure outage, not evidence of a failing MSX program. Set bounded APT operations, retain the failing log, distinguish FAIL/SKIP categories, and retry on another runner when network access recovers. Never 'fix' a working disk image in response to these errors.
+
+
+## Fedora 43 alternative to Ubuntu APT — verified 2026-11-11
+
+GitHub's standard hosted Linux VM still uses Ubuntu, but **the job shell and dependencies can run in a Fedora container** with an independent RPM/DNF package repository. This is not a complete replacement for GitHub networking and DNS. A fully non-Ubuntu host requires a self-hosted runner (e.g. Oracle Linux / CentOS Stream / Rocky Linux). Fedora is especially practical for MSX tests because official repositories provide `openmsx`, `mtools`, `python3-pillow`, and `xorg-x11-server-Xvfb`.
+
+Reusable GitHub Actions YAML fragment:
+
+```yaml
+jobs:
+  test-msx:
+    runs-on: ubuntu-24.04   # GitHub-managed VM host, NOT job userspace
+    container:
+      image: fedora:43
+    steps:
+      # Install git *before* checkout: without git checkout may fall back to a
+      # tar/REST archive which does not contain .git metadata.
+      - name: Install tools
+        run: |
+          dnf -y --setopt=timeout=15 --setopt=retries=1 install \
+            git openmsx mtools python3 python3-pillow \
+            xorg-x11-server-Xvfb xorg-x11-xauth curl
+      - uses: actions/checkout@v4
+      - name: Verify workspace
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git rev-parse --is-inside-work-tree
+          command -v xvfb-run
+          command -v mcopy
+```
+
+Containers often mount the Git workspace with a different owner. Trust **only** the known `$GITHUB_WORKSPACE` via `git config --global --add safe.directory`, never `safe.directory='*'`. Also include Fedora `diffutils` for `cmp`, which may not be present in the minimal container.
+
+The isolated Fedora toolchain probe passed: [run 43062958577](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43062958577). The ported production-development build and emulator passes (except the *independent* menu/editor return check) are demonstrated by [run 43065977217](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43065977217). Never report a green build as proof of a passing end-to-end UI test. Preserve ROMs only as ephemeral runner files.
+
+**Important testing distinction:** in the editor scenario of that run, `mcopy` successfully verifies `Z8REG26.TXT` written by the MSX. The screenshot-based check for returning to changing newspaper pages fails; this is a separate unresolved application/harness integration issue. Confirm the full A:/C: return path before release.
