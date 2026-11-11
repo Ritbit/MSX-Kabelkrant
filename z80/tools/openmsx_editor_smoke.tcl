@@ -34,7 +34,7 @@ after time 205 {send "2"}
 after time 250 {capture textmenu}
 after time 255 {send "4"}
 after time 300 {capture loadprompt}
-after time 305 {send_text "RECEPT1"}
+after time 305 {send_text "MENU01"}
 after time 350 {send_text "\r"}
 after time 400 {capture loaded}
 after time 405 {send " "}
