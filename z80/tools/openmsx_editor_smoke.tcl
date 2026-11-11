@@ -36,14 +36,15 @@ after time 405 {send "3"}
 after time 450 {capture returnmenu}
 after time 455 {send "3"}
 after time 500 {capture save}
-after time 505 {send "Z8REG26\r"}
-after time 560 {capture saved}
-after time 565 {send " "}
-after time 610 {capture aftersave}
-after time 615 {send "1"}
-after time 660 {capture mainagain}
-after time 665 {send "1"}
-after time 710 {capture confirmation}
-after time 715 {send "j"}
-after time 790 {capture resumed}
-after time 835 {capture resumed2; set f [open [file join $out "editor.done"] w]; puts $f "KBL_EDITOR_TRACE_DONE"; close $f; exit}
+after time 505 {send "Z8REG26"}
+after time 550 {send "\r"}
+after time 605 {capture saved}
+after time 615 {send " "}
+after time 665 {capture aftersave}
+after time 675 {send "1"}
+after time 720 {capture mainagain}
+after time 730 {send "1"}
+after time 775 {capture confirmation}
+after time 785 {send "j"}
+after time 875 {capture resumed}
+after time 930 {capture resumed2; set f [open [file join $out "editor.done"] w]; puts $f "KBL_EDITOR_TRACE_DONE"; close $f; exit}
