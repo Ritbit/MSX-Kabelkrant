@@ -2,6 +2,7 @@ name: Z80 build and emulator smoke tests
 # ROM-backed regression opt-in uses [nms8250-rom-test] in the triggering commit.
 # Final C: proof fixture: reuse BASIC file handle #1; inspect generated artifact.
 # Editor integration test is opt-in on a disposable disk and preserves A: proof.
+# Keyboard event timings allow for slow BASIC menu transitions.
 on:
   push:
     branches: [feature/z80-renderer]
