@@ -1,0 +1,48 @@
+name: Fedora MSX toolchain probe
+
+# Isolated compatibility probe; does not alter the established Ubuntu workflow.
+on:
+  push:
+    branches: [feature/z80-renderer]
+    paths: [.github/workflows/fedora-msx-probe.yml]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  fedora-toolchain:
+    runs-on: ubuntu-24.04
+    container:
+      image: fedora:43
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install official Fedora MSX toolchain
+        timeout-minutes: 8
+        shell: bash
+        run: |
+          set -euo pipefail
+          dnf -y --setopt=timeout=15 --setopt=retries=1 install \
+            openmsx mtools python3 python3-pillow \
+            xorg-x11-server-Xvfb xorg-x11-xauth
+      - name: Check emulator and disk utility versions
+        shell: bash
+        run: |
+          set -euo pipefail
+          cat /etc/os-release
+          rpm -q openmsx mtools python3-pillow xorg-x11-server-Xvfb
+          command -v openmsx
+          command -v mcopy
+          command -v mdir
+          command -v xvfb-run
+          python3 -c 'from PIL import Image; print("Pillow import: OK")'
+      - name: Verify original MSX disk and source scripts
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -s assets/kabelkrant-6.2.dsk
+          cp assets/kabelkrant-6.2.dsk /tmp/probe.dsk
+          mdir -i /tmp/probe.dsk ::
+          python3 -m compileall -q z80/tools
+          echo '### Fedora 43 MSX toolchain: PASS' >> "$GITHUB_STEP_SUMMARY"
