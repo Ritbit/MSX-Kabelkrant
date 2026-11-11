@@ -23,14 +23,25 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-24.04
+    # GitHub provides an Ubuntu host; steps and package management run in Fedora.
+    container:
+      image: fedora:43
     steps:
       - uses: actions/checkout@v4
+      - name: Install Fedora build prerequisites
+        timeout-minutes: 8
+        shell: bash
+        run: |
+          set -euo pipefail
+          dnf -y --setopt=timeout=15 --setopt=retries=1 install \
+            git cmake gcc-c++ make zlib-devel python3 mtools curl tar gzip unzip
+          rpm -q mtools git cmake gcc-c++
       - name: Build SjASMPlus 1.24.0
         run: |
           git clone --recursive --depth 1 --branch v1.24.0 https://github.com/z00m128/sjasmplus.git /tmp/sjasmplus
           cmake -S /tmp/sjasmplus -B /tmp/sjasmplus-build -DCMAKE_BUILD_TYPE=Release -DENABLE_LUA=OFF -DCMAKE_INSTALL_PREFIX=/usr/local
           cmake --build /tmp/sjasmplus-build --parallel 2
-          sudo cmake --install /tmp/sjasmplus-build
+          cmake --install /tmp/sjasmplus-build
           sjasmplus --version
       - name: Convert and verify original fonts
         run: python3 z80/tools/convert_fonts.py --xdat src/X.DAT --output z80/build/FONTS.DAT
@@ -157,14 +168,9 @@ jobs:
           python3 z80/tools/benchmark_basic.py --disk assets/kabelkrant-6.2.dsk --optimized src/LOOP.SYS --output z80/build
       - name: Create isolated MSX2 demo disk
         run: |
-          # Hosted Ubuntu runners normally have usable APT lists already.
-          # Try the package install before network-heavy apt-get update.
-          if ! command -v mcopy >/dev/null 2>&1; then
-            sudo timeout 90s apt-get install -y --no-install-recommends mtools || {
-              sudo timeout 90s apt-get -o Acquire::Retries=1 update -qq
-              sudo timeout 90s apt-get install -y --no-install-recommends mtools
-            }
-          fi
+          # Installed by the Fedora prerequisite step, no Ubuntu APT required.
+          command -v mcopy
+          command -v mdir
           cp assets/kabelkrant-6.2.dsk z80/build/KBLASM.DSK
           # The stand-alone emulator regression does not initialize RAMDISK.BIN.
           # RAMDISK+C004 coexistence is tracked as a separate integration task.
@@ -761,6 +767,9 @@ jobs:
     name: openMSX NMS 8250 runtime smoke
     needs: build
     runs-on: ubuntu-24.04
+    # GitHub provides an Ubuntu host; steps and package management run in Fedora.
+    container:
+      image: fedora:43
     timeout-minutes: 10
     env:
       MSX_NMS8250_MAIN32_B64: ${{ secrets.MSX_NMS8250_MAIN32_B64 }}
@@ -822,11 +831,12 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          # Keep installer failures bounded and distinguish them from MSX regressions.
-          sudo timeout 90s apt-get install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil mtools || {
-            sudo timeout 90s apt-get -o Acquire::Retries=1 update -qq
-            sudo timeout 90s apt-get install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil mtools
-          }
+          # Fedora 43 official packages; the isolated toolchain probe passed.
+          dnf -y --setopt=timeout=15 --setopt=retries=1 install \
+            openmsx mtools python3 python3-pillow \
+            xorg-x11-server-Xvfb xorg-x11-xauth curl coreutils
+          rpm -q openmsx mtools python3-pillow xorg-x11-server-Xvfb
+          command -v xvfb-run
           test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
 
       - name: Decode NMS 8250 ROMs into ephemeral private directory
