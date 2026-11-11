@@ -49,7 +49,7 @@ timeout 240s xvfb-run -a openmsx \
 
 `timeout` limits **wall clock**, while `after time 120` inside openMSX Tcl schedules based on **emulated time**. The KabelKrant runner uses `set throttle off` for accelerated tests; nevertheless, preserve a sufficient wall-clock timeout. A missing ALSA sequencer is often harmless in a headless runner; check that the emulator actually reaches checkpoints rather than treating every audio warning as fatal.
 
-**Always copy** the input `.dsk` to a disposable runtime image before tests that write to A:. The original test disk stays unchanged. Install `mtools` in the **runtime job**, even if the separate build job already has it.
+**Always copy** the input `.dsk` to a disposable runtime image before tests that write to A:. Before scripting a load/edit path, verify the exact test file actually exists **in that disk image**, not in a screenshot or assumed source tree: `mdir -i "$RUNNER_TEMP/test-runtime.dsk" ::`. In KabelKrant, an automated editor test originally tried to load non-existent `RECEPT1.TXT`, while the image really contained `MENU01.TXT` etc.; the editor correctly displayed a file-not-found message. The original test disk stays unchanged. Install `mtools` in the **runtime job**, even if the separate build job already has it.
 
 ## 4. Reusable Tcl screenshot and completion checkpoints
 
