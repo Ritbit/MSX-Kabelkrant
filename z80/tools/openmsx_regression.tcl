@@ -32,6 +32,14 @@ if {$case eq "loop"} {
     after time 165 {kbl_capture 165}
     after time 210 {kbl_capture 210}
     after time 255 {kbl_capture 255; kbl_done "KBL_LOOP_TRACE_DONE"; exit}
+} elseif {$case eq "long"} {
+    # Unattended running: sample over >20 minutes of emulated time.
+    # Each frame is evidence; intermittent uniform wipes are legitimate.
+    foreach stamp {120 300 480 660 840 1020 1200 1380} {
+        set n $stamp
+        after time $n [list kbl_capture [format "%04d" $n]]
+    }
+    after time 1385 {kbl_done "KBL_LONG_TRACE_DONE"; exit}
 } elseif {$case eq "ctest"} {
     # The auto BASIC diagnostic starts after the initializer copied A:->C:.
     # The separate KBLPASS.OK marker in the *emulator's disposable disk*
