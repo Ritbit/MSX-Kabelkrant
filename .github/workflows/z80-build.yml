@@ -157,8 +157,14 @@ jobs:
           python3 z80/tools/benchmark_basic.py --disk assets/kabelkrant-6.2.dsk --optimized src/LOOP.SYS --output z80/build
       - name: Create isolated MSX2 demo disk
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y mtools
+          # Hosted Ubuntu runners normally have usable APT lists already.
+          # Try the package install before network-heavy apt-get update.
+          if ! command -v mcopy >/dev/null 2>&1; then
+            sudo timeout 90s apt-get install -y --no-install-recommends mtools || {
+              sudo timeout 90s apt-get -o Acquire::Retries=1 update -qq
+              sudo timeout 90s apt-get install -y --no-install-recommends mtools
+            }
+          fi
           cp assets/kabelkrant-6.2.dsk z80/build/KBLASM.DSK
           # The stand-alone emulator regression does not initialize RAMDISK.BIN.
           # RAMDISK+C004 coexistence is tracked as a separate integration task.
@@ -817,8 +823,10 @@ jobs:
         run: |
           set -euo pipefail
           # Keep installer failures bounded and distinguish them from MSX regressions.
-          sudo timeout 150s apt-get -o Acquire::Retries=2 update -qq
-          sudo timeout 150s apt-get -o Acquire::Retries=2 install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil mtools
+          sudo timeout 90s apt-get install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil mtools || {
+            sudo timeout 90s apt-get -o Acquire::Retries=1 update -qq
+            sudo timeout 90s apt-get install -y --no-install-recommends openmsx openmsx-data xvfb python3-pil mtools
+          }
           test "$(stat -c %s z80/build/KBLASM.DSK)" -eq 737280
 
       - name: Decode NMS 8250 ROMs into ephemeral private directory
