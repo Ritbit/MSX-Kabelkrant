@@ -87,3 +87,9 @@ Keep this list short and current: move resolved technical detail to
 ## ROM URL regression follow-up (2026-11-11)
 - [x] [Run 42983952510](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42983952510): all build steps passed. First of four new split Philips ROM URLs (`nms8250-bios.rom`) returned HTTP 405 from GitHub Actions; remaining three were not attempted because the step stopped at the first error. No emulator run or C: runtime test occurred.
 - [ ] Resume automated NMS8250 C:/loop tests with verified ROM files in a private runner pool or private Actions secrets, not ROM bytes committed to Git. Do not retry these blocked public URLs without changed circumstances.
+
+## Verified NMS8250 ROM-backed CI milestone (2026-11-11)
+
+[GitHub Actions run 43001359714](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43001359714), commit `9f3618d`: **build and openMSX runtime job both passed**, using four supplied split ROM URLs fetched with `curl -A "Mozilla/5.0"` into an ephemeral runner ROM pool (no ROM data in repository or artifacts). The openMSX job reports success for standalone Z80 screenshot smoke, independent full Kabelkrant multi-page screenshot/difference regression at 120/165/210/255 emulated seconds on `KBLTITLECOPY.DSK`, and C: write/read/compare/delete proof with `A:KBLPASS.OK` checked via `mcopy` from a disposable copy of `KBLCTESTAUTO.DSK`. Screenshot artifacts are retained by Actions.
+
+Earlier failed runs identified **test harness errors**, not established production regressions: pre-boot screenshot assertions at 25/30s, injected BASIC proof opening file handle #2 (error 52 without `MAXFILES` setting), and missing `mtools` in the separate runtime job. These are corrected; injected proof now reuses closed handle #1. **Still not established:** interactive editor/menu flows, pixel-exact comparison, clock rollover or truly long unattended operation. Keep experimental preview and released v6.2b distinct.
