@@ -12,8 +12,16 @@ proc kbl_capture {stamp} {
     global out case
     set png [file join $out "${case}-${stamp}.png"]
     screenshot -raw $png
-    puts "KBL_OPENMSX_CAPTURE:${case}:${stamp}:${png}"
-    flush stdout
+    set marker [open [file join $out "${case}-${stamp}.done"] w]
+    puts $marker "KBL_OPENMSX_CAPTURE:${case}:${stamp}:${png}"
+    close $marker
+}
+
+proc kbl_done {message} {
+    global out case
+    set marker [open [file join $out "${case}.done"] w]
+    puts $marker $message
+    close $marker
 }
 
 if {$case eq "loop"} {
@@ -23,13 +31,13 @@ if {$case eq "loop"} {
     after time 75  {kbl_capture 075}
     after time 120 {kbl_capture 120}
     after time 165 {kbl_capture 165}
-    after time 210 {kbl_capture 210; puts "KBL_LOOP_TRACE_DONE"; exit}
+    after time 210 {kbl_capture 210; kbl_done "KBL_LOOP_TRACE_DONE"; exit}
 } elseif {$case eq "ctest"} {
     # The auto BASIC diagnostic starts after the initializer copied A:->C:.
     # The separate KBLPASS.OK marker in the *emulator's disposable disk*
     # is the machine-checkable proof of the C: round trip.
     after time 25 {kbl_capture 025}
-    after time 60 {kbl_capture 060; puts "KBL_CTEST_TRACE_DONE"; exit}
+    after time 60 {kbl_capture 060; kbl_done "KBL_CTEST_TRACE_DONE"; exit}
 } else {
     error "Unsupported KBL_CASE: $case"
 }
