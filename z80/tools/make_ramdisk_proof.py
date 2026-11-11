@@ -22,9 +22,9 @@ def generate(basic_text: str)->bytes:
     if any(i in rows for i in (212,214,216,218)):
         raise ValueError("Line numbers reserved for marker are in use")
     rows.update({
-        212:'OPEN "A:KBLPASS.OK" FOR OUTPUT AS #2',
-        214:'PRINT #2,"PASS C: RW DELETE"',
-        216:'CLOSE #2',
+        212:'OPEN "A:KBLPASS.OK" FOR OUTPUT AS #1',
+        214:'PRINT #1,"PASS C: RW DELETE"',
+        216:'CLOSE #1',
         218:'PRINT "C: VERIFIED: DISK PROOF SAVED"',
     })
     out=encode_msx_basic(("\n".join(f"{n} {rows[n]}" for n in sorted(rows))+"\n").encode("ascii"))
