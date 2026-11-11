@@ -110,3 +110,9 @@ A screenshot by itself is not proof of correct execution, correct VRAM pixels or
 ## Working discipline
 
 Before testing, record: branch + commit SHA, precise disk image + checksum, emulator/machine settings, ROM hashes (never raw ROM bytes), test type, actual observations, and CI run URL if applicable. When a test fails, retain the last-known-good disk and diagnose that failure only; do not recreate previously solved setup problems. Update `TODO.md` with verified status, not assumptions.
+
+## Verified NMS8250 ROM-backed CI milestone (2026-11-11)
+
+[GitHub Actions run 43001359714](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43001359714), commit `9f3618d`: **build and openMSX runtime job both passed**, using four supplied split ROM URLs fetched with `curl -A "Mozilla/5.0"` into an ephemeral runner ROM pool (no ROM data in repository or artifacts). The openMSX job reports success for standalone Z80 screenshot smoke, independent full Kabelkrant multi-page screenshot/difference regression at 120/165/210/255 emulated seconds on `KBLTITLECOPY.DSK`, and C: write/read/compare/delete proof with `A:KBLPASS.OK` checked via `mcopy` from a disposable copy of `KBLCTESTAUTO.DSK`. Screenshot artifacts are retained by Actions.
+
+Earlier failed runs identified **test harness errors**, not established production regressions: pre-boot screenshot assertions at 25/30s, injected BASIC proof opening file handle #2 (error 52 without `MAXFILES` setting), and missing `mtools` in the separate runtime job. These are corrected; injected proof now reuses closed handle #1. **Still not established:** interactive editor/menu flows, pixel-exact comparison, clock rollover or truly long unattended operation. Keep experimental preview and released v6.2b distinct.
