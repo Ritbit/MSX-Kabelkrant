@@ -36,8 +36,10 @@ if {$case eq "loop"} {
     # Unattended running: sample over >20 minutes of emulated time.
     # Each frame is evidence; intermittent uniform wipes are legitimate.
     foreach stamp {120 300 480 660 840 1020 1200 1380} {
-        set n $stamp
-        after time $n [list kbl_capture [format "%04d" $n]]
+        # A pair 2 simulated seconds apart separates transient full-screen
+        # wipes from sustained blank/frozen display states.
+        after time $stamp [list kbl_capture [format "%04d" $stamp]]
+        after time [expr {$stamp + 2}] [list kbl_capture [format "%04d" [expr {$stamp + 2}]]]
     }
     after time 1385 {kbl_done "KBL_LONG_TRACE_DONE"; exit}
 } elseif {$case eq "ctest"} {
