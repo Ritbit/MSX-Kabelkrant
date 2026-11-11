@@ -869,7 +869,7 @@ jobs:
             -diska z80/build/KBLASM.DSK \
             -script z80/tools/openmsx_smoke.tcl \
             2>&1 | tee "$RUNNER_TEMP/openmsx-smoke.log"
-          grep -q 'OPENMSX_SMOKE_SCREENSHOT:' "$RUNNER_TEMP/openmsx-smoke.log"
+          grep -q 'OPENMSX_SMOKE_SCREENSHOT:' z80/build/openmsx-smoke.done
           test -s z80/build/openmsx-smoke.png
           python3 z80/tools/check_openmsx_smoke.py z80/build/openmsx-smoke.png
           echo "### openMSX: standalone smoke PASSED" >> "$GITHUB_STEP_SUMMARY"
@@ -897,7 +897,7 @@ jobs:
             -diska "$RUNNER_TEMP/KBLTITLE-RUNTIME.DSK" \
             -script z80/tools/openmsx_regression.tcl \
             > "$RUNNER_TEMP/kbl-loop.log" 2>&1
-          grep -q 'KBL_LOOP_TRACE_DONE' "$RUNNER_TEMP/kbl-loop.log"
+          grep -q 'KBL_LOOP_TRACE_DONE' z80/build/openmsx-regression/loop.done
           python3 z80/tools/check_openmsx_regression.py \
             --case loop --output z80/build/openmsx-regression/loop-summary.json
           echo "### NMS8250: 210-second newspaper captures verified" >> "$GITHUB_STEP_SUMMARY"
@@ -912,7 +912,7 @@ jobs:
             -diska "$RUNNER_TEMP/KBLCTEST-RUNTIME.DSK" \
             -script z80/tools/openmsx_regression.tcl \
             > "$RUNNER_TEMP/kbl-ctest.log" 2>&1
-          grep -q 'KBL_CTEST_TRACE_DONE' "$RUNNER_TEMP/kbl-ctest.log"
+          grep -q 'KBL_CTEST_TRACE_DONE' z80/build/openmsx-regression/ctest.done
           python3 z80/tools/check_openmsx_regression.py \
             --case ctest --output z80/build/openmsx-regression/ctest-summary.json
           mcopy -i "$RUNNER_TEMP/KBLCTEST-RUNTIME.DSK" ::KBLPASS.OK - \
