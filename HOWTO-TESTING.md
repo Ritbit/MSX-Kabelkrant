@@ -1,5 +1,7 @@
 # HOWTO-TESTING — MSX Kabelkrant Z80
 
+**Copyable methods for other MSX projects:** [docs/REUSABLE-MSX-EMULATOR-TESTING.md](docs/REUSABLE-MSX-EMULATOR-TESTING.md). This document is the **project-specific** reference for ROM URLs and current evidence.
+
 > Development-only documentation for `feature/z80-renderer`. Never merge this file or the development coordination files into `main`. Released BASIC v6.2b is the stable reference. See also `BUILD-AND-TEST.md`, `CONTEXT.md`, `TODO.md`, `PLAN.md`, `z80/FULL-TEST.md` and `.github/workflows/z80-build.yml`.
 
 ## Non-negotiable testing rules
@@ -26,7 +28,7 @@ The following four URLs were supplied by the project maintainer. **Store these s
 
 ## Philips NMS8250 ROM identification and configuration
 
-An NMS8250 set may contain a **32 KiB BIOS+BASIC** image plus **16 KiB SUB** and **16 KiB disk** ROMs, or the BIOS and BASIC may be provided as separate **16 KiB** halves. Both packaging styles are possible. Sizes are useful clues **but not definitive identification**.
+The reusable ROM acquisition/security technique is documented in the portable guide linked above. An NMS8250 set may contain a **32 KiB BIOS+BASIC** image plus **16 KiB SUB** and **16 KiB disk** ROMs, or the BIOS and BASIC may be provided as separate **16 KiB** halves. Both packaging styles are possible. Sizes are useful clues **but not definitive identification**.
 
 ```sh
 find /path/to/roms -type f -print0 |
