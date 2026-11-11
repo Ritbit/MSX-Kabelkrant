@@ -122,8 +122,8 @@ Do not promote alpha as stable or merge the feature branch wholesale.
 
 - The earlier `KBLCOMB.DSK` ROM-overlay experiment is **known broken** and superseded by separate high-RAM staging; do not mistake its old failure for the working onefile alpha.
 - User-confirmed WebMSX: integrated 14 Z80 wipes on `KBLWIPEINT14.DSK`; accepted title-background-copy variant `KBLTITLECOPY.DSK`. These are valid manual smoke results, **not** complete regression evidence.
-- [GitHub Actions run 42889296897](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42889296897): all 72 build-job steps successful, including disk-image tests. ROM-backed NMS8250 job failed **before emulator launch**, because both previously supplied remote ROM endpoints returned HTTP 405. Do not retry without new access evidence.
-- Automated C: read/write/compare/delete proof, 210s loop captures and image checks are already wired into `.github/workflows/z80-build.yml`, but not executed in that run. They require a verified private ROM pool, ideally the three-file 32+16+16 KiB Actions secrets.
+- [GitHub Actions run 42889296897](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/42889296897): all 72 build-job steps successful, including disk-image tests. Historical ROM-backed NMS8250 job failed before launch due HTTP 405. **Superseded** by successful run 43001359714 using four split ROM URLs with browser User-Agent.
+- Automated C: read/write/compare/delete proof, 210s loop captures and image checks are already wired into `.github/workflows/z80-build.yml`, and were **subsequently executed successfully** in run 43001359714 with ephemeral four-ROM downloads. Do not store ROMs in the repository.
 - Always read `HOWTO-TESTING.md` for reproducible ROM setup and evidence levels, and `TODO.md` for current next tasks. Never demand exact upstream ROM filenames.
 
 ## Verified NMS8250 ROM-backed CI milestone (2026-11-11)
