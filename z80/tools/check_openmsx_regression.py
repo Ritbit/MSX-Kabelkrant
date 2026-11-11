@@ -13,7 +13,7 @@ import json
 def inspect(folder: Path, variant: str):
     patterns=([f"loop-{n:03d}.png" for n in (120,165,210,255)]
               if variant=="loop" else
-              [f"long-{n:04d}.png" for n in (120,300,480,660,840,1020,1200,1380)]
+              [f"long-{n:04d}.png" for base in (120,300,480,660,840,1020,1200,1380) for n in (base,base+2)]
               if variant=="long" else ["ctest-120.png","ctest-210.png"])
     frames=[]
     meaningful=[]
@@ -39,13 +39,16 @@ def inspect(folder: Path, variant: str):
             frames.append(image.copy())
     results={"case":variant,"frames":patterns,"frame_sizes":[list(im.size) for im in frames]}
     if variant in ("loop","long"):
-        # Allow a short instantaneous full-screen wipe, but not a screen that
-        # stays blank or repeats for most of the unattended run.
-        required=2 if variant=="loop" else 5
-        if sum(meaningful)<required:
+        # A single nearly blank screenshot can be a legitimate Z80 wipe.
+        # For the long case each sample has a second frame 2 MSX seconds later.
+        # Fail if both frames in a pair are blank, but tolerate one blank frame.
+        if variant=="long":
+            pairs=[meaningful[i:i+2] for i in range(0,len(meaningful),2)]
+            results["populated_pairs"]=pairs
+            if not all(any(pair) for pair in pairs):
+                raise AssertionError(f"Sustained blank display in paired capture: {pairs}")
+        elif sum(meaningful)<2:
             raise AssertionError(f"Too few populated newspaper frames: {meaningful}")
-        if variant=="long" and any(not any(meaningful[i:i+3]) for i in range(len(meaningful)-2)):
-            raise AssertionError("Three consecutive low-colour frames during long run")
         # Compare only a cropped part of the image (avoid the animated clock).
         # A live newspaper must change substantially over many MSX seconds;
         # a blinking cursor/error screen should not be accepted as progress.
@@ -57,8 +60,15 @@ def inspect(folder: Path, variant: str):
             diffs.append(round(sum(rms)/3,3))
         results["populated_frames"]=meaningful
         results["consecutive_mean_rgb_diff"]=diffs
-        minimum_diffs=2 if variant=="loop" else 4
-        if sum(d>5.0 for d in diffs)<minimum_diffs:
+        if variant=="long":
+            # Compare samples at separate intervals, not only the two frames
+            # of a single wipe. Clock motion alone is excluded by the crop.
+            cross_sample=[round(sum(ImageStat.Stat(ImageChops.difference(frames[i],frames[i+2])).mean)/3,3)
+                          for i in range(0,len(frames)-2,2)]
+            results["cross_sample_rgb_diff"]=cross_sample
+            if sum(d>5.0 for d in cross_sample)<4:
+                raise AssertionError(f"No substantial changes across long-run intervals: {cross_sample}")
+        elif sum(d>5.0 for d in diffs)<2:
             raise AssertionError(f"No substantial newspaper changes: RGB differences {diffs}")
     return results
 
