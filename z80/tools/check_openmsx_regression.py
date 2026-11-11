@@ -19,11 +19,13 @@ def inspect(folder: Path, variant: str):
     meaningful=[]
     for name in patterns:
         p=folder/name
-        if not p.is_file() or p.stat().st_size<1024:
+        if not p.is_file() or p.stat().st_size<100:
             raise AssertionError(f"Missing emulator screenshot: {p}")
         with Image.open(p) as im:
             im.load()
             rgb=im.convert("RGB")
+            # Highly compressible *valid* transition screenshots may be <1 KiB.
+            # Verify PNG decoding and dimensions, not an arbitrary 1024B floor.
             if rgb.width<256 or rgb.height<192:
                 raise AssertionError(f"Unrealistic screenshot shape: {name} {rgb.size}")
             # Snapshot emulator output includes borders on some renderers,
