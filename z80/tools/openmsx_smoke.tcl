@@ -4,6 +4,8 @@
 after time 25 {
     set path [file normalize "z80/build/openmsx-smoke.png"]
     screenshot -raw $path
-    puts "OPENMSX_SMOKE_SCREENSHOT: $path"
+    set marker [open [file normalize "z80/build/openmsx-smoke.done"] w]
+    puts $marker "OPENMSX_SMOKE_SCREENSHOT: $path"
+    close $marker
     exit
 }
