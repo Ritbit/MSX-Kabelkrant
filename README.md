@@ -2,7 +2,7 @@
 
 ![ZZBO Kabelkrant startup screen](docs/images/startup.png)
 
-You can see it working with a live demo here via the [WebMSX emulator](https://webmsx.org/?MACHINE=MSX2E&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/main/assets/kabelkrant-6.2.dsk)
+For an immediately playable **BASIC** demo, use [WebMSX with BASIC 6.2b](https://webmsx.org/?MACHINE=MSX2E&DISK=https://raw.githubusercontent.com/Ritbit/MSX-Kabelkrant/main/assets/kabelkrant-6.2b.dsk). The Assembly Assisted demo link will be added when its final disk image is published.
 
 This repository preserves the source code of the **Kabelkrant**, a digital information bulletin system built in the early 1990s for **[ZZBO](https://nl.wikipedia.org/wiki/ZZBO)** — the *Zaanse Zieken en Bejaarden Omroep*, a local radio & television broadcaster serving care facilities in the Zaanstreek region of the Netherlands.
 
@@ -10,7 +10,18 @@ The system ran unattended on a **Philips NMS-8250 MSX2** computer, displaying ro
 
 The software is written almost entirely in **MSX BASIC**, with a small Z80 assembly RAM disk driver to keep page loading fast. It ran in production for several years.
 
-The version published here is **version 6.2 (1994)**. Two earlier generations are preserved in `archive/`, older versions did not survive the years unfortunately.
+The historical production version was **6.2 (1994)**. This branch contains the modern **Assembly Assisted** development lineage; its standalone release artifacts are pending publication. Earlier generations are preserved in `archive/`.
+
+## KabelKrant Assembly Assisted — independent edition
+
+This branch is the **Assembly Assisted release line**, maintained separately from [KabelKrant BASIC 6.2b on `main`](https://github.com/Ritbit/MSX-Kabelkrant/tree/main). No merge into `main` is planned.
+
+The revised runtime combines a Z80 text renderer supporting four fonts, 14 accelerated Z80 page wipes (plus the title wipe), and RAMdisk functionality. On an emulated Philips NMS8250 the measured wipe-routine speedup was **127.76×** in aggregate versus BASIC; this figure does **not** represent end-to-end page rendering speed. Editor, RAMdisk, prolonged loop, midnight rollover, and weekday regression tests were completed on the development branch.
+
+**Downloads:** The versioned DSK and ZIP for this edition will be linked here once the standalone GitHub release is published. The historical `assets/kabelkrant-6.2.*` files are **BASIC 6.2**, not the Assembly Assisted build; do not use them as substitutes. For the current BASIC edition see [BASIC 6.2b DSK/ZIP](https://github.com/Ritbit/MSX-Kabelkrant/releases/tag/v6.2b).
+
+Development and test documentation remain on [`feature/z80-renderer`](https://github.com/Ritbit/MSX-Kabelkrant/tree/feature/z80-renderer); this release branch is kept separate.
+
 
 # Why and a bit of history
 
@@ -158,9 +169,7 @@ Recommended emulators:
 
 The source files must be placed on an MSX-DOS disk image with the correct layout. See [docs/SYSTEM-OVERVIEW.md](docs/SYSTEM-OVERVIEW.md) for the runtime requirements.
 
-Easier is to download the [.dsk](https://github.com/Ritbit/MSX-Kabelkrant/raw/refs/heads/main/assets/kabelkrant-6.2.dsk) disk-image for running on an MSX2-emulator or even a physical machine!
-
-Or you can download a [zip-archive](https://github.com/Ritbit/MSX-Kabelkrant/raw/refs/heads/main/assets/kabelkrant-6.2.zip) with all the files in a ascii/readable format
+The Assembly Assisted DSK/ZIP download links will appear here after the standalone release is built and validated. For now, [download the separate BASIC 6.2b release](https://github.com/Ritbit/MSX-Kabelkrant/releases/tag/v6.2b).
 
 ---
 
