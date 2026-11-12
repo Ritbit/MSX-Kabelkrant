@@ -4,6 +4,8 @@ This changelog records the public archive history, not every original 1990s deve
 
 ## 6.2b — 2026 maintenance release
 
+- 2026-11-12 maintenance re-spin: correct `LOOP.SYS` line 1330 weekday calculation for 2000–2089 (including the leap-year 2000 boundary), retaining the original 1990–2089 two-digit-year pivot and weekday/week-record numbering. Validate all 36,525 dates; rebuild the BASIC disk image and ZIP without changing the historical 6.2 disk or the other 27 files. [CI build](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43237807415).
+
 - 2026-11-10 maintenance re-spin: replace `GOSUB 2200` with `GOTO 2200` at line 190 in `LOOP.SYS`. The page loop restarts using `GOTO 140` without returning, so the original entry could accumulate BASIC return frames. All historical and other 6.2b files remain unchanged.
 
 
