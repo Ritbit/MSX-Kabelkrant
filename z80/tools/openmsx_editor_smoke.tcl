@@ -26,7 +26,8 @@ proc send_text {string} {
     type_via_keybuf $string
 }
 # Open the existing MSX editor, load a known original TXT page, change it,
-# save as a NEW 8.3 filename on a disposable disk, and resume the newspaper.
+# overwrite the existing page on a disposable disk, and resume the newspaper.
+# This avoids consuming an extra RAMdisk C: directory entry/cluster.
 # Avoid the historical empty-buffer editor branch (LEN(R$(Y))=1).
 after time 140 {send " "}
 after time 200 {capture main}
@@ -49,7 +50,7 @@ after time 605 {send "3"}
 after time 650 {capture returnmenu}
 after time 655 {send "3"}
 after time 700 {capture save}
-after time 705 {send_text "Z8REG26"}
+after time 705 {send_text "MENU01"}
 after time 750 {send_text "\r"}
 after time 800 {capture saved}
 after time 805 {send " "}
