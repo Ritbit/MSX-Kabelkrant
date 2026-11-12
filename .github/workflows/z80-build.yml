@@ -1019,7 +1019,7 @@ jobs:
           python3 z80/tools/parse_wipe_benchmark.py \
             z80/build/openmsx-benchmark/BENCHRES.CSV \
             --json z80/build/openmsx-benchmark/benchmark.json
-          echo "### NMS8250: all 14 BASIC/Z80 jiffy timings and FRE(0) measured" >> "$GITHUB_STEP_SUMMARY"
+          echo "### NMS8250: 14 BASIC timings + 25 Z80 calls per effect and FRE(0) measured" >> "$GITHUB_STEP_SUMMARY"
       - name: Verify RTC midnight rollover using disposable BASIC proof
         if: always() && env.ROM_READY == 'true'
         shell: bash
@@ -1050,9 +1050,8 @@ jobs:
           grep -q ',00:' z80/build/openmsx-clock/CLOCK.OK
           grep -q 'FRE0,' z80/build/openmsx-clock/CLOCK.OK
           echo "### NMS8250: emulated 23:59 -> 00:00 RTC and FRE(0) proof PASS (newspaper continuation independent)" >> "$GITHUB_STEP_SUMMARY"
-      - name: Diagnose direct midnight initialization and live broadcast
+      - name: Verify direct midnight initialization and live broadcast
         if: always() && env.ROM_READY == 'true'
-        continue-on-error: true
         shell: bash
         timeout-minutes: 4
         run: |
