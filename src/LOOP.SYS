@@ -50,8 +50,7 @@
 1300 D=VAL(MID$(D$,1,2))
 1310 M=VAL(MID$(D$,4,2))
 1320 Y=VAL(MID$(D$,7,2))
-1325 ' Gregorian: 2000-2089 -1 weekday; Jan/Feb 2000 another -1
-1330 DG=((Y\12+Y MOD 12+(Y MOD 12)\4+C(M)+(Y MOD 4=0 AND M<3 AND Y>0)+D+(LEFT$(JA$,2)="20")+(Y=0 AND M<3 AND LEFT$(JA$,2)="20")) MOD 7)
+1330 DG=((Y\12+Y MOD 12+(Y MOD 12)\4+C(M)+(Y MOD 4=0 AND M<3 AND Y>0)+D+(Y<90)+(Y=0 AND M<3)) MOD 7)
 1340 DG$=D$(DG)+"dag"
 1350 DA$=DG$+STR$(VAL(LEFT$(D$,2)))+" "+MA$+" "+JA$
 1360 WK=((DG+5)MOD 7)+1
