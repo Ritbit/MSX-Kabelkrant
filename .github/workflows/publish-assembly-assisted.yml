@@ -1,0 +1,73 @@
+name: Publish Assembly Assisted files to v6.2b
+
+# Publishing is intentionally separate from the BASIC source branch.
+# This action reuses the last successful, ROM-tested Fedora/openMSX run.
+on:
+  push:
+    branches:
+      - release/kabelkrant-assembly-assisted
+    paths:
+      - .github/workflows/publish-assembly-assisted.yml
+
+permissions:
+  actions: read
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Install MSX disk tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y mtools zip unzip
+      - name: Retrieve validated Assembly Assisted disk
+        uses: actions/download-artifact@v4
+        with:
+          repository: Ritbit/MSX-Kabelkrant
+          run-id: 43238212345
+          github-token: ${{ github.token }}
+          name: KBLTITLE-ONLY-TWO-BARS-ALPHA
+          path: validated
+      - name: Check disk and package original disk contents
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f validated/KBLTITLECOPY.DSK
+          test "$(stat -c %s validated/KBLTITLECOPY.DSK)" -eq 737280
+          mdir -i validated/KBLTITLECOPY.DSK ::RAMDISK.BIN
+          mdir -i validated/KBLTITLECOPY.DSK ::LOOP.SYS
+          mdir -i validated/KBLTITLECOPY.DSK ::KBLINIT.SYS
+          mkdir -p distribution
+          cp validated/KBLTITLECOPY.DSK distribution/kabelkrant-assembly-assisted-1.0.dsk
+          mkdir -p extracted
+          cd extracted
+          mcopy -s -i ../distribution/kabelkrant-assembly-assisted-1.0.dsk '::*' .
+          test -f LOOP.SYS
+          test -f RAMDISK.BIN
+          test -f KBLINIT.SYS
+          zip -q -r ../distribution/kabelkrant-assembly-assisted-1.0.zip .
+          cd ..
+          unzip -t distribution/kabelkrant-assembly-assisted-1.0.zip
+          sha256sum distribution/*
+      - name: Add two Assembly Assisted downloads to existing BASIC release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          gh release view v6.2b --repo Ritbit/MSX-Kabelkrant --json assets \
+            --jq '.assets[].name' > /tmp/release-assets-before.txt
+          grep -qx 'kabelkrant-6.2b.dsk' /tmp/release-assets-before.txt
+          grep -qx 'kabelkrant-6.2b.zip' /tmp/release-assets-before.txt
+          if grep -qx 'kabelkrant-assembly-assisted-1.0.dsk' /tmp/release-assets-before.txt ||
+             grep -qx 'kabelkrant-assembly-assisted-1.0.zip' /tmp/release-assets-before.txt; then
+            echo "Assembly Assisted assets already present; refusing to overwrite."
+            exit 1
+          fi
+          gh release upload v6.2b \
+            distribution/kabelkrant-assembly-assisted-1.0.dsk \
+            distribution/kabelkrant-assembly-assisted-1.0.zip \
+            --repo Ritbit/MSX-Kabelkrant
+          gh release view v6.2b --repo Ritbit/MSX-Kabelkrant --json assets \
+            --jq '.assets[].name' | sort
