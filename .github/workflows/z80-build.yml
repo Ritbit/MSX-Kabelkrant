@@ -779,7 +779,7 @@ jobs:
     # GitHub provides an Ubuntu host; steps and package management run in Fedora.
     container:
       image: fedora:43
-    timeout-minutes: 10
+    timeout-minutes: 18
     env:
       MSX_NMS8250_MAIN32_B64: ${{ secrets.MSX_NMS8250_MAIN32_B64 }}
       MSX_NMS8250_SUB16_B64: ${{ secrets.MSX_NMS8250_SUB16_B64 }}
@@ -806,6 +806,11 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: KBLASM-experimental-MSX2-testdisk
+          path: z80/build
+      - name: Download 14-effect BASIC/Z80 benchmark disk from this run
+        uses: actions/download-artifact@v4
+        with:
+          name: KBLWIAUTO-14-EFFECT-TIMING
           path: z80/build
 
       - name: Determine whether system ROMs were configured
@@ -991,10 +996,78 @@ jobs:
             > "$RUNNER_TEMP/kbl-editor.log" 2>&1
           cp "$RUNNER_TEMP/kbl-editor.log" z80/build/openmsx-editor/editor.log
           grep -q 'KBL_EDITOR_TRACE_DONE' z80/build/openmsx-editor/editor.done
-          mcopy -i "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK" ::Z8REG26.TXT - \
+          mcopy -i "$RUNNER_TEMP/KBL-EDITOR-RUNTIME.DSK" ::MENU01.TXT - \
             | grep -q 'Z80EDITORTEST'
           python3 z80/tools/check_editor_smoke.py
-          echo "### NMS8250: operator menu/editor write to A:, return to live pages PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "### NMS8250: operator menu/editor overwrote MENU01.TXT on A:, returned to live pages PASS" >> "$GITHUB_STEP_SUMMARY"
+      - name: Benchmark all 14 legacy BASIC wipes against Z80 on NMS8250
+        if: always() && env.ROM_READY == 'true'
+        shell: bash
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          mkdir -p z80/build/openmsx-benchmark
+          cp z80/build/KBLWIAUTO.DSK "$RUNNER_TEMP/KBL-BENCH-RUNTIME.DSK"
+          timeout 190s xvfb-run -a openmsx \
+            -machine Philips_NMS_8250 \
+            -diska "$RUNNER_TEMP/KBL-BENCH-RUNTIME.DSK" \
+            -script z80/tools/openmsx_benchmark.tcl \
+            > z80/build/openmsx-benchmark/benchmark.log 2>&1
+          grep -q 'KBL_BENCH_EMULATED_745_SECONDS' z80/build/openmsx-benchmark/benchmark.done
+          mcopy -i "$RUNNER_TEMP/KBL-BENCH-RUNTIME.DSK" ::BENCHRES.CSV \
+            z80/build/openmsx-benchmark/BENCHRES.CSV
+          python3 z80/tools/parse_wipe_benchmark.py \
+            z80/build/openmsx-benchmark/BENCHRES.CSV \
+            --json z80/build/openmsx-benchmark/benchmark.json
+          echo "### NMS8250: all 14 BASIC/Z80 jiffy timings and FRE(0) measured" >> "$GITHUB_STEP_SUMMARY"
+      - name: Verify RTC midnight rollover and resume actual newspaper
+        if: always() && env.ROM_READY == 'true'
+        shell: bash
+        timeout-minutes: 5
+        run: |
+          set -euo pipefail
+          mkdir -p z80/build/openmsx-clock
+          cp z80/build/KBLTITLECOPY.DSK "$RUNNER_TEMP/KBL-CLOCK-RUNTIME.DSK"
+          mcopy -i "$RUNNER_TEMP/KBL-CLOCK-RUNTIME.DSK" ::KBLINIT.SYS \
+            z80/build/openmsx-clock/KBLINIT-ORIG.SYS
+          python3 z80/tools/make_clock_rollover_test.py \
+            z80/build/openmsx-clock/KBLINIT-ORIG.SYS \
+            z80/build/openmsx-clock/KBLINIT-TEST.SYS \
+            z80/build/openmsx-clock/CLOCKCHK.BAS
+          mcopy -o -i "$RUNNER_TEMP/KBL-CLOCK-RUNTIME.DSK" \
+            z80/build/openmsx-clock/KBLINIT-TEST.SYS ::KBLINIT.SYS
+          mcopy -o -i "$RUNNER_TEMP/KBL-CLOCK-RUNTIME.DSK" \
+            z80/build/openmsx-clock/CLOCKCHK.BAS ::CLOCKCHK.BAS
+          timeout 140s xvfb-run -a openmsx \
+            -machine Philips_NMS_8250 \
+            -diska "$RUNNER_TEMP/KBL-CLOCK-RUNTIME.DSK" \
+            -script z80/tools/openmsx_clock.tcl \
+            > z80/build/openmsx-clock/clock.log 2>&1
+          grep -q 'KBL_CLOCK_EMULATED_315_SECONDS' z80/build/openmsx-clock/clock.done
+          mcopy -i "$RUNNER_TEMP/KBL-CLOCK-RUNTIME.DSK" ::CLOCK.OK - \
+            > z80/build/openmsx-clock/CLOCK.OK
+          grep -q 'PASS RTC,23:' z80/build/openmsx-clock/CLOCK.OK
+          grep -q ',00:' z80/build/openmsx-clock/CLOCK.OK
+          grep -q 'FRE0,' z80/build/openmsx-clock/CLOCK.OK
+          echo "### NMS8250: emulated 23:59 -> 00:00 RTC and FRE(0) proof PASS" >> "$GITHUB_STEP_SUMMARY"
+      - name: Upload benchmark and clock evidence, including on failure (no ROMs)
+        if: always() && env.ROM_READY == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: openmsx-NMS8250-benchmark-and-clock
+          path: |
+            z80/build/openmsx-benchmark/*.png
+            z80/build/openmsx-benchmark/*.csv
+            z80/build/openmsx-benchmark/*.json
+            z80/build/openmsx-benchmark/*.log
+            z80/build/openmsx-benchmark/*.done
+            z80/build/openmsx-clock/*.png
+            z80/build/openmsx-clock/*.OK
+            z80/build/openmsx-clock/*.log
+            z80/build/openmsx-clock/*.done
+          if-no-files-found: warn
+          retention-days: 14
+
       - name: Upload menu/editor evidence, even on failed scenario (no ROMs)
         if: always() && env.ROM_READY == 'true'
         uses: actions/upload-artifact@v4
