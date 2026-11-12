@@ -6,7 +6,7 @@ Full **Fedora 43/NMS8250 CI run [43226534570](https://github.com/Ritbit/MSX-Kabe
 
 **25-call-per-mode wipe benchmark**: aggregate original-BASIC/native wipe-body speedup **127.76x**, arithmetic mean per-mode ratio **132.82x**, measured FRE(0)=**13,558 bytes** in the benchmark context. Raw files BENCHRES.CSV and benchmark.json are in the CI artifact; interpretation in docs/Z80-WIPE-BENCHMARK-2026-11-12.md. Not an end-to-end page-loop speedup.
 
-Current minimal release TODO: TODO.md; older testing chronology archived in docs/TEST-HISTORY-2026-11.md. `main` and 6.2b stay unchanged.
+Current minimal release TODO: TODO.md; older testing chronology archived in docs/TEST-HISTORY-2026-11.md. **Exception to the no-main-change rule by explicit request:** the same compact Gregorian weekday fix was committed to `main` and packaged into the BASIC 6.2b disk/ZIP on 2026-11-12.
 
 
 > **Private-to-development documentation in a public branch.** This file and
