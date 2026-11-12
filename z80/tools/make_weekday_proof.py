@@ -8,6 +8,9 @@ import argparse
 from datetime import date
 from pathlib import Path
 import re
+import sys
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "tools"))
 
 from msx_basic_ascii import encode_msx_basic, validate_msx_basic
 
