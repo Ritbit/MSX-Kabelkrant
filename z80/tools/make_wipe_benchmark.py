@@ -79,24 +79,26 @@ def make_benchmark(original: str) -> str:
         '100 B(I)=D#',
         '110 LINE(0,50)-(511,211),14,BF',
         '120 T#=TIME',
+        '125 FOR J=1 TO 25',
         '130 CALL WIPE(I)',
+        '135 NEXT J',
         '140 U#=TIME:D#=U#-T#:IF D#<0 THEN D#=D#+65536',
         '150 Z(I)=D#',
         '160 NEXT I',
         '170 SCREEN 0:WIDTH 80:COLOR 15,4,4:CLS',
         '180 PRINT "KABELKRANT BASIC / Z80 WIPE BENCHMARK"',
         '190 PRINT "50Hz/60Hz jiffies: smaller = faster"',
-        '200 PRINT "Effect  BASIC   Z80     Z80/BASIC"',
+        '200 PRINT "Effect BASIC   Z80/25calls  avgZ80/BASIC"',
         '210 FOR I=1 TO 14',
         '220 PRINT USING "##";I;',
         '230 PRINT USING "    #####   #####";B(I);Z(I);',
-        '240 IF B(I)=0 THEN PRINT "    n/a" ELSE PRINT USING "     ###.##";Z(I)/B(I)',
+        '240 IF B(I)=0 THEN PRINT "    n/a" ELSE PRINT USING "     ###.##";Z(I)/(25*B(I))',
         '250 NEXT I',
         '260 PRINT "Wipe 14 BASIC geometry differs (known bug)."',
         '270 PRINT "Z80 animation includes frame pacing."',
         '280 PRINT "Record results; RESET to restart newspaper."',
         '281 OPEN "A:BENCHRES.CSV" FOR OUTPUT AS #1',
-        '282 PRINT #1,"effect,basic_jiffies,z80_jiffies"',
+        '282 PRINT #1,"effect,basic_jiffies,z80_25calls_jiffies"',
         '283 FOR I=1 TO 14:PRINT #1,STR$(I)+","+STR$(B(I))+","+STR$(Z(I)):NEXT I',
         '284 PRINT #1,"FRE0,";F#',
         '285 CLOSE #1',
@@ -133,7 +135,7 @@ def main() -> None:
         path.write_bytes(payload)
     print(f"Clean LOOP ASCII-disk delta: {len(clean)-len(old):+d} bytes "
           f"({len(old)} -> {len(clean)}); this is NOT tokenized BASIC RAM")
-    print(f"Benchmark BASIC: {len(benchmark)} disk bytes, 14 paired timings")
+    print(f"Benchmark BASIC: {len(benchmark)} disk bytes, 14 BASIC timings + 25 Z80 calls per effect")
 
 
 if __name__ == "__main__":
