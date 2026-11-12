@@ -1,5 +1,13 @@
 # HOWTO-TESTING — MSX Kabelkrant Z80
 
+## Gregorian weekday fix — 12 November 2026
+
+Both `main` (BASIC 6.2b) and `feature/z80-renderer` now use the corrected century-aware day-of-week expression at `src/LOOP.SYS` line 1330. It preserves the 1990–2089 two-digit year pivot, reports **Friday 2026-11-13** correctly, handles 2000-02-29, and remains within the fixed 14-cluster BASIC release allocation (18 bytes headroom). Python regression covers all **36,525** supported dates. Actual NMS8250 MSX BASIC executes **217** independently generated cases and writes an A: proof marker only when all match.
+
+- [Feature ROM-backed CI run 43238212345](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43238212345): both jobs PASS, including 217 guest BASIC cases and established Z80/RTC/editor/C: regressions.
+- [Main BASIC 6.2b release build 43237807415](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43237807415): PASS; rebuilt DSK/ZIP and refreshed GitHub release v6.2b assets without changing the original 6.2.
+- Copyable test details: [z80/WEEKDAY-REGRESSION.md](z80/WEEKDAY-REGRESSION.md).
+
 ## Accepted Fedora runtime regression — 12 November 2026
 
 [Run 43226534570](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43226534570): both jobs PASS. On the NMS8250: standalone TEXT, 14-wipe/title integrated newspaper loop, C: read/write/delete proof, 1,395 seconds unattended with 24 PNG frames, operator editor existing-file overwrite and return to changing live pages. The ROMs are downloaded ephemerally and never committed or uploaded.
