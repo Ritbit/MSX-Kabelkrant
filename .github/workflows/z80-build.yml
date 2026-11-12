@@ -10,7 +10,7 @@ name: Z80 build and emulator smoke tests
 on:
   push:
     branches: [feature/z80-renderer]
-    paths: ['.github/workflows/z80-build.yml', 'z80/**', 'src/X.DAT']
+    paths: ['.github/workflows/z80-build.yml', 'z80/**', 'src/X.DAT', 'src/LOOP.SYS', 'tools/test_weekday.py']
   workflow_dispatch:
 
 concurrency:
@@ -45,6 +45,8 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git rev-parse --is-inside-work-tree
           test -d .git
+      - name: Verify Gregorian weekday formula (all 36,525 supported dates)
+        run: python3 tools/test_weekday.py
       - name: Build SjASMPlus 1.24.0
         run: |
           git clone --recursive --depth 1 --branch v1.24.0 https://github.com/z00m128/sjasmplus.git /tmp/sjasmplus
@@ -981,6 +983,33 @@ jobs:
           python3 z80/tools/check_openmsx_regression.py \
             --case long --output z80/build/openmsx-regression/long-summary.json
           echo "### NMS8250: paired captures over 1385 MSX seconds: PASS" >> "$GITHUB_STEP_SUMMARY"
+      - name: Execute weekday formula in real NMS8250 BASIC (217 cases)
+        if: always() && env.ROM_READY == 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p z80/build/openmsx-weekday
+          cp z80/build/KBLTITLECOPY.DSK "$RUNNER_TEMP/KBL-WEEKDAY-RUNTIME.DSK"
+          mcopy -i "$RUNNER_TEMP/KBL-WEEKDAY-RUNTIME.DSK" ::KBLINIT.SYS \
+            z80/build/openmsx-weekday/KBLINIT-ORIG.SYS
+          python3 z80/tools/make_weekday_proof.py \
+            z80/build/openmsx-weekday/KBLINIT-ORIG.SYS \
+            z80/build/openmsx-weekday/KBLINIT-TEST.SYS \
+            z80/build/openmsx-weekday/WDAY.BAS
+          mcopy -o -i "$RUNNER_TEMP/KBL-WEEKDAY-RUNTIME.DSK" \
+            z80/build/openmsx-weekday/KBLINIT-TEST.SYS ::KBLINIT.SYS
+          mcopy -o -i "$RUNNER_TEMP/KBL-WEEKDAY-RUNTIME.DSK" \
+            z80/build/openmsx-weekday/WDAY.BAS ::WDAY.BAS
+          timeout 140s xvfb-run -a openmsx \
+            -machine Philips_NMS_8250 \
+            -diska "$RUNNER_TEMP/KBL-WEEKDAY-RUNTIME.DSK" \
+            -script z80/tools/openmsx_weekday.tcl \
+            > z80/build/openmsx-weekday/weekday.log 2>&1
+          grep -q 'KBL_WEEKDAY_EMULATED_225_SECONDS' z80/build/openmsx-weekday/weekday.done
+          mcopy -i "$RUNNER_TEMP/KBL-WEEKDAY-RUNTIME.DSK" ::WDAY.OK - \
+            > z80/build/openmsx-weekday/WDAY.OK
+          grep -q '^PASS 217 WEEKDAYS' z80/build/openmsx-weekday/WDAY.OK
+          echo "### NMS8250: 217 BASIC weekday cases PASS (1990–2089)" >> "$GITHUB_STEP_SUMMARY"
       - name: Exercise menu editor save and return on disposable NMS8250 disk
         if: always() && env.ROM_READY == 'true'
         shell: bash
@@ -1135,6 +1164,10 @@ jobs:
             z80/build/openmsx-regression/*.json
             z80/build/openmsx-regression/*.done
             z80/build/openmsx-regression/*.log
+            z80/build/openmsx-weekday/*.png
+            z80/build/openmsx-weekday/*.log
+            z80/build/openmsx-weekday/*.done
+            z80/build/openmsx-weekday/*.OK
           if-no-files-found: warn
           retention-days: 14
 
