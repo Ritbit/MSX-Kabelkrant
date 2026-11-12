@@ -76,7 +76,7 @@ class KabelkrantWeekdayTests(unittest.TestCase):
                 self.assertEqual(msx_weekday(*ymd), dg)
                 # Original DG=0 Sat -> WK=6, DG=6 Fri -> WK=5.
                 self.assertEqual(((dg + 5) % 7) + 1,
-                                 ((date(*ymd).weekday() + 1) % 7) + 1)
+                                 date(*ymd).weekday() + 1)
 
 
 if __name__ == "__main__":
