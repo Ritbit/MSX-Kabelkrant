@@ -69,6 +69,7 @@ def make_benchmark(original: str) -> str:
         '10 REM KBL A/B WIPE TIMING - ORIG BASIC VS SHARED Z80',
         '20 DEFINT A-Z:DEFDBL X,Y',
         '30 DIM B(14),Z(14)',
+        '35 F#=FRE(0)',
         '40 INTERVAL OFF:SCREEN 7:COLOR 15,0,0',
         '50 FOR I=1 TO 14',
         '60 LINE(0,50)-(511,211),14,BF',
@@ -94,6 +95,11 @@ def make_benchmark(original: str) -> str:
         '260 PRINT "Wipe 14 BASIC geometry differs (known bug)."',
         '270 PRINT "Z80 animation includes frame pacing."',
         '280 PRINT "Record results; RESET to restart newspaper."',
+        '281 OPEN "A:BENCHRES.CSV" FOR OUTPUT AS #1',
+        '282 PRINT #1,"effect,basic_jiffies,z80_jiffies"',
+        '283 FOR I=1 TO 14:PRINT #1,STR$(I)+","+STR$(B(I))+","+STR$(Z(I)):NEXT I',
+        '284 PRINT #1,"FRE0,";F#',
+        '285 CLOSE #1',
         '290 END',
     ]
     for index, original_number in enumerate(ORIGINAL_EFFECT_LINES):
