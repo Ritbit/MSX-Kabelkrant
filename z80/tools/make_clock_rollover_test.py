@@ -45,14 +45,22 @@ def main():
     parser.add_argument("source", type=Path)
     parser.add_argument("initializer", type=Path)
     parser.add_argument("clock_basic", type=Path)
+    parser.add_argument("--direct", action="store_true", help="Set time inline and run LOOP directly")
     args = parser.parse_args()
     args.initializer.parent.mkdir(parents=True, exist_ok=True)
     args.clock_basic.parent.mkdir(parents=True, exist_ok=True)
-    args.initializer.write_bytes(make_initializer(args.source.read_bytes()))
+    init_data=make_initializer(args.source.read_bytes())
+    if args.direct:
+        before=b'235 RUN "A:CLOCKCHK.BAS"'
+        if before not in init_data:
+            raise ValueError("CLOCKCHK initializer patch point missing")
+        init_data=init_data.replace(before,b'235 SET TIME "23:59:50"')
+        validate_msx_basic(init_data)
+    args.initializer.write_bytes(init_data)
     data = encode_msx_basic(CLOCK_PROBE.encode("ascii"))
     validate_msx_basic(data)
     args.clock_basic.write_bytes(data)
-    print(f"Clock rollover: {len(data)} MSX BASIC bytes; original KBLINIT unmodified")
+    print(f"Clock rollover: {len(data)} MSX BASIC bytes; original KBLINIT unmodified; direct={args.direct}")
 
 if __name__=="__main__":
     main()
