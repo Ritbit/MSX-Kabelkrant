@@ -4,7 +4,7 @@
 
 ## Core acceptance — DONE
 
-- [x] Stable BASIC 6.2b remains independently released and unchanged on `main`.
+- [x] BASIC 6.2b maintenance weekday fix merged to `main` (2026-11-12); release DSK and ZIP rebuilt with 27 other original files preserved.
 - [x] Combined RAMdisk+Z80 TEXT engine boots and runs; all four fonts, 14 Z80 wipes and the corrected title wipe were previously accepted in WebMSX.
 - [x] Fedora 43 container for both build and openMSX jobs; no Ubuntu APT dependency.
 - [x] Repeatable [NMS8250 full CI run 43226534570](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43226534570): build/assembly/tests, standalone renderer, integrated multi-page loop, RAMdisk C: read/write/delete, **1,395 seconds** unattended, editor/menu load-edit-save-to-existing-A:-file and return to broadcast **all PASS**.
@@ -21,7 +21,7 @@
 
 ## Independent follow-ups, not core Z80 blockers
 
-- [ ] Investigate **pre-existing weekday-name offset in 20xx** (Friday 13 November 2026 renders as Saturday). Original 1994 day-of-week formula was not adapted for 2000–2099; the RTC midnight crossing itself passes. Fix via a separate reviewed BASIC change, not as an unexamined Z80 side effect.
+- [x] Fixed original 19xx weekday arithmetic for the supported 1990–2089 range (2026-11-13 now Friday). 36,525 dates validated on both branches; 217 cases additionally executed in real NMS8250 BASIC with `A:WDAY.OK`. `main` BASIC 6.2b rebuilt/released; see `z80/WEEKDAY-REGRESSION.md`.
 - [ ] Test creation of **additional new** editor C: files with RAMdisk nearly full. Overwriting an existing page is now verified A: and return-to-loop; prior extra-file `Z8REG26.TXT` attempt wrote A: but stalled in the C: save path. Avoid claiming arbitrary free capacity.
 - [ ] Optional: edge-font ASCII 127, pixel-exact 6.2b renderer parity, full end-to-end page timing (vs wipe bodies), and five-argument rectangular wipe experiment. None was part of the accepted 14-wipe engine test scope.
 - [ ] Diagnostic only: explain why the extra test-only `CLOCKCHK.BAS` program that independently proves RTC rollover leaves a static subsequent screen whereas direct inline `SET TIME` + original `LOOP.SYS` progresses normally. The CI release gate uses the **direct** route.
