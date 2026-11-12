@@ -15,8 +15,7 @@ WEEKDAYS = ("zaterdag", "zondag", "maandag", "dinsdag",
 EXPECTED = (
     r'1330 DG=((Y\12+Y MOD 12+(Y MOD 12)\4+C(M)'
     r'+(Y MOD 4=0 AND M<3 AND Y>0)+D'
-    r'+(LEFT$(JA$,2)="20")'
-    r'+(Y=0 AND M<3 AND LEFT$(JA$,2)="20")) MOD 7)'
+    r'+(Y<90)+(Y=0 AND M<3)) MOD 7)'
 )
 
 
