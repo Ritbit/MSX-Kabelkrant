@@ -19,7 +19,7 @@ Two editions are maintained **independently** in this repository; the Z80 editio
 | Edition | Branch | Status |
 | --- | --- | --- |
 | **KabelKrant BASIC 6.2b** | [`main`](https://github.com/Ritbit/MSX-Kabelkrant/tree/main) | Current BASIC maintenance release; [download DSK/ZIP](https://github.com/Ritbit/MSX-Kabelkrant/releases/tag/v6.2b) |
-| **KabelKrant Assembly Assisted** | [`release/kabelkrant-assembly-assisted`](https://github.com/Ritbit/MSX-Kabelkrant/tree/release/kabelkrant-assembly-assisted) | Separate Z80-accelerated edition; see its branch for release status and builds |
+| **KabelKrant Assembly Assisted** | [`release/kabelkrant-assembly-assisted`](https://github.com/Ritbit/MSX-Kabelkrant/tree/release/kabelkrant-assembly-assisted) | Separate Z80-accelerated edition; [DSK](https://github.com/Ritbit/MSX-Kabelkrant/releases/download/v6.2b/kabelkrant-assembly-assisted-1.0.dsk) / [ZIP](https://github.com/Ritbit/MSX-Kabelkrant/releases/download/v6.2b/kabelkrant-assembly-assisted-1.0.zip) (both on the v6.2b release page) |
 
 The Assembly Assisted edition provides a four-font Z80 text renderer, 14 assembly wipe transitions, and a combined RAMdisk module. Benchmarking measured **127.76×** faster wipe routines overall (not 127.76× faster complete pages). Its ongoing development takes place on [`feature/z80-renderer`](https://github.com/Ritbit/MSX-Kabelkrant/tree/feature/z80-renderer).
 
