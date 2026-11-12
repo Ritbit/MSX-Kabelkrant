@@ -1,5 +1,14 @@
 # Development context — Z80 Kabelkrant
 
+## Verified release-candidate tests — 12 November 2026
+
+Full **Fedora 43/NMS8250 CI run [43226534570](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43226534570) PASS**: assembly/build, standalone TEXT, integrated page loop, C: read/write/delete, 1395 seconds unattended, editor load/modify/overwrite of existing MENU01.TXT, and return to changing live pages. Guest RTC crossed 23:59:50 to 00:00:00; the separate direct SET TIME initializer also showed real newspaper progression after midnight. The alternative CLOCKCHK.BAS chain produced static frames, a fixture-specific anomaly; it is not the accepted live-loop path.
+
+**25-call-per-mode wipe benchmark**: aggregate original-BASIC/native wipe-body speedup **127.76x**, arithmetic mean per-mode ratio **132.82x**, measured FRE(0)=**13,558 bytes** in the benchmark context. Raw files BENCHRES.CSV and benchmark.json are in the CI artifact; interpretation in docs/Z80-WIPE-BENCHMARK-2026-11-12.md. Not an end-to-end page-loop speedup.
+
+Current minimal release TODO: TODO.md; older testing chronology archived in docs/TEST-HISTORY-2026-11.md. `main` and 6.2b stay unchanged.
+
+
 > **Private-to-development documentation in a public branch.** This file and
 > `AGENTS.md`, `PLAN.md`, `TODO.md`, `BUILD-AND-TEST.md`,
 > `HOWTO-TESTING.md` belong to
