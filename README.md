@@ -12,6 +12,18 @@ The software is written almost entirely in **MSX BASIC**, with a small Z80 assem
 
 The current downloadable release is **6.2b (2026 maintenance update)**, based on the original **6.2 (1994)**. The original v6.2 disk and ZIP remain in `assets/` for historical reference. Two earlier generations are preserved in `archive/`.
 
+## Available editions
+
+Two editions are maintained **independently** in this repository; the Z80 edition is **not merged into `main`**.
+
+| Edition | Branch | Status |
+| --- | --- | --- |
+| **KabelKrant BASIC 6.2b** | [`main`](https://github.com/Ritbit/MSX-Kabelkrant/tree/main) | Current BASIC maintenance release; [download DSK/ZIP](https://github.com/Ritbit/MSX-Kabelkrant/releases/tag/v6.2b) |
+| **KabelKrant Assembly Assisted** | [`release/kabelkrant-assembly-assisted`](https://github.com/Ritbit/MSX-Kabelkrant/tree/release/kabelkrant-assembly-assisted) | Separate Z80-accelerated edition; see its branch for release status and builds |
+
+The Assembly Assisted edition provides a four-font Z80 text renderer, 14 assembly wipe transitions, and a combined RAMdisk module. Benchmarking measured **127.76×** faster wipe routines overall (not 127.76× faster complete pages). Its ongoing development takes place on [`feature/z80-renderer`](https://github.com/Ritbit/MSX-Kabelkrant/tree/feature/z80-renderer).
+
+
 # Why and a bit of history
 
 In the late 80's and early 90's, the ZZBO, a local broadcaster serving care facilities in the Zaanstreek region, wanted to provide digital information to their viewers in the hospital rooms and public areas of the main hospital ziekenhuis de Heel in Zaandam. I (as an enthusiast 18 year old in 1990), was already experimenting with developing news-bulletin systems myself on my home-computer and so I suggested they could use a simple home-computer and I would make a program that could display rotating information pages on the internal cable TV channel. I built the Kabelkrant system on a Philips NMS-8250 MSX2 computer, which ran unattended and displayed pages like visiting hours, daily menus, announcements, and local news. The system was a success and ran in production for several years up to 1999!
