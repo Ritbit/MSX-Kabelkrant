@@ -1,5 +1,16 @@
 # HOWTO-TESTING — MSX Kabelkrant Z80
 
+## Accepted Fedora runtime regression — 12 November 2026
+
+[Run 43226534570](https://github.com/Ritbit/MSX-Kabelkrant/actions/runs/43226534570): both jobs PASS. On the NMS8250: standalone TEXT, 14-wipe/title integrated newspaper loop, C: read/write/delete proof, 1,395 seconds unattended with 24 PNG frames, operator editor existing-file overwrite and return to changing live pages. The ROMs are downloaded ephemerally and never committed or uploaded.
+
+For benchmark figures, guest-produced BENCHRES.CSV and benchmark.json are retained in the `openmsx-NMS8250-benchmark-and-clock` Actions artifact. The accepted benchmark now repeats each Z80 wipe **25 times** and averages the guest jiffies; see [docs/Z80-WIPE-BENCHMARK-2026-11-12.md](docs/Z80-WIPE-BENCHMARK-2026-11-12.md) for all 14 measured pairs and interpretation.
+
+RTC: the test-only CLOCKCHK.BAS recorded 23:59:50 -> 00:00:00 and FRE(0)=15,605 in A:CLOCK.OK; **separately**, direct inline SET TIME before the normal LOOP.SYS produced changing newspaper pages after midnight, and that test is a mandatory CI gate. The chained CLOCKCHK -> LOOP fixture itself showed static frames and is not treated as production evidence.
+
+For ROM acquisition, Fedora/DNF packages, headless openMSX, 25-call timing and clock fixture design, see [docs/REUSABLE-MSX-EMULATOR-TESTING.md](docs/REUSABLE-MSX-EMULATOR-TESTING.md). The short current TODO.md lists release packaging and independent nonblocking issues; the long historic test log is in docs/TEST-HISTORY-2026-11.md.
+
+
 **Copyable methods for other MSX projects:** [docs/REUSABLE-MSX-EMULATOR-TESTING.md](docs/REUSABLE-MSX-EMULATOR-TESTING.md). This document is the **project-specific** reference for ROM URLs and current evidence.
 
 > Development-only documentation for `feature/z80-renderer`. Never merge this file or the development coordination files into `main`. Released BASIC v6.2b is the stable reference. See also `BUILD-AND-TEST.md`, `CONTEXT.md`, `TODO.md`, `PLAN.md`, `z80/FULL-TEST.md` and `.github/workflows/z80-build.yml`.
