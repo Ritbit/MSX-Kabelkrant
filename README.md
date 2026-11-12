@@ -17,7 +17,7 @@ The historical production version was **6.2 (1994)**. This feature branch contai
 **This is the development branch** for KabelKrant Assembly Assisted, not the BASIC release branch and not the release download location. Experimental code, automated tests, and development documentation live here.
 
 - **BASIC 6.2b (stable):** [`main`](https://github.com/Ritbit/MSX-Kabelkrant/tree/main) · [DSK/ZIP release](https://github.com/Ritbit/MSX-Kabelkrant/releases/tag/v6.2b)
-- **Assembly Assisted (separate release line):** [`release/kabelkrant-assembly-assisted`](https://github.com/Ritbit/MSX-Kabelkrant/tree/release/kabelkrant-assembly-assisted)
+- **Assembly Assisted (separate release line):** [`release/kabelkrant-assembly-assisted`](https://github.com/Ritbit/MSX-Kabelkrant/tree/release/kabelkrant-assembly-assisted) · [DSK](https://github.com/Ritbit/MSX-Kabelkrant/releases/download/v6.2b/kabelkrant-assembly-assisted-1.0.dsk) / [ZIP](https://github.com/Ritbit/MSX-Kabelkrant/releases/download/v6.2b/kabelkrant-assembly-assisted-1.0.zip)
 
 Assembly Assisted combines Z80 text rendering (four fonts), all 14 Z80 wipe transitions, and RAMdisk functionality. Wipe-routine benchmark: **127.76×** total speedup over BASIC on the emulated NMS8250; this does not measure total page or full-loop speed. See [HOWTO-TESTING.md](HOWTO-TESTING.md) and the [Z80 documentation](z80/README.md) for testing/build details.
 
